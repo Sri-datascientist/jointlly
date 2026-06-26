@@ -72,10 +72,6 @@ const BuilderMyProjects = ({ embedded = false }: BuilderMyProjectsProps) => {
     };
   }, [isAuthenticated, user?.userType]);
 
-  const titleClass = embedded
-    ? "text-2xl font-bold text-foreground"
-    : "text-4xl font-bold text-foreground";
-
   return (
     <div className={embedded ? "min-h-0" : "w-full"}>
       {!embedded && (
@@ -119,13 +115,6 @@ const BuilderMyProjects = ({ embedded = false }: BuilderMyProjectsProps) => {
       )}
 
       <main className={embedded ? "w-full" : "max-w-7xl mx-auto w-full py-8"}>
-        <div className={embedded ? "mb-6" : "mb-8"}>
-          <h1 className={titleClass}>Projects</h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Your selected opportunity projects and portfolio projects are shown here.
-          </p>
-        </div>
-
         {!isAuthenticated || user?.userType !== "builder" ? (
           <p className="text-sm text-muted-foreground">Sign in as a builder to see your projects.</p>
         ) : loading ? (

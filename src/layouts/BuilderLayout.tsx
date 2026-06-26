@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
   CreditCard,
   Images,
   Menu,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,6 +26,13 @@ import { UserProfileDropdown } from "@/components/UserProfileDropdown";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { getBuilderPageMeta } from "@/lib/dashboardLayoutMeta";
+import {
+  dashboardLayoutShell,
+  DashboardLayoutGreenHeader,
+  sidebarNavLinkClass,
+  sidebarSubNavLinkClass,
+} from "@/components/dashboard/DashboardLayoutHeader";
 
 const ACCOUNT_PREFIX = "/builder/account";
 
@@ -46,7 +54,6 @@ const BuilderLayout = () => {
   const navigate = useNavigate();
   const { logout, isAuthenticated, user } = useAuth();
   const [profileId, setProfileId] = useState<string | null>(null);
-  const [capabilityTypes, setCapabilityTypes] = useState<string[]>([]);
   const [accountOpen, setAccountOpen] = useState(() => location.pathname.startsWith(ACCOUNT_PREFIX));
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -54,23 +61,15 @@ const BuilderLayout = () => {
     let cancelled = false;
     if (!isAuthenticated || user?.userType !== "builder") {
       setProfileId(null);
-      setCapabilityTypes([]);
       return;
     }
     (async () => {
       try {
-        const [profile, caps] = await Promise.all([
-          getProfessionalProfile(),
-          listProfessionalCapabilities(),
-        ]);
+        const profile = await getProfessionalProfile();
         if (cancelled) return;
         setProfileId(profile.id);
-        setCapabilityTypes(caps.map((c) => c.capability_type));
       } catch {
-        if (!cancelled) {
-          setProfileId(null);
-          setCapabilityTypes([]);
-        }
+        if (!cancelled) setProfileId(null);
       }
     })();
     return () => {
@@ -83,6 +82,7 @@ const BuilderLayout = () => {
   }, [location.pathname]);
 
   const pathOnly = location.pathname.split("?")[0];
+  const pageMeta = useMemo(() => getBuilderPageMeta(location.pathname), [location.pathname]);
 
   const isMainNavActive = (path: string) => {
     if (pathOnly.startsWith(ACCOUNT_PREFIX)) return false;
@@ -110,143 +110,111 @@ const BuilderLayout = () => {
   const profileFormPath = (itemPath: string) =>
     profileId != null ? `${itemPath}?edit=${encodeURIComponent(profileId)}` : itemPath;
 
+  const headerAction =
+    pathOnly === "/builder/dashboard" ? (
+      <Link to="/builder/options">
+        <Button className="gap-1.5 h-8 px-3 text-xs bg-white text-[#0D3B21] hover:bg-white/90 shadow-sm border-0">
+          <Plus className="w-4 h-4" />
+          Post listing
+        </Button>
+      </Link>
+    ) : null;
+
   return (
-    /* fixed inset-0: flush to viewport — avoids blank strip from any parent/#root spacing */
-    <div className="fixed inset-0 z-[1] flex items-stretch w-full m-0 p-0 bg-background overflow-hidden">
-      {/* Modern Sidebar */}
-      <aside className="w-72 shrink-0 bg-background hidden lg:flex flex-col min-h-0 overflow-y-auto scrollbar-none">
-        {/* Header — extra top padding, no harsh divider line */}
-        <div className="px-6 pt-8 pb-5">
-          <UserProfileDropdown variant="builder" />
+    <div className={cn("fixed inset-0 z-[1] flex w-full m-0 p-0 overflow-hidden", dashboardLayoutShell.pageBg)}>
+      <aside className={dashboardLayoutShell.sidebar}>
+        <div className={dashboardLayoutShell.sidebarHeader}>
+          <div className={dashboardLayoutShell.sidebarHeaderShine} />
+          <div className="relative">
+            <UserProfileDropdown
+              variant="builder"
+              triggerClassName="text-white hover:text-white/90 [&_*]:text-white/90"
+            />
+          </div>
         </div>
 
-        {/* Main Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
-          <div className="mb-4">
-            <div className="text-xs font-semibold text-foreground/55 uppercase tracking-wider mb-2 px-3">
-              Main
-            </div>
-            <div className="space-y-3">
-              <div className="space-y-2">
-                {navItems.map((item) => {
-                  const active = isMainNavActive(item.path);
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all group",
-                        active
-                          ? "bg-primary/10 text-primary shadow-sm"
-                          : "text-foreground/90 hover:bg-secondary/70 hover:text-foreground"
-                      )}
-                    >
-                      <item.icon className={cn("w-5 h-5 shrink-0", active ? "text-primary" : "text-foreground/60 group-hover:text-foreground/90")} />
-                      <span className="flex-1">{item.label}</span>
-                      {active && <ChevronRight className="w-4 h-4 text-primary" />}
-                    </Link>
-                  );
-                })}
-              </div>
-
-              <Collapsible open={accountOpen} onOpenChange={setAccountOpen} className="space-y-1">
-              <CollapsibleTrigger
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  accountSectionActive
-                    ? "bg-primary/10 text-primary shadow-sm"
-                    : "text-foreground/90 hover:bg-secondary/70 hover:text-foreground"
-                )}
-              >
-                <User
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-none">
+          {navItems.map((item) => {
+            const active = isMainNavActive(item.path);
+            return (
+              <Link key={item.path} to={item.path} className={sidebarNavLinkClass(active)}>
+                <item.icon
                   className={cn(
                     "w-5 h-5 shrink-0",
-                    accountSectionActive ? "text-primary" : "text-foreground/60"
+                    active ? "text-[#1A5C35]" : "text-[#1A2E1A]/45 group-hover:text-[#1A5C35]",
                   )}
                 />
-                <span className="flex-1 text-left">Account</span>
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 shrink-0 transition-transform text-foreground/60",
-                    accountOpen && "rotate-180"
-                  )}
-                />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-1 pt-1 pl-2">
-                {accountSubLinks.map((sub) => {
-                  const subActive = pathOnly === sub.to || pathOnly.startsWith(`${sub.to}/`);
-                  return (
-                    <Link
-                      key={sub.to}
-                      to={sub.to}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg py-2 pl-7 pr-3 text-sm font-medium transition-all",
-                        subActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground/75 hover:bg-secondary/70 hover:text-foreground"
-                      )}
-                    >
-                      <sub.icon
-                        className={cn(
-                          "w-4 h-4 shrink-0",
-                          subActive ? "text-primary" : "text-foreground/60"
-                        )}
-                      />
-                      <span className="flex-1">{sub.label}</span>
-                      {subActive && <ChevronRight className="w-4 h-4 text-primary" />}
-                    </Link>
-                  );
-                })}
-              </CollapsibleContent>
-              </Collapsible>
-            </div>
-          </div>
+                <span className="flex-1">{item.label}</span>
+                {active && <ChevronRight className="w-4 h-4 text-[#1A5C35]" />}
+              </Link>
+            );
+          })}
 
-          <div className="pt-6 mt-1">
-            <div className="text-xs font-semibold text-foreground/55 uppercase tracking-wider mb-2 px-3">
-              Profiles
-            </div>
-            <div className="space-y-3">
-              {profileItems.map((item) => {
-                const active = isProfileNavActive(item.path);
-                // If a professional profile exists, always pass ?edit=<profileId>
-                const targetPath =
-                  profileId != null
-                    ? `${item.path}?edit=${encodeURIComponent(profileId)}`
-                    : item.path;
+          <Collapsible open={accountOpen} onOpenChange={setAccountOpen} className="mt-2">
+            <CollapsibleTrigger
+              className={cn(
+                sidebarNavLinkClass(accountSectionActive),
+                "w-full outline-none focus-visible:ring-2 focus-visible:ring-[#1A5C35]/30",
+              )}
+            >
+              <User
+                className={cn(
+                  "w-5 h-5 shrink-0",
+                  accountSectionActive ? "text-[#1A5C35]" : "text-[#1A2E1A]/45 group-hover:text-[#1A5C35]",
+                )}
+              />
+              <span className="flex-1 text-left">Account</span>
+              <ChevronDown
+                className={cn(
+                  "w-4 h-4 shrink-0 transition-transform text-[#1A2E1A]/45",
+                  accountOpen && "rotate-180",
+                )}
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-1 pt-1">
+              {accountSubLinks.map((sub) => {
+                const subActive = pathOnly === sub.to || pathOnly.startsWith(`${sub.to}/`);
                 return (
-                  <Link
-                    key={item.path}
-                    to={targetPath}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all group",
-                      active
-                        ? "bg-primary/10 text-primary shadow-sm"
-                        : "text-foreground/90 hover:bg-secondary/70 hover:text-foreground"
-                    )}
-                  >
-                    <item.icon
+                  <Link key={sub.to} to={sub.to} className={sidebarSubNavLinkClass(subActive)}>
+                    <sub.icon
                       className={cn(
-                        "w-5 h-5 shrink-0",
-                        active ? "text-primary" : "text-foreground/60 group-hover:text-foreground/90"
+                        "w-4 h-4 shrink-0",
+                        subActive ? "text-[#1A5C35]" : "text-[#1A2E1A]/45",
                       )}
                     />
-                    <span className="flex-1">{item.label}</span>
-                    {active && <ChevronRight className="w-4 h-4 text-primary" />}
+                    <span className="flex-1">{sub.label}</span>
+                    {subActive && <ChevronRight className="w-4 h-4 text-[#1A5C35]" />}
                   </Link>
                 );
               })}
-            </div>
-          </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <div className="mt-3 border-t border-[#1A5C35]/10 pt-1" aria-hidden />
+          {profileItems.map((item) => {
+            const active = isProfileNavActive(item.path);
+            const targetPath = profileFormPath(item.path);
+            return (
+              <Link key={item.path} to={targetPath} className={sidebarNavLinkClass(active)}>
+                <item.icon
+                  className={cn(
+                    "w-5 h-5 shrink-0",
+                    active ? "text-[#1A5C35]" : "text-[#1A2E1A]/45 group-hover:text-[#1A5C35]",
+                  )}
+                />
+                <span className="flex-1">{item.label}</span>
+                {active && <ChevronRight className="w-4 h-4 text-[#1A5C35]" />}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 pt-6 space-y-1">
+        <div className="p-4 border-t border-[#1A5C35]/10 space-y-1 shrink-0 bg-[#f8fcf9]">
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground/90 hover:bg-secondary/70 hover:text-foreground transition-all group"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-[#1A5C35]/6 hover:text-[#0D3B21] transition-all group"
           >
-            <Home className="w-5 h-5 text-foreground/60 group-hover:text-foreground/90" />
+            <Home className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-[#1A5C35]" />
             <span>Back to home</span>
           </Link>
           <button
@@ -255,25 +223,24 @@ const BuilderLayout = () => {
               logout();
               navigate("/");
             }}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground/90 hover:bg-red-50 hover:text-red-600 transition-all group"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-red-50 hover:text-red-600 transition-all group"
           >
-            <LogOut className="w-5 h-5 text-foreground/60 group-hover:text-red-600" />
+            <LogOut className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-red-600" />
             <span>Logout</span>
           </button>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-0 bg-background overflow-hidden">
-        <header className="lg:hidden shrink-0 border-b border-border/40 bg-background z-50 pt-[env(safe-area-inset-top,0px)]">
+      <main className={dashboardLayoutShell.mainPanel}>
+        <header className={dashboardLayoutShell.mobileHeader}>
           <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 min-h-[52px]">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
                 <SheetTrigger asChild>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="shrink-0 h-10 w-10 touch-target"
+                    className="shrink-0 h-10 w-10 touch-target text-white hover:bg-white/15 hover:text-white"
                     aria-label="Open navigation menu"
                   >
                     <Menu className="h-5 w-5" />
@@ -362,18 +329,15 @@ const BuilderLayout = () => {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <Link
-                to="/builder/dashboard"
-                className="font-semibold text-foreground truncate"
-                onClick={() => setMobileNavOpen(false)}
-              >
-                Builder
-              </Link>
+              <span className="font-semibold text-white truncate">{pageMeta.title}</span>
             </div>
-            <UserProfileDropdown variant="builder" triggerClassName="p-0 shrink-0" />
+            <UserProfileDropdown variant="builder" triggerClassName="text-white shrink-0 [&_*]:text-white/90" />
           </div>
         </header>
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-4 sm:pt-6 pb-[max(5rem,env(safe-area-inset-bottom))] lg:pb-6 px-4 sm:px-6 lg:px-8">
+
+        <DashboardLayoutGreenHeader {...pageMeta} action={headerAction} />
+
+        <div className={dashboardLayoutShell.contentScroll}>
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>
@@ -384,4 +348,3 @@ const BuilderLayout = () => {
 };
 
 export default BuilderLayout;
-

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram } from "lucide-react";
-const appLogo = "/image/IMG-20260323-WA0012-removebg-preview.png";
+import { Mail, Phone, MapPin, Linkedin, Facebook, Instagram } from "lucide-react";
+import logoNavbarDark from "@/assets/logo-navbar-dark.svg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -69,11 +69,13 @@ const Footer = () => {
             viewport={{ once: true }}
             className="col-span-2 lg:col-span-2"
           >
-            <img
-              src={appLogo}
-              alt="Jointlly footer logo"
-              className="h-20 sm:h-24 w-auto mb-4"
-            />
+            <Link to="/" className="inline-flex mb-4 min-h-[44px] items-center">
+              <img
+                src={logoNavbarDark}
+                alt="Jointlly"
+                className="h-16 sm:h-20 md:h-24 w-auto max-w-[220px] sm:max-w-[280px] object-contain object-left"
+              />
+            </Link>
             <p className="text-sm text-primary-foreground/85 mb-6 max-w-xs">
             The Validation Report is based on publicly available government records.<br></br>While
             Jointlly strives for accuracy, users are advised to conduct independent legal due diligence
@@ -99,7 +101,7 @@ const Footer = () => {
               </a>
               <div className="flex items-start gap-2 text-sm text-primary-foreground/75">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>Banshankri, Bengaluru</span>
+                <span>Banshankri, Bengaluru, Karnataka, India</span>
               </div>
             </div>
           </motion.div>

@@ -1,5 +1,21 @@
 import { useEffect, useState } from "react";
 import { getAdminConnections, type AdminConnectionRecord } from "@/lib/api";
+import {
+  AdminDataPanel,
+  AdminDateTimeCell,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarTitle,
+} from "@/components/admin/AdminTableUI";
 
 const AdminConnections = () => {
   const [rows, setRows] = useState<AdminConnectionRecord[]>([]);
@@ -26,64 +42,71 @@ const AdminConnections = () => {
     };
   }, []);
 
+  if (loading) return <AdminLoadingState label="Loading connections…" />;
+  if (error) return <AdminErrorState message={error} />;
+
   return (
-    <div className="max-w-7xl mx-auto space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold text-foreground">Marketplace Connections</h1>
-        <p className="text-sm text-muted-foreground">
-          Landowner-builder selection events with payment and contact traceability.
-        </p>
-      </div>
-
-      {loading && <div className="text-sm text-muted-foreground">Loading connections...</div>}
-      {error && <div className="text-sm text-destructive">{error}</div>}
-      {!loading && !error && rows.length === 0 && (
-        <div className="text-sm text-muted-foreground">No connection records found.</div>
-      )}
-
-      {!loading && !error && rows.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/60">
-              <tr className="text-left">
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Selection</th>
-                <th className="px-3 py-2">Landowner</th>
-                <th className="px-3 py-2">Builder</th>
-                <th className="px-3 py-2">Project</th>
-                <th className="px-3 py-2">Payment</th>
-                <th className="px-3 py-2">Updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.match_id} className="border-t">
-                  <td className="px-3 py-2">{r.status}</td>
-                  <td className="px-3 py-2">{r.selection_side || "-"}</td>
-                  <td className="px-3 py-2">
-                    <div>{r.landowner_name || "-"}</div>
-                    <div className="text-xs text-muted-foreground">{r.landowner_email || "-"}</div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div>{r.builder_company_name || "-"}</div>
-                    <div className="text-xs text-muted-foreground">{r.builder_email || "-"}</div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div>{r.project_type || "-"}</div>
-                    <div className="text-xs text-muted-foreground">{r.project_city || "-"}</div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div>{r.payment_status || "-"}</div>
-                    <div className="text-xs text-muted-foreground">{r.payment_id || r.payment_order_id || "-"}</div>
-                  </td>
-                  <td className="px-3 py-2">{new Date(r.updated_at).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+    <AdminDataPanel toolbar={<AdminToolbarTitle label="Marketplace connections" count={rows.length} />}>
+      <AdminTableWrap>
+        <AdminTable className="min-w-[900px]">
+          <AdminTableHeader>
+            <AdminTableRow className="hover:bg-transparent border-0">
+              <AdminTableHead className="w-[10%]">Status</AdminTableHead>
+              <AdminTableHead className="w-[10%]">Selection</AdminTableHead>
+              <AdminTableHead className="w-[20%]">Landowner</AdminTableHead>
+              <AdminTableHead className="w-[20%]">Builder</AdminTableHead>
+              <AdminTableHead className="w-[16%]">Project</AdminTableHead>
+              <AdminTableHead className="w-[16%]">Payment</AdminTableHead>
+              <AdminTableHead className="w-[8%]">Updated</AdminTableHead>
+            </AdminTableRow>
+          </AdminTableHeader>
+          <AdminTableBody>
+            {rows.length === 0 ? (
+              <AdminTableEmpty colSpan={7} message="No connection records found." />
+            ) : (
+              rows.map((r) => (
+                <AdminTableRow key={r.match_id}>
+                  <AdminTableCell>
+                    <AdminStatusBadge status={r.status} variant="neutral" />
+                  </AdminTableCell>
+                  <AdminTableCell muted>{r.selection_side || "—"}</AdminTableCell>
+                  <AdminTableCell>
+                    <div className="font-medium text-[#0D3B21]">{r.landowner_name || "—"}</div>
+                    <div className="text-xs text-[#1A2E1A]/50 truncate" title={r.landowner_email ?? undefined}>
+                      {r.landowner_email || "—"}
+                    </div>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <div className="font-medium text-[#0D3B21]">{r.builder_company_name || "—"}</div>
+                    <div className="text-xs text-[#1A2E1A]/50 truncate" title={r.builder_email ?? undefined}>
+                      {r.builder_email || "—"}
+                    </div>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <div className="font-medium">{r.project_type || "—"}</div>
+                    <div className="text-xs text-[#1A2E1A]/50">{r.project_city || "—"}</div>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <div>
+                      <AdminStatusBadge
+                        status={r.payment_status || "—"}
+                        variant={r.payment_status === "SUCCESS" ? "success" : "neutral"}
+                      />
+                    </div>
+                    <div className="text-xs text-[#1A2E1A]/50 font-mono truncate mt-1" title={r.payment_id ?? r.payment_order_id ?? undefined}>
+                      {r.payment_id || r.payment_order_id || "—"}
+                    </div>
+                  </AdminTableCell>
+                  <AdminTableCell muted>
+                    <AdminDateTimeCell value={r.updated_at} />
+                  </AdminTableCell>
+                </AdminTableRow>
+              ))
+            )}
+          </AdminTableBody>
+        </AdminTable>
+      </AdminTableWrap>
+    </AdminDataPanel>
   );
 };
 

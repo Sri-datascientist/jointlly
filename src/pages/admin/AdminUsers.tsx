@@ -1,36 +1,38 @@
 import { useState, useEffect } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { getAdminUsers, type AdminUserListItem, type BackendRole } from "@/lib/api";
-import { Link } from "react-router-dom";
+import {
+  AdminActiveBadge,
+  AdminDataPanel,
+  AdminDateTimeCell,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminRoleBadge,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarActions,
+  AdminToolbarTitle,
+  formatAdminDate,
+} from "@/components/admin/AdminTableUI";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<AdminUserListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<BackendRole | "ALL">("ALL");
-
-  const formatLastLogin = (value?: string | null): string => {
-    if (!value) return "Never";
-    const dt = new Date(value);
-    if (Number.isNaN(dt.getTime())) return "Invalid";
-    return dt.toLocaleString();
-  };
 
   useEffect(() => {
     let cancelled = false;
@@ -52,85 +54,81 @@ const AdminUsers = () => {
     };
   }, [roleFilter]);
 
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[40vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-700" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <p className="text-destructive">{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <AdminLoadingState label="Loading users…" />;
+  if (error) return <AdminErrorState message={error} />;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Users</h1>
-      <p className="text-muted-foreground mb-6">All registered users.</p>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">List</CardTitle>
-          <Select
-            value={roleFilter}
-            onValueChange={(v) => setRoleFilter(v as BackendRole | "ALL")}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All roles" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All roles</SelectItem>
-              <SelectItem value="LANDOWNER">Landowner</SelectItem>
-              <SelectItem value="PROFESSIONAL">Professional</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Active</TableHead>
-                <TableHead>Last login</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right"> </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell className="font-medium">{u.email}</TableCell>
-                  <TableCell>{u.name}</TableCell>
-                  <TableCell>
-                    <Badge variant={u.role === "ADMIN" ? "default" : "secondary"}>{u.role}</Badge>
-                  </TableCell>
-                  <TableCell>{u.is_active ? "Yes" : "No"}</TableCell>
-                  <TableCell className="text-muted-foreground">{formatLastLogin(u.last_login_at)}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(u.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link to={`/admin/users/${u.id}`} className="text-sm text-primary hover:underline">
-                      View 360
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {users.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">No users found.</p>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    <AdminDataPanel
+      toolbar={
+        <>
+          <AdminToolbarTitle label="All users" count={users.length} />
+          <AdminToolbarActions>
+            <Select
+              value={roleFilter}
+              onValueChange={(v) => setRoleFilter(v as BackendRole | "ALL")}
+            >
+              <SelectTrigger className="w-[180px] h-9 border-[#1A5C35]/20 bg-white">
+                <SelectValue placeholder="All roles" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All roles</SelectItem>
+                <SelectItem value="LANDOWNER">Landowner</SelectItem>
+                <SelectItem value="PROFESSIONAL">Professional</SelectItem>
+              </SelectContent>
+            </Select>
+          </AdminToolbarActions>
+        </>
+      }
+    >
+      <AdminTableWrap>
+        <AdminTable>
+          <AdminTableHeader>
+            <AdminTableRow className="hover:bg-transparent border-0">
+              <AdminTableHead className="w-[28%]">Email</AdminTableHead>
+              <AdminTableHead className="w-[18%]">Name</AdminTableHead>
+              <AdminTableHead className="w-[12%]">Role</AdminTableHead>
+              <AdminTableHead className="w-[8%] text-center">Active</AdminTableHead>
+              <AdminTableHead className="w-[14%]">Last login</AdminTableHead>
+              <AdminTableHead className="w-[10%]">Created</AdminTableHead>
+              <AdminTableHead className="w-[10%] text-right">Action</AdminTableHead>
+            </AdminTableRow>
+          </AdminTableHeader>
+          <AdminTableBody>
+            {users.length === 0 ? (
+              <AdminTableEmpty colSpan={7} message="No users found." />
+            ) : (
+              users.map((u) => (
+                <AdminTableRow key={u.id}>
+                  <AdminTableCell className="font-medium max-w-0">
+                    <span className="block truncate" title={u.email}>
+                      {u.email}
+                    </span>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <span className="block truncate" title={u.name}>
+                      {u.name}
+                    </span>
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <AdminRoleBadge role={u.role} />
+                  </AdminTableCell>
+                  <AdminTableCell className="text-center">
+                    <AdminActiveBadge active={u.is_active} />
+                  </AdminTableCell>
+                  <AdminTableCell muted>
+                    <AdminDateTimeCell value={u.last_login_at} />
+                  </AdminTableCell>
+                  <AdminTableCell muted>{formatAdminDate(u.created_at)}</AdminTableCell>
+                  <AdminTableCell className="text-right">
+                    <AdminTableAction to={`/admin/users/${u.id}`} label="View 360" />
+                  </AdminTableCell>
+                </AdminTableRow>
+              ))
+            )}
+          </AdminTableBody>
+        </AdminTable>
+      </AdminTableWrap>
+    </AdminDataPanel>
   );
 };
 

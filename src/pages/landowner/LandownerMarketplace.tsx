@@ -526,15 +526,6 @@ export default function LandownerMarketplace() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-foreground">Opportunities</h1>
-        <p className="text-sm text-muted-foreground max-w-3xl">
-          Select a project to view matched construction companies. Builders are limited to the service types you have
-          registered{hasAllRegisteredTypes ? " (all types — full directory)." : "."} Leave location empty to see all
-          matching builders; use the location field only when you want to narrow by city or area.
-        </p>
-      </header>
-
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <div className="xl:col-span-2">
           <label className="block text-xs font-medium text-foreground/85 mb-1">Your project</label>

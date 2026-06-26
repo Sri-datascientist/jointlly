@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+debug-*.log
 
 node_modules
 dist
@@ -26,7 +27,8 @@ jointlly_backend/app/jointlly/
 jointlly_backend/generated_exports/
 *.zip
 
-# Editor directories and files
+# Editor / IDE
+.cursor/
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -36,3 +38,4 @@ jointlly_backend/generated_exports/
 *.njsproj
 *.sln
 *.sw?
+Thumbs.db

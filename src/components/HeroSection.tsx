@@ -5,8 +5,10 @@ import ThreeDModelViewer from "./ThreeDModelViewer";
 
 const MODEL_VIEWER_ID = "hero-3d-globe";
 
-/** Front-right elevated view — rotation (auto + drag) starts from this angle */
+/** Front-right elevated camera view */
 const HERO_GLOBE_INITIAL_ORBIT = "38deg 72deg 105%";
+/** GLB faces away at turntable 0° — start at 180° so auto-rotate begins from the front */
+const HERO_GLOBE_INITIAL_TURNTABLE_DEG = 180;
 
 const CONTENT_BY_CATEGORY = {
   residential: {
@@ -158,6 +160,7 @@ const HeroSection = () => {
                 transparent
                 rotateOnly
                 initialCameraOrbit={HERO_GLOBE_INITIAL_ORBIT}
+                initialTurntableRotationDeg={HERO_GLOBE_INITIAL_TURNTABLE_DEG}
               />
             </div>
           </motion.div>

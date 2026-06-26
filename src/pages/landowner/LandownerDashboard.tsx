@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Hammer, Handshake, Palette, Wrench, Plus, FileText, CheckCircle2, ArrowRight, Users, Sparkles, Loader2 } from "lucide-react";
+import { Hammer, Handshake, Palette, Wrench, FileText, CheckCircle2, ArrowRight, Users, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LandownerProjectCard } from "@/components/LandownerProjectCard";
 import { createPaymentOrder, getMyTransactions, verifyPaymentTransaction } from "@/lib/api";
+import {
+  DashboardLoadingState,
+  DashboardPromoBanner,
+  DashboardQuickActionCard,
+  DashboardSectionHeader,
+  DashboardStatCard,
+  dashboardCardShell,
+  DashboardCardBackground,
+} from "@/components/dashboard/DashboardUI";
+import { cn } from "@/lib/utils";
 
 type RazorpaySuccessPayload = {
   razorpay_payment_id: string;
@@ -62,10 +71,10 @@ function ensureRazorpayScript(): Promise<void> {
 }
 
 const quickActions = [
-  { path: "/landowner/contract-construction", label: "Contract construction", icon: Hammer, desc: "I need a professional team to construct.", color: "bg-green-500" },
-  { path: "/landowner/joint-venture", label: "Joint venture / JD", icon: Handshake, desc: "Explore JV/JD opportunities.", color: "bg-green-600" },
-  { path: "/landowner/interior", label: "Interior architecture", icon: Palette, desc: "Find an interior design professional.", color: "bg-green-500" },
-  { path: "/landowner/reconstruction", label: "Renovation / repaint", icon: Wrench, desc: "Repairs or improvements to my space.", color: "bg-green-600" },
+  { path: "/landowner/contract-construction", slug: "contract-construction", label: "Contract construction", icon: Hammer, desc: "I need a professional team to construct." },
+  { path: "/landowner/joint-venture", slug: "joint-venture", label: "Joint venture / JD", icon: Handshake, desc: "Explore JV/JD opportunities." },
+  { path: "/landowner/interior", slug: "interior", label: "Interior architecture", icon: Palette, desc: "Find an interior design professional." },
+  { path: "/landowner/reconstruction", slug: "reconstruction", label: "Renovation / repaint", icon: Wrench, desc: "Repairs or improvements to my space." },
 ];
 
 const LandownerDashboard = () => {
@@ -162,175 +171,117 @@ const LandownerDashboard = () => {
   };
 
   const stats = [
-    { label: "Active Projects", value: projects.length, icon: FileText, color: "text-green-600" },
-    { label: "Published", value: projects.length, icon: CheckCircle2, color: "text-green-500" },
-    { label: "Your matches", value: 0, icon: Users, color: "text-green-600" },
+    { label: "Active projects", value: projects.length, icon: FileText, accent: "green" as const },
+    { label: "Published listings", value: projects.length, icon: CheckCircle2, accent: "mint" as const },
+    { label: "Your matches", value: 0, icon: Users, accent: "gold" as const, href: "/landowner/matches" },
   ];
 
   if (loadingEntryFee) {
-    return (
-      <div className="min-h-[40vh] flex items-center justify-center text-muted-foreground gap-2">
-        <Loader2 className="h-5 w-5 animate-spin" />
-        Checking entry fee status...
-      </div>
-    );
+    return <DashboardLoadingState label="Checking entry fee status…" />;
   }
 
   if (!entryFeePaid) {
     return (
-      <div className="min-h-0 bg-background flex flex-col">
-        <main className="max-w-3xl mx-auto w-full px-6 py-12">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Landowner entry fee required</h1>
-            <p className="text-muted-foreground mb-6">
-              Complete the one-time <strong>₹99</strong> landowner entry fee to unlock dashboard, project posting, and marketplace access.
+      <div className="py-4 sm:py-8">
+        <div className={cn(dashboardCardShell, "max-w-2xl mx-auto overflow-hidden")}>
+          <div className="relative border-b border-[#1A5C35]/15 bg-gradient-to-r from-[#0D3B21] via-[#1A5C35] to-[#2d6e48] px-6 sm:px-8 py-6">
+            <div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(255,255,255,0.1)_0%,transparent_50%)]" />
+            <h1 className="relative font-times text-2xl sm:text-3xl !text-white">Unlock your dashboard</h1>
+            <p className="relative mt-2 text-sm text-white/80">
+              One-time landowner entry fee to access projects, matching, and marketplace.
             </p>
-            <div className="flex items-center gap-3">
-              <Button onClick={() => void handlePayEntryFee()} disabled={payingEntryFee}>
-                {payingEntryFee ? "Opening Razorpay..." : "Pay ₹99 and Continue"}
-              </Button>
-              <Link to="/landowner/account/payments" className="text-sm text-primary hover:underline">
-                View payment history
-              </Link>
-            </div>
-            {entryFeeError && (
-              <p className="mt-4 text-sm text-destructive">{entryFeeError}</p>
-            )}
           </div>
-        </main>
+          <div className="relative p-6 sm:p-8">
+            <DashboardCardBackground />
+            <div className="relative">
+              <p className="text-4xl font-bold text-[#0D3B21] tabular-nums">
+                ₹99<span className="text-lg font-semibold text-[#1A2E1A]/50">/-</span>
+              </p>
+              <p className="mt-2 text-sm text-[#1A2E1A]/65 leading-relaxed">
+                Complete payment to unlock dashboard, project posting, and opportunities marketplace access.
+              </p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={() => void handlePayEntryFee()}
+                  disabled={payingEntryFee}
+                  className="bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] hover:opacity-95 shadow-md min-h-[44px]"
+                >
+                  {payingEntryFee ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Opening Razorpay…
+                    </>
+                  ) : (
+                    "Pay ₹99 and continue"
+                  )}
+                </Button>
+                <Link
+                  to="/landowner/account/payments"
+                  className="inline-flex items-center justify-center text-sm font-semibold text-[#1A5C35] hover:underline min-h-[44px]"
+                >
+                  View payment history
+                </Link>
+              </div>
+              {entryFeeError ? (
+                <p className="mt-4 text-sm text-destructive">{entryFeeError}</p>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-0 bg-background flex flex-col">
-      {/* Professional Header */}
-      <header className="sticky top-0 z-30 bg-black text-white border-b border-gray-800 shrink-0 lg:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="text-xl font-bold">Jointlly</Link>
-              <nav className="hidden md:flex items-center gap-6">
-                <Link to="/landowner/dashboard" className="text-sm font-medium hover:text-green-400 transition-colors">Dashboard</Link>
-                <Link to="/landowner/matches" className="text-sm font-medium hover:text-green-400 transition-colors">Your matches</Link>
-                <Link to="/landowner/marketplace" className="text-sm font-medium hover:text-green-400 transition-colors">Opportunities</Link>
-              </nav>
-            </div>
-            <Link to="/landowner/options">
-              <Button className="btn-navbar gap-2">
-                <Plus className="w-4 h-4" />
-                Post Listing
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="pb-4">
+      <DashboardPromoBanner
+        title="Create your opportunity listing"
+        description="Publish your request on Opportunities — contract construction, JV/JD, interior, or renovation — so builders can discover and match with you."
+        icon={Sparkles}
+        ctaLabel="Fill the form"
+        ctaTo="/landowner/options"
+      />
 
-      <main className="max-w-7xl mx-auto w-full pt-4 pb-8 sm:pt-6">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-black mb-2">Dashboard</h1>
-          <p className="text-gray-600">Manage your requests and projects. Create a new request or view published projects.</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-10 sm:mb-12">
+        {stats.map((stat, index) => (
+          <DashboardStatCard key={stat.label} {...stat} index={index} />
+        ))}
+      </div>
 
-        {/* Instruction banner */}
-        <section className="mb-8">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-black">Create your opportunity listing</h2>
-                <p className="text-sm text-gray-600">
-                  To publish your request on Opportunities, fill the form (contract construction, JV/JD, interior, or renovation). Your card will appear for builders to match with you.
-                </p>
-              </div>
-            </div>
-            <Link to="/landowner/options">
-              <Button className="w-full md:w-auto gap-2">
-                Fill the form
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+      {projects.length > 0 ? (
+        <section className="mb-10 sm:mb-12">
+          <DashboardSectionHeader
+            title="Featured projects"
+            subtitle="Your recently published requests"
+            viewAllTo="/landowner/my-projects"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {projects.slice(0, 6).map((project, index) => (
+              <LandownerProjectCard key={index} project={project} index={index} variant="compact" />
+            ))}
           </div>
         </section>
+      ) : null}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
-                <span className="text-2xl font-bold text-black">{stat.value}</span>
-              </div>
-              <p className="text-sm text-gray-600">{stat.label}</p>
-              {stat.label === "Matches" && (
-                <Link to="/landowner/matches" className="text-sm font-medium text-green-600 hover:text-green-700 mt-2 inline-block">View matches</Link>
-              )}
-            </motion.div>
+      <section>
+        <DashboardSectionHeader
+          title="Create new request"
+          subtitle="Choose the type of project you want to publish"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+          {quickActions.map((action, i) => (
+            <DashboardQuickActionCard
+              key={action.path}
+              to={action.path}
+              label={action.label}
+              description={action.desc}
+              icon={action.icon}
+              completed={getProjectStatus(action.slug)}
+              index={i}
+            />
           ))}
         </div>
-
-        {/* Featured Projects Section */}
-        {projects.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-black">Featured Projects</h2>
-              <Link to="/landowner/my-projects" className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
-                View All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.slice(0, 6).map((project, index) => (
-                <LandownerProjectCard key={index} project={project} index={index} variant="compact" />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* New Request Section */}
-        <section>
-          <h2 className="text-2xl font-bold text-black mb-6">Create New Request</h2>
-          <p className="text-gray-600 mb-6">Choose the type of request you want to create.</p>
-          
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {quickActions.map((action, i) => {
-              const isCompleted = getProjectStatus(action.path.split("/").pop() || "");
-              return (
-                <Link key={action.path} to={action.path} className="block h-full">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className={`bg-white border-2 rounded-lg p-6 hover:shadow-lg transition-all cursor-pointer h-full min-h-[220px] flex flex-col ${
-                      isCompleted ? "border-green-500" : "border-gray-200 hover:border-green-500"
-                    }`}
-                  >
-                    <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4`}>
-                      <action.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-black mb-2 line-clamp-2">{action.label}</h3>
-                    <p className="text-sm text-gray-600 mb-4 flex-1 line-clamp-3">{action.desc}</p>
-                    {isCompleted && (
-                      <div className="flex items-center gap-2 text-sm text-green-600 mt-auto">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Completed</span>
-                      </div>
-                    )}
-                  </motion.div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      </main>
+      </section>
     </div>
   );
 };

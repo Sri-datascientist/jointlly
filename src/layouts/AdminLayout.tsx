@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -21,6 +21,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { UserProfileDropdown } from "@/components/UserProfileDropdown";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { getAdminPageMeta } from "@/lib/dashboardLayoutMeta";
+import {
+  dashboardLayoutShell,
+  DashboardLayoutGreenHeader,
+  sidebarNavLinkClass,
+} from "@/components/dashboard/DashboardLayoutHeader";
 
 const navItems = [
   { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -31,10 +37,6 @@ const navItems = [
   { path: "/admin/connections", label: "Connections", icon: Link2 },
   { path: "/admin/support-tickets", label: "Support tickets", icon: LifeBuoy },
   { path: "/admin/payments-cases", label: "Payments cases", icon: CreditCard },
-];
-
-const accountNavItems = [
-  { path: "/admin/settings", label: "Change password", icon: Settings },
 ];
 
 const AdminLayout = () => {
@@ -48,80 +50,55 @@ const AdminLayout = () => {
     return location.pathname.startsWith(path);
   };
 
+  const pageMeta = useMemo(() => getAdminPageMeta(location.pathname), [location.pathname]);
+
   return (
-    <div className="fixed inset-0 z-[1] flex items-stretch w-full m-0 p-0 bg-background overflow-hidden">
-      <aside className="w-72 shrink-0 bg-slate-50 hidden lg:flex flex-col border-r border-slate-200 min-h-0 overflow-y-auto">
-        <div className="p-6 border-b border-border/40">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-6 h-6 text-slate-600" />
-            <span className="font-semibold text-slate-900">Admin</span>
+    <div className={cn("fixed inset-0 z-[1] flex w-full m-0 p-0 overflow-hidden", dashboardLayoutShell.pageBg)}>
+      <aside className={dashboardLayoutShell.sidebar}>
+        <div className={dashboardLayoutShell.sidebarHeader}>
+          <div className={dashboardLayoutShell.sidebarHeaderShine} />
+          <div className="relative space-y-3">
+            <UserProfileDropdown
+              variant="admin"
+              triggerClassName="text-white hover:text-white/90 [&_*]:text-white/90"
+            />
+            <Link
+              to="/admin/settings"
+              className={cn(
+                "hidden lg:flex items-center gap-2 rounded-lg py-1.5 pl-[52px] pr-2 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors",
+                isActive("/admin/settings") && "text-white bg-white/10",
+              )}
+            >
+              <Settings className="w-4 h-4 shrink-0" />
+              Change password
+            </Link>
           </div>
-          <UserProfileDropdown variant="admin" triggerClassName="text-slate-800 hover:text-slate-900" />
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-3">
-            Manage
-          </div>
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-none">
           {navItems.map((item) => {
             const active = isActive(item.path);
             return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all group",
-                  active
-                    ? "bg-slate-200 text-slate-900 shadow-sm"
-                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                )}
-              >
+              <Link key={item.path} to={item.path} className={sidebarNavLinkClass(active)}>
                 <item.icon
                   className={cn(
                     "w-5 h-5 shrink-0",
-                    active ? "text-slate-900" : "text-slate-500 group-hover:text-slate-700"
+                    active ? "text-[#1A5C35]" : "text-[#1A2E1A]/45 group-hover:text-[#1A5C35]",
                   )}
                 />
                 <span className="flex-1">{item.label}</span>
-                {active && <ChevronRight className="w-4 h-4 text-slate-700" />}
-              </Link>
-            );
-          })}
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-3 mt-4 pt-4 border-t border-border/40">
-            Account
-          </div>
-          {accountNavItems.map((item) => {
-            const active = isActive(item.path);
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all group",
-                  active
-                    ? "bg-slate-200 text-slate-900 shadow-sm"
-                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                )}
-              >
-                <item.icon
-                  className={cn(
-                    "w-5 h-5 shrink-0",
-                    active ? "text-slate-900" : "text-slate-500 group-hover:text-slate-700"
-                  )}
-                />
-                <span className="flex-1">{item.label}</span>
-                {active && <ChevronRight className="w-4 h-4 text-slate-700" />}
+                {active && <ChevronRight className="w-4 h-4 text-[#1A5C35]" />}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-border/40 space-y-1">
+        <div className="p-4 border-t border-[#1A5C35]/10 space-y-1 shrink-0 bg-[#f8fcf9]">
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-all group"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-[#1A5C35]/6 hover:text-[#0D3B21] transition-all group"
           >
-            <Home className="w-5 h-5 text-slate-500 group-hover:text-slate-700" />
+            <Home className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-[#1A5C35]" />
             <span>Back to site</span>
           </Link>
           <button
@@ -130,16 +107,17 @@ const AdminLayout = () => {
               logout();
               navigate("/");
             }}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all group"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-red-50 hover:text-red-600 transition-all group"
           >
-            <LogOut className="w-5 h-5 text-slate-500 group-hover:text-red-600" />
+            <LogOut className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-red-600" />
             <span>Logout</span>
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0 min-h-0 bg-background overflow-hidden">
-        <header className="lg:hidden shrink-0 border-b border-border/40 bg-background z-50 pt-[env(safe-area-inset-top,0px)]">
+      {/* Main — separate panel with green header */}
+      <main className={dashboardLayoutShell.mainPanel}>
+        <header className={dashboardLayoutShell.mobileHeader}>
           <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 min-h-[52px]">
             <div className="flex items-center gap-2 min-w-0">
               <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
@@ -147,7 +125,7 @@ const AdminLayout = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 h-10 w-10 touch-target text-foreground/90 hover:bg-secondary/70 hover:text-foreground"
+                    className="shrink-0 h-10 w-10 touch-target text-white hover:bg-white/15 hover:text-white"
                     aria-label="Open admin menu"
                   >
                     <Menu className="h-5 w-5" />
@@ -164,35 +142,20 @@ const AdminLayout = () => {
                     </SheetTitle>
                   </SheetHeader>
                   <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                    <Link
+                      to="/admin/settings"
+                      onClick={() => setMobileNavOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium min-h-[48px] group mb-2",
+                        isActive("/admin/settings")
+                          ? "bg-primary/10 text-primary"
+                          : "text-foreground/90 hover:bg-secondary/70 hover:text-foreground",
+                      )}
+                    >
+                      <Settings className="w-5 h-5 shrink-0 text-foreground/60 group-hover:text-foreground/90" />
+                      Change password
+                    </Link>
                     {navItems.map((item) => {
-                      const active = isActive(item.path);
-                      return (
-                        <Link
-                          key={item.path}
-                          to={item.path}
-                          onClick={() => setMobileNavOpen(false)}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium min-h-[48px] group",
-                            active
-                              ? "bg-primary/10 text-primary"
-                              : "text-foreground/90 hover:bg-secondary/70 hover:text-foreground"
-                          )}
-                        >
-                          <item.icon
-                            className={cn(
-                              "w-5 h-5 shrink-0",
-                              active ? "text-primary" : "text-foreground/60 group-hover:text-foreground/90"
-                            )}
-                          />
-                          {item.label}
-                          {active && <ChevronRight className="w-4 h-4 ml-auto text-primary" />}
-                        </Link>
-                      );
-                    })}
-                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3 mt-4 pt-4 border-t border-border/40">
-                      Account
-                    </div>
-                    {accountNavItems.map((item) => {
                       const active = isActive(item.path);
                       return (
                         <Link
@@ -242,12 +205,15 @@ const AdminLayout = () => {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <span className="font-semibold text-foreground truncate">Admin</span>
+              <span className="font-semibold text-white truncate">{pageMeta.title}</span>
             </div>
-            <UserProfileDropdown variant="admin" triggerClassName="text-foreground/90 shrink-0" />
+            <UserProfileDropdown variant="admin" triggerClassName="text-white shrink-0 [&_*]:text-white/90" />
           </div>
         </header>
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-6 lg:px-8 pb-[max(1rem,env(safe-area-inset-bottom))]">
+
+        <DashboardLayoutGreenHeader {...pageMeta} />
+
+        <div className={dashboardLayoutShell.contentScroll}>
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

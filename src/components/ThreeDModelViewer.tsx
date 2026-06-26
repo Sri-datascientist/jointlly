@@ -18,6 +18,11 @@ type ThreeDModelViewerProps = {
    * Auto-rotate and drag begin from this view when rotateOnly is set.
    */
   initialCameraOrbit?: string;
+  /**
+   * Turntable yaw in degrees when the model loads. Auto-rotate continues from
+   * this angle (model spins on Y; separate from camera-orbit).
+   */
+  initialTurntableRotationDeg?: number;
 };
 
 /**
@@ -37,6 +42,7 @@ type ModelViewerElement = HTMLElement & {
   minCameraOrbit?: string;
   maxCameraOrbit?: string;
   jumpCameraToGoal?: () => void;
+  resetTurntableRotation?: (theta?: number) => void;
 };
 
 /** Parse "theta phi radius" → locked min/max (horizontal spin only). */
@@ -56,6 +62,7 @@ const ThreeDModelViewer = ({
   id,
   rotateOnly = false,
   initialCameraOrbit,
+  initialTurntableRotationDeg,
 }: ThreeDModelViewerProps) => {
   const orbitBounds =
     rotateOnly && initialCameraOrbit ? rotateOnlyOrbitBounds(initialCameraOrbit) : null;
@@ -80,17 +87,23 @@ const ThreeDModelViewer = ({
 
   // Apply starting view after the GLB loads so auto-rotate begins from that angle.
   useEffect(() => {
-    if (!id || !initialCameraOrbit) return;
+    if (!id || (!initialCameraOrbit && initialTurntableRotationDeg == null)) return;
 
-    const bounds = rotateOnly ? rotateOnlyOrbitBounds(initialCameraOrbit) : null;
+    const bounds =
+      rotateOnly && initialCameraOrbit ? rotateOnlyOrbitBounds(initialCameraOrbit) : null;
 
-    const applyInitialOrbit = () => {
+    const applyInitialView = () => {
       const el = document.getElementById(id) as ModelViewerElement | null;
       if (!el) return;
-      el.cameraOrbit = initialCameraOrbit;
-      if (bounds) {
-        el.minCameraOrbit = bounds.min;
-        el.maxCameraOrbit = bounds.max;
+      if (initialCameraOrbit) {
+        el.cameraOrbit = initialCameraOrbit;
+        if (bounds) {
+          el.minCameraOrbit = bounds.min;
+          el.maxCameraOrbit = bounds.max;
+        }
+      }
+      if (initialTurntableRotationDeg != null) {
+        el.resetTurntableRotation?.((initialTurntableRotationDeg * Math.PI) / 180);
       }
       el.jumpCameraToGoal?.();
     };
@@ -98,11 +111,11 @@ const ThreeDModelViewer = ({
     const el = document.getElementById(id) as ModelViewerElement | null;
     if (!el) return;
 
-    el.addEventListener("load", applyInitialOrbit);
-    applyInitialOrbit();
+    el.addEventListener("load", applyInitialView);
+    applyInitialView();
 
-    return () => el.removeEventListener("load", applyInitialOrbit);
-  }, [id, initialCameraOrbit, rotateOnly]);
+    return () => el.removeEventListener("load", applyInitialView);
+  }, [id, initialCameraOrbit, initialTurntableRotationDeg, rotateOnly]);
 
   return (
     <model-viewer

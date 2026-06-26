@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -23,6 +21,31 @@ import {
   type AdminSupportTicketListItem,
   type AdminSupportTicketDetail,
 } from "@/lib/api";
+import {
+  AdminDataPanel,
+  AdminDateTimeCell,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarTitle,
+  adminPanelShell,
+} from "@/components/admin/AdminTableUI";
+import { cn } from "@/lib/utils";
+
+function ticketStatusVariant(status: string): "success" | "warning" | "danger" | "neutral" {
+  if (status === "resolved" || status === "closed") return "success";
+  if (status === "open") return "danger";
+  return "warning";
+}
 
 export default function AdminSupportTickets() {
   const [rows, setRows] = useState<AdminSupportTicketListItem[]>([]);
@@ -94,83 +117,95 @@ export default function AdminSupportTickets() {
     setRows((prev) => prev.map((r) => (r.id === updated.id ? { ...r, status: updated.status } : r)));
   };
 
-  return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Support tickets</h1>
-        <p className="text-muted-foreground mt-1">Operational triage and resolution.</p>
-      </div>
+  if (loading) return <AdminLoadingState label="Loading support tickets…" />;
+  if (error) return <AdminErrorState message={error} />;
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="text-lg">Filters</CardTitle>
-          <div className="text-xs text-muted-foreground">
+  return (
+    <div className="space-y-4">
+      <div className={cn(adminPanelShell, "p-4 sm:p-5")}>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm font-semibold text-[#0D3B21]">Filters</span>
+          <div className="text-xs text-[#1A2E1A]/55">
             {Object.entries(statusCounts)
               .sort((a, b) => a[0].localeCompare(b[0]))
-              .map(([k, v]) => `${k}:${v}`)
-              .join(" · ")}
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(" · ") || "No tickets"}
           </div>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger>
+            <SelectTrigger className="border-[#1A5C35]/20 bg-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
-              <SelectItem value="open">open</SelectItem>
-              <SelectItem value="triage">triage</SelectItem>
-              <SelectItem value="resolved">resolved</SelectItem>
-              <SelectItem value="closed">closed</SelectItem>
+              <SelectItem value="ALL">All statuses</SelectItem>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="triage">Triage</SelectItem>
+              <SelectItem value="resolved">Resolved</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
             </SelectContent>
           </Select>
-          <Input value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="Filter by user_id" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search subject/description" />
-        </CardContent>
-      </Card>
-
-      {loading && <div className="text-sm text-muted-foreground">Loading tickets...</div>}
-      {error && <div className="text-sm text-destructive">{error}</div>}
-
-      {!loading && !error && (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/60">
-              <tr className="text-left">
-                <th className="px-3 py-2">Created</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Subject</th>
-                <th className="px-3 py-2">Route</th>
-                <th className="px-3 py-2">User</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-t">
-                  <td className="px-3 py-2 text-muted-foreground">{new Date(r.created_at).toLocaleString()}</td>
-                  <td className="px-3 py-2">{r.status}</td>
-                  <td className="px-3 py-2">{r.subject}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{r.route || "-"}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{r.user_id || "-"}</td>
-                  <td className="px-3 py-2 text-right">
-                    <Button size="sm" variant="ghost" onClick={() => setSelectedId(r.id)}>
-                      Open
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 && (
-                <tr>
-                  <td className="px-3 py-8 text-center text-muted-foreground" colSpan={6}>
-                    No tickets found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Input
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            placeholder="Filter by user ID"
+            className="border-[#1A5C35]/20 bg-white"
+          />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search subject or description"
+            className="border-[#1A5C35]/20 bg-white"
+          />
         </div>
-      )}
+      </div>
+
+      <AdminDataPanel toolbar={<AdminToolbarTitle label="Support tickets" count={rows.length} />}>
+        <AdminTableWrap>
+          <AdminTable>
+            <AdminTableHeader>
+              <AdminTableRow className="hover:bg-transparent border-0">
+                <AdminTableHead className="w-[14%]">Created</AdminTableHead>
+                <AdminTableHead className="w-[10%]">Status</AdminTableHead>
+                <AdminTableHead className="w-[28%]">Subject</AdminTableHead>
+                <AdminTableHead className="w-[18%]">Route</AdminTableHead>
+                <AdminTableHead className="w-[20%]">User</AdminTableHead>
+                <AdminTableHead className="w-[10%] text-right">Action</AdminTableHead>
+              </AdminTableRow>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {rows.length === 0 ? (
+                <AdminTableEmpty colSpan={6} message="No tickets found." />
+              ) : (
+                rows.map((r) => (
+                  <AdminTableRow key={r.id}>
+                    <AdminTableCell muted>
+                      <AdminDateTimeCell value={r.created_at} />
+                    </AdminTableCell>
+                    <AdminTableCell>
+                      <AdminStatusBadge status={r.status} variant={ticketStatusVariant(r.status)} />
+                    </AdminTableCell>
+                    <AdminTableCell className="font-medium max-w-0">
+                      <span className="block truncate" title={r.subject}>
+                        {r.subject}
+                      </span>
+                    </AdminTableCell>
+                    <AdminTableCell muted>{r.route || "—"}</AdminTableCell>
+                    <AdminTableCell muted>
+                      <span className="block truncate font-mono text-xs" title={r.user_id ?? undefined}>
+                        {r.user_id || "—"}
+                      </span>
+                    </AdminTableCell>
+                    <AdminTableCell className="text-right">
+                      <AdminTableAction label="Open" onClick={() => setSelectedId(r.id)} />
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </AdminTableWrap>
+      </AdminDataPanel>
 
       <Dialog
         open={!!selectedId}
@@ -187,13 +222,13 @@ export default function AdminSupportTickets() {
             <DialogTitle>Ticket</DialogTitle>
           </DialogHeader>
           {!selected ? (
-            <div className="text-sm text-muted-foreground">Loading...</div>
+            <div className="text-sm text-muted-foreground">Loading…</div>
           ) : (
             <div className="space-y-3">
               <div className="text-sm">
                 <div className="font-medium">{selected.subject}</div>
                 <div className="text-xs text-muted-foreground">
-                  {selected.status} · {selected.route || "-"} · {selected.user_id || "-"}
+                  {selected.status} · {selected.route || "—"} · {selected.user_id || "—"}
                 </div>
               </div>
 
@@ -202,15 +237,27 @@ export default function AdminSupportTickets() {
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Admin notes" />
 
               <div className="flex gap-2 flex-wrap">
-                <Button size="sm" variant="secondary" onClick={() => void save({ status: "triage" })}>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ status: "triage" })}
+                >
                   Mark triage
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => void save({ status: "resolved" })}>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ status: "resolved" })}
+                >
                   Mark resolved
-                </Button>
-                <Button size="sm" onClick={() => void save({ admin_notes: notes })}>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md bg-[#1A5C35] px-3 text-xs font-medium text-white hover:opacity-95"
+                  onClick={() => void save({ admin_notes: notes })}
+                >
                   Save notes
-                </Button>
+                </button>
               </div>
             </div>
           )}
@@ -219,4 +266,3 @@ export default function AdminSupportTickets() {
     </div>
   );
 }
-

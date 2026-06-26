@@ -79,20 +79,6 @@ const BuilderMatches = () => {
       <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/20 via-background to-background" />
         <div className="relative z-10 max-w-5xl mx-auto w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-10"
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Matches & <span className="text-gradient-primary">Opportunities</span>
-            </h1>
-            <p className="text-muted-foreground">
-              Landowner requests that match your profile, location, and expertise.
-            </p>
-          </motion.div>
-
           {loading && (
             <motion.div
               initial={{ opacity: 0 }}

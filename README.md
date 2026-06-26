@@ -1,49 +1,36 @@
 # Jointlly
 
+Real-estate collaboration platform — React frontend + FastAPI backend.
+
 ## Local development
 
-The only requirement is having Node.js & npm installed.
-
-Follow these steps:
+See [CONNECT.md](./CONNECT.md) for full frontend ↔ backend setup.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Frontend (repo root)
+npm install
 npm run dev
+
+# Backend
+cd jointlly_backend
+python -m venv .venv
+.venv\Scripts\activate   # Windows
+pip install -r requirements.txt
+cp .env.example .env       # configure secrets locally — never commit .env
+alembic upgrade head
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
-**Edit a file directly in GitHub**
+## Deploy on AWS EC2
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+See **[docs/DEPLOY_EC2.md](./docs/DEPLOY_EC2.md)** for Nginx, systemd, migrations, and production env setup.
 
-**Use GitHub Codespaces**
+## Stack
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Frontend:** Vite, React, TypeScript, shadcn-ui, Tailwind CSS
+- **Backend:** FastAPI, SQLAlchemy, Alembic, MySQL, Razorpay
 
-## What technologies are used for this project?
+## Secrets
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-Build the app and deploy the generated `dist/` folder to your hosting provider of choice.
+Copy `.env.example` files to `.env` locally. All `.env` files are gitignored and must not be pushed to GitHub.
 

@@ -61,12 +61,6 @@ const LandownerMyProjects = () => {
       </header>
 
       <main className="max-w-7xl mx-auto w-full py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-black mb-2">My Projects</h1>
-          <p className="text-gray-600">Your published requests and their status. Builders can view and respond to these.</p>
-        </div>
-
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filter Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">

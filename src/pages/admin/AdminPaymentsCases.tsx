@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -17,6 +15,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { listAdminTransactions, updateAdminTransaction, type AdminTransactionListItem } from "@/lib/api";
+import {
+  AdminDataPanel,
+  AdminDateTimeCell,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarTitle,
+  adminPanelShell,
+} from "@/components/admin/AdminTableUI";
+import { cn } from "@/lib/utils";
+
+function paymentStatusVariant(status: string): "success" | "warning" | "danger" | "neutral" {
+  if (status === "SUCCESS") return "success";
+  if (status === "FAILED") return "danger";
+  if (status === "PENDING") return "warning";
+  return "neutral";
+}
 
 export default function AdminPaymentsCases() {
   const [rows, setRows] = useState<AdminTransactionListItem[]>([]);
@@ -73,99 +97,113 @@ export default function AdminPaymentsCases() {
     return map;
   }, [rows]);
 
-  const save = async (patch: { admin_resolution_status?: "OPEN" | "INVESTIGATING" | "RESOLVED"; admin_notes?: string | null }) => {
+  const save = async (patch: {
+    admin_resolution_status?: "OPEN" | "INVESTIGATING" | "RESOLVED";
+    admin_notes?: string | null;
+  }) => {
     if (!selected) return;
     const updated = await updateAdminTransaction(selected.id, patch);
     setSelected(updated);
     setRows((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
   };
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Payments cases</h1>
-        <p className="text-muted-foreground mt-1">
-          Admin resolution layer for payment/refund issues (does not trigger Razorpay refunds).
-        </p>
-      </div>
+  if (loading) return <AdminLoadingState label="Loading payment cases…" />;
+  if (error) return <AdminErrorState message={error} />;
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="text-lg">Filters</CardTitle>
-          <div className="text-xs text-muted-foreground">
+  return (
+    <div className="space-y-4">
+      <div className={cn(adminPanelShell, "p-4 sm:p-5")}>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm font-semibold text-[#0D3B21]">Filters</span>
+          <div className="text-xs text-[#1A2E1A]/55">
             {Object.entries(resolutionCounts)
               .sort((a, b) => a[0].localeCompare(b[0]))
-              .map(([k, v]) => `${k}:${v}`)
-              .join(" · ")}
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(" · ") || "No cases"}
           </div>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <Input value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="User id" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search order_id/payment_id" />
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <Input
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            placeholder="User ID"
+            className="border-[#1A5C35]/20 bg-white"
+          />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Order or payment ID"
+            className="border-[#1A5C35]/20 bg-white"
+          />
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger>
+            <SelectTrigger className="border-[#1A5C35]/20 bg-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
-              <SelectItem value="PENDING">PENDING</SelectItem>
-              <SelectItem value="SUCCESS">SUCCESS</SelectItem>
-              <SelectItem value="FAILED">FAILED</SelectItem>
+              <SelectItem value="ALL">All statuses</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="SUCCESS">Success</SelectItem>
+              <SelectItem value="FAILED">Failed</SelectItem>
             </SelectContent>
           </Select>
-          <Input value={type} onChange={(e) => setType(e.target.value)} placeholder="Transaction type" />
-        </CardContent>
-      </Card>
-
-      {loading && <div className="text-sm text-muted-foreground">Loading transactions...</div>}
-      {error && <div className="text-sm text-destructive">{error}</div>}
-
-      {!loading && !error && (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/60">
-              <tr className="text-left">
-                <th className="px-3 py-2">Created</th>
-                <th className="px-3 py-2">Type</th>
-                <th className="px-3 py-2">Amount</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Order/Payment</th>
-                <th className="px-3 py-2">Resolution</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-t">
-                  <td className="px-3 py-2 text-muted-foreground">{new Date(r.created_at).toLocaleString()}</td>
-                  <td className="px-3 py-2">{r.transaction_type}</td>
-                  <td className="px-3 py-2">
-                    {r.amount} {r.currency}
-                  </td>
-                  <td className="px-3 py-2">{r.status}</td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground break-words">
-                    {r.razorpay_order_id || "-"}
-                    <div>{r.razorpay_payment_id || "-"}</div>
-                  </td>
-                  <td className="px-3 py-2">{r.admin_resolution_status || "-"}</td>
-                  <td className="px-3 py-2 text-right">
-                    <Button size="sm" variant="ghost" onClick={() => setSelectedId(r.id)}>
-                      Open
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 && (
-                <tr>
-                  <td className="px-3 py-8 text-center text-muted-foreground" colSpan={7}>
-                    No transactions found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Input
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            placeholder="Transaction type"
+            className="border-[#1A5C35]/20 bg-white"
+          />
         </div>
-      )}
+      </div>
+
+      <AdminDataPanel toolbar={<AdminToolbarTitle label="Payment cases" count={rows.length} />}>
+        <AdminTableWrap>
+          <AdminTable className="min-w-[960px]">
+            <AdminTableHeader>
+              <AdminTableRow className="hover:bg-transparent border-0">
+                <AdminTableHead className="w-[12%]">Created</AdminTableHead>
+                <AdminTableHead className="w-[14%]">Type</AdminTableHead>
+                <AdminTableHead className="w-[10%]">Amount</AdminTableHead>
+                <AdminTableHead className="w-[10%]">Status</AdminTableHead>
+                <AdminTableHead className="w-[24%]">Order / payment</AdminTableHead>
+                <AdminTableHead className="w-[12%]">Resolution</AdminTableHead>
+                <AdminTableHead className="w-[8%] text-right">Action</AdminTableHead>
+              </AdminTableRow>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {rows.length === 0 ? (
+                <AdminTableEmpty colSpan={7} message="No transactions found." />
+              ) : (
+                rows.map((r) => (
+                  <AdminTableRow key={r.id}>
+                    <AdminTableCell muted>
+                      <AdminDateTimeCell value={r.created_at} />
+                    </AdminTableCell>
+                    <AdminTableCell className="font-medium">{r.transaction_type}</AdminTableCell>
+                    <AdminTableCell className="tabular-nums">
+                      {r.amount} {r.currency}
+                    </AdminTableCell>
+                    <AdminTableCell>
+                      <AdminStatusBadge status={r.status} variant={paymentStatusVariant(r.status)} />
+                    </AdminTableCell>
+                    <AdminTableCell muted>
+                      <div className="font-mono text-xs break-all">{r.razorpay_order_id || "—"}</div>
+                      <div className="font-mono text-xs text-[#1A2E1A]/45 break-all mt-0.5">
+                        {r.razorpay_payment_id || "—"}
+                      </div>
+                    </AdminTableCell>
+                    <AdminTableCell>
+                      <AdminStatusBadge status={r.admin_resolution_status || "—"} variant="neutral" />
+                    </AdminTableCell>
+                    <AdminTableCell className="text-right">
+                      <AdminTableAction label="Open" onClick={() => setSelectedId(r.id)} />
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </AdminTableWrap>
+      </AdminDataPanel>
 
       <Dialog
         open={!!selectedId}
@@ -182,7 +220,7 @@ export default function AdminPaymentsCases() {
             <DialogTitle>Transaction</DialogTitle>
           </DialogHeader>
           {!selected ? (
-            <div className="text-sm text-muted-foreground">Loading...</div>
+            <div className="text-sm text-muted-foreground">Loading…</div>
           ) : (
             <div className="space-y-3">
               <div className="text-sm">
@@ -193,24 +231,40 @@ export default function AdminPaymentsCases() {
               </div>
 
               <div className="text-xs text-muted-foreground break-words">
-                Order: {selected.razorpay_order_id || "-"} · Payment: {selected.razorpay_payment_id || "-"}
+                Order: {selected.razorpay_order_id || "—"} · Payment: {selected.razorpay_payment_id || "—"}
               </div>
 
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Admin notes" />
 
               <div className="flex gap-2 flex-wrap">
-                <Button size="sm" variant="secondary" onClick={() => void save({ admin_resolution_status: "OPEN" })}>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ admin_resolution_status: "OPEN" })}
+                >
                   Open
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => void save({ admin_resolution_status: "INVESTIGATING" })}>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ admin_resolution_status: "INVESTIGATING" })}
+                >
                   Investigating
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => void save({ admin_resolution_status: "RESOLVED" })}>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ admin_resolution_status: "RESOLVED" })}
+                >
                   Resolved
-                </Button>
-                <Button size="sm" onClick={() => void save({ admin_notes: notes })}>
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-8 items-center rounded-md bg-[#1A5C35] px-3 text-xs font-medium text-white hover:opacity-95"
+                  onClick={() => void save({ admin_notes: notes })}
+                >
                   Save notes
-                </Button>
+                </button>
               </div>
             </div>
           )}
@@ -219,4 +273,3 @@ export default function AdminPaymentsCases() {
     </div>
   );
 }
-

@@ -1,14 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -21,11 +12,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAdminFormSubmissions, type AdminFormSubmissionListItem } from "@/lib/api";
 import { FormSubmissionPayloadView } from "@/components/admin/FormSubmissionPayloadView";
 import { AdminFormSubmissionPayloadEditor } from "@/components/admin/AdminFormSubmissionPayloadEditor";
+import {
+  AdminDataPanel,
+  AdminDateTimeCell,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarActions,
+  AdminToolbarTitle,
+} from "@/components/admin/AdminTableUI";
 
 const AdminFormSubmissions = () => {
   const [list, setList] = useState<AdminFormSubmissionListItem[]>([]);
@@ -56,95 +64,86 @@ const AdminFormSubmissions = () => {
     };
   }, [sideFilter, formTypeFilter]);
 
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[40vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-700" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <p className="text-destructive">{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <AdminLoadingState label="Loading form submissions…" />;
+  if (error) return <AdminErrorState message={error} />;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Form submissions</h1>
-      <p className="text-muted-foreground mb-6">Requirements and data from builder/landowner forms.</p>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="text-lg">List</CardTitle>
-          <div className="flex gap-2">
-            <Select value={sideFilter} onValueChange={setSideFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Side" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All sides</SelectItem>
-                <SelectItem value="builder">Builder</SelectItem>
-                <SelectItem value="landowner">Landowner</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={formTypeFilter} onValueChange={setFormTypeFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Form type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All types</SelectItem>
-                <SelectItem value="joint-venture">Joint venture</SelectItem>
-                <SelectItem value="contract-construction">Contract construction</SelectItem>
-                <SelectItem value="interior">Interior</SelectItem>
-                <SelectItem value="reconstruction">Renovation/Repaint</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Side</TableHead>
-                <TableHead>Form type</TableHead>
-                <TableHead>User email</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {list.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(row.created_at).toLocaleString()}
-                  </TableCell>
-                  <TableCell>{row.side}</TableCell>
-                  <TableCell>{row.form_type}</TableCell>
-                  <TableCell>{row.user_email ?? (row.user_id ? " " : "Anonymous")}</TableCell>
-                  <TableCell>
-                    {row.payload && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedSubmission(row)}
-                      >
-                        Edit payload
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {list.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">No form submissions found.</p>
-          )}
-        </CardContent>
-      </Card>
+    <>
+      <AdminDataPanel
+        toolbar={
+          <>
+            <AdminToolbarTitle label="Form submissions" count={list.length} />
+            <AdminToolbarActions>
+              <Select value={sideFilter} onValueChange={setSideFilter}>
+                <SelectTrigger className="w-[140px] h-9 border-[#1A5C35]/20 bg-white">
+                  <SelectValue placeholder="Side" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All sides</SelectItem>
+                  <SelectItem value="builder">Builder</SelectItem>
+                  <SelectItem value="landowner">Landowner</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={formTypeFilter} onValueChange={setFormTypeFilter}>
+                <SelectTrigger className="w-[180px] h-9 border-[#1A5C35]/20 bg-white">
+                  <SelectValue placeholder="Form type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All types</SelectItem>
+                  <SelectItem value="joint-venture">Joint venture</SelectItem>
+                  <SelectItem value="contract-construction">Contract construction</SelectItem>
+                  <SelectItem value="interior">Interior</SelectItem>
+                  <SelectItem value="reconstruction">Renovation/Repaint</SelectItem>
+                </SelectContent>
+              </Select>
+            </AdminToolbarActions>
+          </>
+        }
+      >
+        <AdminTableWrap>
+          <AdminTable>
+            <AdminTableHeader>
+              <AdminTableRow className="hover:bg-transparent border-0">
+                <AdminTableHead className="w-[16%]">Submitted</AdminTableHead>
+                <AdminTableHead className="w-[12%]">Side</AdminTableHead>
+                <AdminTableHead className="w-[22%]">Form type</AdminTableHead>
+                <AdminTableHead className="w-[34%]">User email</AdminTableHead>
+                <AdminTableHead className="w-[16%] text-right">Action</AdminTableHead>
+              </AdminTableRow>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {list.length === 0 ? (
+                <AdminTableEmpty colSpan={5} message="No form submissions found." />
+              ) : (
+                list.map((row) => (
+                  <AdminTableRow key={row.id}>
+                    <AdminTableCell muted>
+                      <AdminDateTimeCell value={row.created_at} />
+                    </AdminTableCell>
+                    <AdminTableCell>
+                      <AdminStatusBadge status={row.side} variant="neutral" />
+                    </AdminTableCell>
+                    <AdminTableCell className="font-medium">{row.form_type}</AdminTableCell>
+                    <AdminTableCell muted>
+                      {row.user_email ?? (row.user_id ? "—" : "Anonymous")}
+                    </AdminTableCell>
+                    <AdminTableCell className="text-right">
+                      {row.payload ? (
+                        <AdminTableAction
+                          label="Edit payload"
+                          onClick={() => setSelectedSubmission(row)}
+                        />
+                      ) : (
+                        <span className="text-xs text-[#1A2E1A]/40">—</span>
+                      )}
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </AdminTableWrap>
+      </AdminDataPanel>
 
       <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
         <DialogContent className="max-w-5xl max-h-[85vh] overflow-auto">
@@ -181,7 +180,9 @@ const AdminFormSubmissions = () => {
                     side={selectedSubmission.side}
                     onSaved={(next) => {
                       setSelectedSubmission((prev) => (prev ? { ...prev, payload: next } : prev));
-                      setList((prev) => prev.map((row) => (row.id === selectedSubmission.id ? { ...row, payload: next } : row)));
+                      setList((prev) =>
+                        prev.map((row) => (row.id === selectedSubmission.id ? { ...row, payload: next } : row)),
+                      );
                     }}
                     onDeleted={() => {
                       setList((prev) => prev.filter((row) => row.id !== selectedSubmission.id));
@@ -202,7 +203,7 @@ const AdminFormSubmissions = () => {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 

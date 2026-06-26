@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { getAdminLandowners, type AdminLandownerListItem } from "@/lib/api";
+import {
+  AdminDataPanel,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarTitle,
+} from "@/components/admin/AdminTableUI";
 
 const AdminLandowners = () => {
   const [list, setList] = useState<AdminLandownerListItem[]>([]);
@@ -34,66 +38,48 @@ const AdminLandowners = () => {
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[40vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-700" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <p className="text-destructive">{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <AdminLoadingState label="Loading landowners…" />;
+  if (error) return <AdminErrorState message={error} />;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Landowners</h1>
-      <p className="text-muted-foreground mb-6">Landowner profiles with property and project counts.</p>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">List</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Properties</TableHead>
-                <TableHead>Projects</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {list.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium">{row.name}</TableCell>
-                  <TableCell>{row.user_email ?? " "}</TableCell>
-                  <TableCell>{row.city ?? " "}</TableCell>
-                  <TableCell>{row.property_count}</TableCell>
-                  <TableCell>{row.project_count}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/admin/landowners/${row.id}`}>View</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {list.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">No landowners found.</p>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    <AdminDataPanel toolbar={<AdminToolbarTitle label="Landowner profiles" count={list.length} />}>
+      <AdminTableWrap>
+        <AdminTable>
+          <AdminTableHeader>
+            <AdminTableRow className="hover:bg-transparent border-0">
+              <AdminTableHead className="w-[22%]">Name</AdminTableHead>
+              <AdminTableHead className="w-[30%]">Email</AdminTableHead>
+              <AdminTableHead className="w-[18%]">City</AdminTableHead>
+              <AdminTableHead className="w-[10%] text-center">Properties</AdminTableHead>
+              <AdminTableHead className="w-[10%] text-center">Projects</AdminTableHead>
+              <AdminTableHead className="w-[10%] text-right">Action</AdminTableHead>
+            </AdminTableRow>
+          </AdminTableHeader>
+          <AdminTableBody>
+            {list.length === 0 ? (
+              <AdminTableEmpty colSpan={6} message="No landowners found." />
+            ) : (
+              list.map((row) => (
+                <AdminTableRow key={row.id}>
+                  <AdminTableCell className="font-medium">{row.name}</AdminTableCell>
+                  <AdminTableCell muted>
+                    <span className="block truncate" title={row.user_email ?? undefined}>
+                      {row.user_email ?? "—"}
+                    </span>
+                  </AdminTableCell>
+                  <AdminTableCell muted>{row.city ?? "—"}</AdminTableCell>
+                  <AdminTableCell className="text-center tabular-nums">{row.property_count}</AdminTableCell>
+                  <AdminTableCell className="text-center tabular-nums">{row.project_count}</AdminTableCell>
+                  <AdminTableCell className="text-right">
+                    <AdminTableAction to={`/admin/landowners/${row.id}`} />
+                  </AdminTableCell>
+                </AdminTableRow>
+              ))
+            )}
+          </AdminTableBody>
+        </AdminTable>
+      </AdminTableWrap>
+    </AdminDataPanel>
   );
 };
 

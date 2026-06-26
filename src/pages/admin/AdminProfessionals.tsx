@@ -1,16 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   downloadAdminProfessionalExportByRecord,
   downloadAdminProfessionalsBulkExport,
@@ -20,15 +9,29 @@ import {
   type AdminProfessionalListItem,
 } from "@/lib/api";
 import { downloadBlob } from "@/lib/downloadFile";
+import {
+  AdminDataPanel,
+  AdminErrorState,
+  AdminLoadingState,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTableAction,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableEmpty,
+  AdminTableHead,
+  AdminTableHeader,
+  AdminTableRow,
+  AdminTableWrap,
+  AdminToolbarActions,
+  AdminToolbarTitle,
+  approvalBadgeVariant,
+  adminPanelShell,
+} from "@/components/admin/AdminTableUI";
+import { cn } from "@/lib/utils";
 
 function saveBlob(blob: Blob, fileName: string) {
   downloadBlob(blob, fileName);
-}
-
-function approvalVariant(status: AdminProfessionalListItem["approval_status"]): "secondary" | "default" | "destructive" {
-  if (status === "APPROVED") return "default";
-  if (status === "REJECTED") return "destructive";
-  return "secondary";
 }
 
 const AdminProfessionals = () => {
@@ -86,104 +89,109 @@ const AdminProfessionals = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[40vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-700" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <p className="text-destructive">{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <AdminLoadingState label="Loading professionals…" />;
+  if (error) return <AdminErrorState message={error} />;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Professionals</h1>
-      <p className="text-muted-foreground mb-6">Builder and professional profiles with capability summary.</p>
+    <div className="space-y-6">
+      <AdminDataPanel
+        toolbar={
+          <>
+            <AdminToolbarTitle label="Professional profiles" count={list.length} />
+            <AdminToolbarActions>
+              <Button
+                onClick={onDownloadBulk}
+                disabled={bulkDownloading}
+                className="h-9 bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] hover:opacity-95"
+              >
+                {bulkDownloading ? "Preparing…" : "Bulk Excel download"}
+              </Button>
+            </AdminToolbarActions>
+          </>
+        }
+      >
+        <AdminTableWrap>
+          <AdminTable>
+            <AdminTableHeader>
+              <AdminTableRow className="hover:bg-transparent border-0">
+                <AdminTableHead className="w-[22%]">Company</AdminTableHead>
+                <AdminTableHead className="w-[24%]">Email</AdminTableHead>
+                <AdminTableHead className="w-[12%]">City</AdminTableHead>
+                <AdminTableHead className="w-[26%]">Capabilities</AdminTableHead>
+                <AdminTableHead className="w-[10%]">Approval</AdminTableHead>
+                <AdminTableHead className="w-[6%] text-right">Action</AdminTableHead>
+              </AdminTableRow>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {list.length === 0 ? (
+                <AdminTableEmpty colSpan={6} message="No professionals found." />
+              ) : (
+                list.map((row) => (
+                  <AdminTableRow key={row.id}>
+                    <AdminTableCell className="font-medium">{row.company_name}</AdminTableCell>
+                    <AdminTableCell muted>
+                      <span className="block truncate" title={row.user_email ?? undefined}>
+                        {row.user_email ?? "—"}
+                      </span>
+                    </AdminTableCell>
+                    <AdminTableCell muted>{row.city ?? "—"}</AdminTableCell>
+                    <AdminTableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {row.capability_types.map((c) => (
+                          <AdminStatusBadge key={c} status={c} variant="neutral" />
+                        ))}
+                        {row.capability_types.length === 0 ? (
+                          <span className="text-[#1A2E1A]/40">—</span>
+                        ) : null}
+                      </div>
+                    </AdminTableCell>
+                    <AdminTableCell>
+                      <AdminStatusBadge
+                        status={row.approval_status}
+                        variant={approvalBadgeVariant(row.approval_status)}
+                      />
+                    </AdminTableCell>
+                    <AdminTableCell className="text-right">
+                      <AdminTableAction to={`/admin/professionals/${row.id}`} />
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </AdminTableWrap>
+      </AdminDataPanel>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="text-lg">List</CardTitle>
-          <Button onClick={onDownloadBulk} disabled={bulkDownloading}>
-            {bulkDownloading ? "Preparing..." : "Bulk Excel Download"}
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Company</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Capabilities</TableHead>
-                <TableHead>Approval</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {list.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium">{row.company_name}</TableCell>
-                  <TableCell>{row.user_email ?? " "}</TableCell>
-                  <TableCell>{row.city ?? " "}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {row.capability_types.map((c) => (
-                        <Badge key={c} variant="secondary">{c}</Badge>
-                      ))}
-                      {row.capability_types.length === 0 && " "}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={approvalVariant(row.approval_status)}>{row.approval_status}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/admin/professionals/${row.id}`}>View</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {list.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">No professionals found.</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-lg">Recent Export Files</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {exportsList.length === 0 ? (
-            <p className="text-muted-foreground">No export history yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {exportsList.map((x) => (
-                <div key={x.id} className="flex items-center justify-between rounded-md border p-3">
-                  <div className="text-sm">
-                    <p className="font-medium">{x.file_name}</p>
-                    <p className="text-muted-foreground">
-                      {x.scope} · rows: {x.row_count} · {new Date(x.created_at).toLocaleString()}
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={() => onDownloadHistoryItem(x.id)}>
-                    Download
-                  </Button>
+      <div className={cn(adminPanelShell, "p-5")}>
+        <h2 className="text-sm font-semibold text-[#0D3B21] mb-4">Recent export files</h2>
+        {exportsList.length === 0 ? (
+          <p className="text-sm text-[#1A2E1A]/55">No export history yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {exportsList.map((x) => (
+              <div
+                key={x.id}
+                className="flex flex-col gap-3 rounded-xl border border-[#1A5C35]/12 bg-[#fafcfb] p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0 text-sm">
+                  <p className="font-medium text-[#0D3B21] truncate">{x.file_name}</p>
+                  <p className="text-[#1A2E1A]/55 text-xs mt-0.5">
+                    {x.scope} · {x.row_count} rows · {new Date(x.created_at).toLocaleString()}
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onDownloadHistoryItem(x.id)}
+                  className="shrink-0 border-[#1A5C35]/20 text-[#1A5C35]"
+                >
+                  Download
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { User as UserIcon, Building2, Mail, Phone, Camera, Shield, Lock } from "lucide-react";
+import { User as UserIcon, Building2, Mail, Phone, Camera, Shield } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,11 +87,21 @@ export function UserProfileDropdown({
               {initials || <Icon className="h-5 w-5" />}
             </AvatarFallback>
           </Avatar>
-          <div className="hidden lg:block text-left">
-            <div className="font-semibold text-black text-lg">
+          <div className="hidden lg:block text-left min-w-0">
+            <div
+              className={cn(
+                "font-semibold text-lg truncate",
+                variant === "admin" ? "text-inherit" : "text-black",
+              )}
+            >
               {variant === "admin" ? "Admin" : variant === "builder" ? "Builder" : "Landowner"}
             </div>
-            <div className="text-xs text-gray-500">
+            <div
+              className={cn(
+                "text-xs truncate",
+                variant === "admin" ? "text-white/70" : "text-gray-500",
+              )}
+            >
               {variant === "admin" ? "Administrator" : variant === "builder" ? "Construction Company" : "Property Owner"}
             </div>
           </div>
@@ -172,17 +182,6 @@ export function UserProfileDropdown({
             <p className="mt-2 text-xs text-red-600" role="alert">
               {uploadError}
             </p>
-          )}
-          {variant === "admin" && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/admin/settings" className="flex items-center gap-2 cursor-pointer">
-                  <Lock className="h-4 w-4" />
-                  Change password
-                </Link>
-              </DropdownMenuItem>
-            </>
           )}
           {user.userType === "admin" && variant !== "admin" && (
             <>
