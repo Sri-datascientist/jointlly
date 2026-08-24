@@ -91,20 +91,26 @@ const UseCaseDetailContent = ({
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl leading-none">{useCase.icon}</span>
-        <span className="font-westack text-lg font-semibold text-white">{useCase.highlight}</span>
+      <div className="flex items-center gap-2.5 mb-3">
+        <span className="text-3xl sm:text-4xl leading-none drop-shadow-md">{useCase.icon}</span>
+        <span className="font-westack text-2xl sm:text-3xl font-semibold text-white drop-shadow-md">
+          {useCase.highlight}
+        </span>
       </div>
-      <p className="text-xs leading-relaxed text-white/90">{useCase.strapline}</p>
-      <p className="mt-2 text-[11px] text-white/70">{useCase.subtitle}</p>
+      <p className="text-sm sm:text-base leading-relaxed text-white/95 drop-shadow-sm">
+        {useCase.strapline}
+      </p>
+      <p className="mt-2.5 text-sm sm:text-base font-medium text-white/80 drop-shadow-sm">
+        {useCase.subtitle}
+      </p>
       {showBullets && (
-        <ul className="mt-3 space-y-1">
+        <ul className="mt-4 space-y-2">
           {useCase.bullets.map((bullet) => (
             <li
               key={bullet}
-              className="text-[11px] text-white/80 leading-snug flex gap-2"
+              className="text-sm sm:text-base text-white/90 leading-snug flex gap-2.5 drop-shadow-sm"
             >
-              <span className="text-white/50 shrink-0">•</span>
+              <span className="text-[#52b788] shrink-0 font-bold">•</span>
               <span>{bullet}</span>
             </li>
           ))}
@@ -112,13 +118,29 @@ const UseCaseDetailContent = ({
       )}
       <Link
         to={PRODUCT_PATHS[id]}
-        className="mt-4 inline-flex items-center text-xs font-semibold text-white/95 hover:text-white underline-offset-2 hover:underline"
+        className="mt-5 inline-flex items-center text-sm sm:text-base font-semibold text-white hover:text-[#b8f0d0] underline-offset-4 hover:underline drop-shadow-sm"
       >
         Explore {useCase.highlight} →
       </Link>
     </>
   );
 };
+
+/** Partial bottom scrim — darkens lower area for text without covering the full image */
+function UseCaseImageScrim({ strong = false }: { strong?: boolean }) {
+  return (
+    <>
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 pointer-events-none",
+          strong ? "h-[72%]" : "h-[58%]",
+          "bg-gradient-to-t from-black/95 via-black/70 to-transparent",
+        )}
+      />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-white/10 pointer-events-none" />
+    </>
+  );
+}
 
 /** Desktop: horizontal hover-expand accordion */
 const UseCaseAccordionPanel = ({
@@ -161,28 +183,28 @@ const UseCaseAccordionPanel = ({
       />
       <div
         className={cn(
-          "absolute inset-0 transition-colors duration-500",
+          "absolute inset-0 transition-opacity duration-500 pointer-events-none",
           theme.accentGradientClassName,
-          isWide ? "opacity-55" : "opacity-30",
+          isWide ? "opacity-25" : "opacity-15",
         )}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />
+      <UseCaseImageScrim strong={isWide} />
 
       <div
         className={cn(
-          "absolute inset-x-0 bottom-0 flex flex-col items-center justify-end p-3 transition-opacity duration-300",
+          "absolute inset-x-0 bottom-0 z-10 flex flex-col items-center justify-end p-3 transition-opacity duration-300",
           isWide ? "opacity-0 pointer-events-none" : "opacity-100",
         )}
       >
-        <span className="text-xl leading-none mb-1">{useCase.icon}</span>
-        <span className="font-westack text-xs font-semibold text-white text-center leading-tight">
+        <span className="text-2xl leading-none mb-1.5 drop-shadow-md">{useCase.icon}</span>
+        <span className="font-westack text-sm font-semibold text-white text-center leading-tight drop-shadow-md">
           {useCase.highlight}
         </span>
       </div>
 
       <div
         className={cn(
-          "absolute inset-0 flex flex-col justify-end p-5 md:p-6 transition-all duration-400",
+          "absolute inset-x-0 bottom-0 z-10 flex flex-col justify-end p-5 md:p-7 lg:p-8 transition-all duration-400",
           isWide ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none",
         )}
       >
@@ -227,12 +249,12 @@ const MobileUseCaseGallery = ({
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/45" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-1">
-                <span className="text-lg leading-none">{useCase.icon}</span>
+              <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-1 z-10">
+                <span className="text-xl leading-none drop-shadow-md">{useCase.icon}</span>
                 <span
                   className={cn(
-                    "font-westack text-[9px] font-semibold text-white text-center leading-tight line-clamp-2",
+                    "font-westack text-[11px] font-semibold text-white text-center leading-tight line-clamp-2 drop-shadow-md",
                     !isSelected && "hidden",
                   )}
                 >
@@ -261,12 +283,12 @@ const MobileUseCaseGallery = ({
             />
             <div
               className={cn(
-                "absolute inset-0 opacity-50",
+                "absolute inset-0 opacity-20 pointer-events-none",
                 theme.accentGradientClassName,
               )}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15" />
-            <div className="absolute inset-0 flex flex-col justify-end p-4">
+            <UseCaseImageScrim strong />
+            <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col justify-end p-5 sm:p-6">
               <UseCaseDetailContent useCase={selected} />
             </div>
           </motion.div>

@@ -36,7 +36,7 @@ const Documentation = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-emerald-50 overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
 
       <main className="pt-20">

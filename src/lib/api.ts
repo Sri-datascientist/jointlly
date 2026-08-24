@@ -2031,6 +2031,7 @@ export interface AdminStats {
   projects_draft: number;
   projects_published: number;
   total_form_submissions: number;
+  total_connections: number;
 }
 
 export interface AdminUserListItem {
@@ -2252,6 +2253,20 @@ export async function getAdminUser360(userId: string): Promise<AdminUser360Respo
   return handleResponse<AdminUser360Response>(res);
 }
 
+export async function updateAdminUser(
+  userId: string,
+  patch: { name?: string; is_active?: boolean },
+): Promise<AdminUserListItem> {
+  const base = getBaseUrl();
+  const res = await authFetch(`${base}/api/v1/admin/users/${userId}`, {
+    method: "PATCH",
+    headers: { ...authHeader(), "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  if (res.status === 403) throw new Error("Admin only");
+  return handleResponse<AdminUserListItem>(res);
+}
+
 export async function listAdminSupportTickets(params: {
   status?: string;
   user_id?: string;
@@ -2378,6 +2393,50 @@ export async function getAdminLandownerDetail(id: string): Promise<AdminLandowne
   });
   if (res.status === 403) throw new Error("Admin only");
   return handleResponse<AdminLandownerDetail>(res);
+}
+
+export async function updateAdminLandownerProfile(
+  landownerId: string,
+  patch: { name?: string; phone?: string | null; city?: string | null },
+): Promise<AdminLandownerDetail["profile"]> {
+  const base = getBaseUrl();
+  const res = await authFetch(`${base}/api/v1/admin/landowners/${landownerId}/profile`, {
+    method: "PATCH",
+    headers: { ...authHeader(), "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  if (res.status === 403) throw new Error("Admin only");
+  return handleResponse<AdminLandownerDetail["profile"]>(res);
+}
+
+export async function updateAdminLandownerProperty(
+  landownerId: string,
+  propertyId: string,
+  patch: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const base = getBaseUrl();
+  const res = await authFetch(`${base}/api/v1/admin/landowners/${landownerId}/properties/${propertyId}`, {
+    method: "PATCH",
+    headers: { ...authHeader(), "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  if (res.status === 403) throw new Error("Admin only");
+  return handleResponse<Record<string, unknown>>(res);
+}
+
+export async function updateAdminLandownerProject(
+  landownerId: string,
+  projectId: string,
+  patch: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const base = getBaseUrl();
+  const res = await authFetch(`${base}/api/v1/admin/landowners/${landownerId}/projects/${projectId}`, {
+    method: "PATCH",
+    headers: { ...authHeader(), "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  if (res.status === 403) throw new Error("Admin only");
+  return handleResponse<Record<string, unknown>>(res);
 }
 
 export async function getAdminProfessionals(params: AdminListParams = {}): Promise<AdminProfessionalListItem[]> {

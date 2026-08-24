@@ -23,8 +23,15 @@ import {
   ProfileSection,
   SectionLabel,
 } from "@/components/admin/AdminProfileDetailUI";
+import { AdminLandownerEditor } from "@/components/admin/AdminLandownerEditor";
 
-export function AdminLandownerDetailView({ detail }: { detail: AdminLandownerDetail }) {
+export function AdminLandownerDetailView({
+  detail,
+  onUpdated,
+}: {
+  detail: AdminLandownerDetail;
+  onUpdated?: (detail: AdminLandownerDetail) => void;
+}) {
   const { profile, user_email, user_name, properties, projects } = detail;
   const displayName = user_name ?? profile.name;
   const city = profile.city ?? null;
@@ -185,8 +192,8 @@ export function AdminLandownerDetailView({ detail }: { detail: AdminLandownerDet
           <ProfileSection>
             <h3 className="mb-1 font-semibold text-[#0D3B21]">Admin review</h3>
             <p className="mb-4 text-xs leading-relaxed text-[#1A2E1A]/55">
-              Review this landowner&apos;s properties and project listings. Open the full user record for tickets,
-              payments, and submissions.
+              Review and edit this landowner&apos;s profile, properties, and projects. Open the full user record for
+              tickets, payments, and submissions.
             </p>
             <div className="space-y-2">
               {user_email ? (
@@ -214,6 +221,14 @@ export function AdminLandownerDetailView({ detail }: { detail: AdminLandownerDet
             <ContextRow label="Created" value={formatAdminDate(profile.created_at)} />
             <ContextRow label="Updated" value={formatAdminDate(profile.updated_at)} />
           </ProfileSection>
+
+          {onUpdated ? (
+            <AdminLandownerEditor
+              landownerId={profile.id}
+              detail={detail}
+              onUpdated={onUpdated}
+            />
+          ) : null}
         </div>
       </div>
     </div>

@@ -36,20 +36,24 @@ function AdminStatCard({ label, value, icon: Icon, sub, path, index }: AdminStat
       transition={{ duration: 0.4, delay: index * 0.06 }}
       className={cn(
         dashboardCardShell,
-        "p-5 sm:p-6 h-full transition-all duration-300",
-        path && "hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(26,92,53,0.12)] hover:border-[#1A5C35]/25",
+        "rounded-xl p-3.5 sm:p-4 h-full transition-all duration-300",
+        path && "hover:-translate-y-0.5 hover:shadow-[0_6px_24px_rgba(26,92,53,0.1)] dark:hover:shadow-[0_6px_24px_rgba(0,0,0,0.35)] hover:border-[#1A5C35]/25 dark:hover:border-primary/30",
       )}
     >
       <DashboardCardBackground />
-      <div className="relative flex items-start justify-between gap-3 mb-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#1A5C35] to-[#0D3B21] shadow-sm">
-          <Icon className="h-5 w-5 text-white" />
+      {path ? (
+        <ArrowRight className="absolute right-3.5 top-3.5 h-3.5 w-3.5 theme-brand opacity-50" />
+      ) : null}
+      <div className="relative flex flex-col items-center text-center">
+        <div className="mb-2.5 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#1A5C35] to-[#0D3B21] shadow-sm">
+          <Icon className="h-4 w-4 text-white" />
         </div>
-        {path ? <ArrowRight className="h-4 w-4 text-[#1A5C35]/40" /> : null}
+        <p className="text-2xl font-bold tabular-nums theme-heading">{value}</p>
+        <p className="mt-0.5 text-xs font-semibold theme-body">{label}</p>
+        {sub ? (
+          <p className="mt-1.5 text-[11px] theme-muted leading-relaxed">{sub}</p>
+        ) : null}
       </div>
-      <p className="relative text-3xl font-bold tabular-nums text-[#0D3B21]">{value}</p>
-      <p className="relative mt-1 text-sm font-semibold text-[#0D3B21]/80">{label}</p>
-      {sub ? <p className="relative mt-2 text-xs text-[#1A2E1A]/55 leading-relaxed">{sub}</p> : null}
     </motion.div>
   );
 
@@ -119,6 +123,7 @@ const AdminDashboard = () => {
       label: "Projects",
       value: stats.total_projects,
       icon: FolderOpen,
+      path: "/admin/landowners",
       sub: `${stats.projects_draft} draft · ${stats.projects_published} published`,
     },
     {
@@ -129,7 +134,7 @@ const AdminDashboard = () => {
     },
     {
       label: "Connections",
-      value: stats.total_projects,
+      value: stats.total_connections,
       icon: Link2,
       path: "/admin/connections",
       sub: "Marketplace selection records",
@@ -138,7 +143,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="pb-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
         {cards.map((item, index) => (
           <AdminStatCard key={item.label} {...item} index={index} />
         ))}

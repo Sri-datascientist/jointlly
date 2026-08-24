@@ -37,11 +37,15 @@ from app.schemas.admin import (
     AdminProfessionalProfileUpdate,
     AdminBuilderFormPayloadUpdate,
     AdminFormPayloadUpdate,
+    AdminUserUpdateRequest,
+    AdminPropertyUpdate,
+    AdminProjectUpdate,
 )
 from app.schemas.auth import MessageResponse
 from app.schemas.forms import BuilderPortfolioLatestResponse, FormSubmissionDetailResponse
 from app.schemas.landowner import (
     LandownerProfileResponse,
+    LandownerProfileUpdate,
     PropertyResponse,
     ProjectResponse,
     JVPreferencesResponse,
@@ -136,6 +140,32 @@ async def get_user_360(
     )
 
 
+@router.patch("/users/{user_id}", response_model=UserListResponse)
+async def patch_admin_user(
+    user_id: UUID,
+    body: AdminUserUpdateRequest,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update user account fields (name, active status)."""
+    updated = await AdminService.update_user_admin(
+        db,
+        admin_user_id=current_user.id,
+        user_id=user_id,
+        patch=body.model_dump(exclude_unset=True),
+    )
+    last_login_map = await AdminService._last_login_map_for_users(db, [updated.id])
+    return UserListResponse.model_validate({
+        "id": updated.id,
+        "email": updated.email,
+        "name": updated.name,
+        "role": updated.role,
+        "is_active": updated.is_active,
+        "created_at": updated.created_at,
+        "last_login_at": last_login_map.get(str(updated.id)),
+    })
+
+
 @router.get("/landowners", response_model=List[LandownerListResponse])
 async def list_landowners(
     skip: int = Query(0, ge=0),
@@ -164,6 +194,61 @@ async def get_landowner_detail(
         properties=[PropertyResponse.model_validate(prop) for prop in detail["properties"]],
         projects=projects,
     )
+
+
+@router.patch("/landowners/{landowner_id}/profile", response_model=LandownerProfileResponse)
+async def patch_admin_landowner_profile(
+    landowner_id: UUID,
+    body: LandownerProfileUpdate,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update landowner profile fields (name, phone, city)."""
+    profile = await AdminService.update_landowner_profile_admin(
+        db,
+        admin_user_id=current_user.id,
+        landowner_id=landowner_id,
+        patch=body.model_dump(exclude_unset=True),
+    )
+    return LandownerProfileResponse.model_validate(profile)
+
+
+@router.patch("/landowners/{landowner_id}/properties/{property_id}", response_model=PropertyResponse)
+async def patch_admin_landowner_property(
+    landowner_id: UUID,
+    property_id: UUID,
+    body: AdminPropertyUpdate,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a landowner property record."""
+    prop = await AdminService.update_property_admin(
+        db,
+        admin_user_id=current_user.id,
+        landowner_id=landowner_id,
+        property_id=property_id,
+        patch=body.model_dump(exclude_unset=True),
+    )
+    return PropertyResponse.model_validate(prop)
+
+
+@router.patch("/landowners/{landowner_id}/projects/{project_id}", response_model=ProjectResponse)
+async def patch_admin_landowner_project(
+    landowner_id: UUID,
+    project_id: UUID,
+    body: AdminProjectUpdate,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a landowner project listing."""
+    project = await AdminService.update_project_admin(
+        db,
+        admin_user_id=current_user.id,
+        landowner_id=landowner_id,
+        project_id=project_id,
+        patch=body.model_dump(exclude_unset=True),
+    )
+    return ProjectResponse.model_validate(project)
 
 
 @router.get("/professionals", response_model=List[ProfessionalListResponse])

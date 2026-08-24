@@ -171,7 +171,7 @@ const Auth = () => {
   const userTypeLabel = formData.userType === "builder" ? "Construction Company" : "Landowner";
 
   return (
-    <div className="relative min-h-screen bg-[#edf8f1] overflow-x-hidden">
+    <div className="relative min-h-screen bg-background overflow-x-hidden">
       <div className="relative z-10 max-w-md mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-8">
           <Link
             to="/"

@@ -54,8 +54,8 @@ const PayerBadge = ({ payer }: { payer: string }) => (
 const GatekeeperFeeDisplay = ({ fee }: { fee: GatekeeperFee }) => {
   if (fee.type === "range") {
     return (
-      <div className="rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-3 shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1">
+      <div className="w-full rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1.5">
           Fee range
         </p>
         <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21] leading-snug">
@@ -68,15 +68,15 @@ const GatekeeperFeeDisplay = ({ fee }: { fee: GatekeeperFee }) => {
   }
 
   return (
-    <div className="rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-3 text-right shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
-      <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1">
+    <div className="w-full rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
+      <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1.5">
         Entry fee
       </p>
       <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21]">
         {formatRupee(fee.amount)}
       </p>
       {fee.label ? (
-        <p className="mt-0.5 text-xs font-medium text-[#1A2E1A]/55 capitalize">{fee.label}</p>
+        <p className="mt-1 text-xs font-medium text-[#1A2E1A]/55 capitalize">{fee.label}</p>
       ) : null}
     </div>
   );
@@ -157,7 +157,7 @@ const GatekeeperCard = ({ row, index }: { row: GatekeeperRow; index: number }) =
       </div>
     </div>
 
-    <div className="relative p-5 sm:p-6 space-y-4">
+    <div className="relative p-5 sm:p-6 space-y-4 text-center">
       <GatekeeperFeeDisplay fee={row.fee} />
       {row.notes ? (
         <p className="text-sm text-[#1A2E1A]/65 leading-relaxed border-t border-[#1A5C35]/10 pt-4">

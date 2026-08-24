@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Hammer, Handshake, Loader2, Palette, Paintbrush, Star } from "lucide-react";
 import {
   getBuilderMarketplace,
-  getBuilderMarketplacePortfolio,
   getProjectMatches,
   landownerClearMatchSelection,
   landownerSelectMatch,
@@ -12,10 +11,13 @@ import {
   listLandownerProjects,
   type BuilderMarketplaceCard,
   type BuilderMarketplacePortfolioPreview,
-  type BuilderPortfolioLatest,
   type MatchResponse,
 } from "@/lib/api";
-import { BuilderPortfolioTypePanel } from "@/components/BuilderPortfolioPayloadView";
+import {
+  addCompareBuilderId,
+  getCompareBuilderIds,
+  mergeCompareIds,
+} from "@/lib/builderCompareSession";
 import { PortfolioTypeSummaryCard } from "@/components/PortfolioTypeSummaryCard";
 import { getMatchTier, MatchBadge } from "@/components/opportunities";
 import { Button } from "@/components/ui/button";
@@ -155,26 +157,6 @@ function builderOrShell(
   );
 }
 
-/** Capability rows + saved portfolio forms (previews), for landowners with multiple listing types. */
-function portfolioSubmissionForTab(
-  data: BuilderPortfolioLatest | null,
-  tab: LandownerPortfolioTab
-): BuilderPortfolioLatest["contract_construction"] {
-  if (!data) return null;
-  switch (tab) {
-    case "contract":
-      return data.contract_construction;
-    case "jv":
-      return data.joint_venture;
-    case "interior":
-      return data.interior;
-    case "renovation":
-      return data.renovation_repaint;
-    default:
-      return null;
-  }
-}
-
 function builderCoversAnyRegisteredCapability(
   b: BuilderMarketplaceCard,
   registered: Set<string>
@@ -203,6 +185,12 @@ function builderCoversAnyRegisteredCapability(
 
 export default function LandownerMarketplace() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const comparePickState = location.state as {
+    pickForCompare?: boolean;
+    compareTab?: LandownerPortfolioTab;
+  } | null;
+  const pickForCompare = comparePickState?.pickForCompare === true;
   const [projects, setProjects] = useState<
     Array<{ id: string; property_id: string; project_type: string }>
   >([]);
@@ -219,12 +207,6 @@ export default function LandownerMarketplace() {
   const [matchToClear, setMatchToClear] = useState<MatchResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [detailProfessionalId, setDetailProfessionalId] = useState<string | null>(null);
-  const [detailCompanyName, setDetailCompanyName] = useState<string | undefined>();
-  const [detailPortfolio, setDetailPortfolio] = useState<BuilderPortfolioLatest | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
 
   const registeredCapabilitySet = useMemo(() => {
     const s = new Set<string>();
@@ -452,31 +434,33 @@ export default function LandownerMarketplace() {
     return prefs.length > 0 ? prefs.join(", ") : "—";
   };
 
-  const openBuilderRegistrationDetail = async (professionalId: string, companyName?: string) => {
-    setDetailProfessionalId(professionalId);
-    setDetailCompanyName(companyName);
-    setDetailOpen(true);
-    setDetailPortfolio(null);
-    setDetailError(null);
-    setDetailLoading(true);
-    try {
-      const rows = await getBuilderMarketplacePortfolio(professionalId);
-      setDetailPortfolio(rows);
-    } catch (e) {
-      setDetailError(e instanceof Error ? e.message : "Failed to load builder details");
-    } finally {
-      setDetailLoading(false);
-    }
-  };
+  const openBuilderCompareProfile = (professionalId: string, companyName?: string) => {
+    const defaultTab =
+      pickForCompare && comparePickState?.compareTab
+        ? comparePickState.compareTab
+        : projectTypeToPortfolioTab(selectedProjectForCards?.project_type) ?? "contract";
 
-  const closeBuilderDetail = (open: boolean) => {
-    if (!open) {
-      setDetailOpen(false);
-      setDetailProfessionalId(null);
-      setDetailCompanyName(undefined);
-      setDetailPortfolio(null);
-      setDetailError(null);
+    if (pickForCompare) {
+      const compareIds = addCompareBuilderId(professionalId);
+      const primaryId = compareIds[0] ?? professionalId;
+      navigate(`/landowner/marketplace/builders/${primaryId}`, {
+        state: {
+          ...profileNavState(companyName, selectedProjectForCards?.project_type),
+          defaultTab,
+          compareIds,
+        },
+      });
+      return;
     }
+
+    const compareIds = mergeCompareIds(professionalId, getCompareBuilderIds().filter((id) => id !== professionalId));
+    navigate(`/landowner/marketplace/builders/${professionalId}`, {
+      state: {
+        ...profileNavState(companyName, selectedProjectForCards?.project_type),
+        defaultTab,
+        compareIds,
+      },
+    });
   };
 
   const confirmClearSelection = async () => {
@@ -526,6 +510,12 @@ export default function LandownerMarketplace() {
 
   return (
     <div className="space-y-6">
+      {pickForCompare ? (
+        <div className="rounded-xl border border-[#1A5C35]/25 bg-[#f0f7f3] px-4 py-3 text-sm text-[#0D3B21]">
+          <span className="font-semibold">Compare mode:</span> choose a builder below to add them to your side-by-side
+          comparison ({getCompareBuilderIds().length} of 3 selected).
+        </div>
+      ) : null}
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <div className="xl:col-span-2">
           <label className="block text-xs font-medium text-foreground/85 mb-1">Your project</label>
@@ -628,7 +618,8 @@ export default function LandownerMarketplace() {
                     title={meta.title}
                     status={status}
                     lines={lines}
-                    footerLabel="At a glance"
+                    footerLabel="View profile"
+                    onClick={() => openBuilderCompareProfile(match.professional_id, builder.company_name)}
                   />
                   <p className="text-sm text-muted-foreground">
                     Estimated cost:{" "}
@@ -663,9 +654,9 @@ export default function LandownerMarketplace() {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => void openBuilderRegistrationDetail(match.professional_id, builder.company_name)}
+                      onClick={() => openBuilderCompareProfile(match.professional_id, builder.company_name)}
                     >
-                      View detail
+                      View profile
                     </Button>
                   </div>
                 </div>
@@ -680,9 +671,7 @@ export default function LandownerMarketplace() {
               const lines = landownerPortfolioLines(tab, builder, preview, locFb);
               const status = preview?.has_data ? "saved" : "empty";
               const openProfile = () =>
-                navigate(`/landowner/marketplace/builders/${builder.id}`, {
-                  state: profileNavState(builder.company_name, selectedProjectForCards?.project_type),
-                });
+                openBuilderCompareProfile(builder.id, builder.company_name);
               return (
                 <div key={builder.id} className="space-y-3 rounded-xl border border-border bg-card p-4">
                   <div className="flex justify-end">
@@ -695,23 +684,15 @@ export default function LandownerMarketplace() {
                     title={meta.title}
                     status={status}
                     lines={lines}
-                    footerLabel="At a glance"
+                    footerLabel="View profile"
+                    onClick={openProfile}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Match score not assigned yet — use View detail for this listing type or open the full profile.
+                    Match score not assigned yet — open the profile to compare delivery stats and past projects.
                   </p>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      variant="default"
-                      className="flex-1"
-                      onClick={() => void openBuilderRegistrationDetail(builder.id, builder.company_name)}
-                    >
-                      View detail
-                    </Button>
-                    <Button variant="outline" className="flex-1" onClick={openProfile}>
-                      Open full page
-                    </Button>
-                  </div>
+                  <Button variant="default" className="w-full" onClick={openProfile}>
+                    View profile
+                  </Button>
                 </div>
               );
             })}
@@ -754,59 +735,6 @@ export default function LandownerMarketplace() {
             <Button onClick={confirmSelect} disabled={isSubmitting}>
               {isSubmitting ? "Sending…" : "Yes, proceed"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={detailOpen} onOpenChange={closeBuilderDetail}>
-        <DialogContent className="flex max-h-[min(90vh,720px)] max-w-2xl flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
-          <DialogHeader className="shrink-0 space-y-1 border-b border-border px-6 py-4 text-left">
-            <DialogTitle className="pr-8 text-lg">
-              {detailCompanyName?.trim() || "Builder"} — {PORTFOLIO_TAB_META[activePortfolioTab].title}
-            </DialogTitle>
-            <DialogDescription className="text-left text-xs sm:text-sm">
-              Registration fields for this construction type (sensitive contact and exact address fields may be
-              withheld).
-            </DialogDescription>
-          </DialogHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-            {detailLoading && (
-              <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
-                <Loader2 className="h-5 w-5 animate-spin" />
-                Loading details…
-              </div>
-            )}
-            {!detailLoading && detailError && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{detailError}</div>
-            )}
-            {!detailLoading && !detailError && detailPortfolio && (
-              <BuilderPortfolioTypePanel
-                title={PORTFOLIO_TAB_META[activePortfolioTab].title}
-                submission={portfolioSubmissionForTab(detailPortfolio, activePortfolioTab)}
-              />
-            )}
-          </div>
-          <DialogFooter className="shrink-0 border-t border-border px-6 py-3">
-            <Button
-              variant="outline"
-              onClick={() => closeBuilderDetail(false)}
-            >
-              Close
-            </Button>
-            {detailProfessionalId && (
-              <Button
-                onClick={() => {
-                  const id = detailProfessionalId;
-                  const name = detailCompanyName;
-                  closeBuilderDetail(false);
-                  navigate(`/landowner/marketplace/builders/${id}`, {
-                    state: profileNavState(name, selectedProjectForCards?.project_type),
-                  });
-                }}
-              >
-                Open full profile
-              </Button>
-            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

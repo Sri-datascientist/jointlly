@@ -114,8 +114,8 @@ export default function AdminPaymentsCases() {
     <div className="space-y-4">
       <div className={cn(adminPanelShell, "p-4 sm:p-5")}>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm font-semibold text-[#0D3B21]">Filters</span>
-          <div className="text-xs text-[#1A2E1A]/55">
+          <span className="text-sm font-semibold theme-heading">Filters</span>
+          <div className="text-xs theme-muted">
             {Object.entries(resolutionCounts)
               .sort((a, b) => a[0].localeCompare(b[0]))
               .map(([k, v]) => `${k}: ${v}`)

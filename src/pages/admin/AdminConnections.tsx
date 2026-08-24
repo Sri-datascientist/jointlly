@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAdminConnections, type AdminConnectionRecord } from "@/lib/api";
 import {
+  AdminCellSecondary,
+  AdminCellStack,
   AdminDataPanel,
   AdminDateTimeCell,
   AdminErrorState,
@@ -71,20 +73,21 @@ const AdminConnections = () => {
                   </AdminTableCell>
                   <AdminTableCell muted>{r.selection_side || "—"}</AdminTableCell>
                   <AdminTableCell>
-                    <div className="font-medium text-[#0D3B21]">{r.landowner_name || "—"}</div>
-                    <div className="text-xs text-[#1A2E1A]/50 truncate" title={r.landowner_email ?? undefined}>
-                      {r.landowner_email || "—"}
-                    </div>
+                    <AdminCellStack
+                      primary={r.landowner_name || "—"}
+                      secondary={r.landowner_email || "—"}
+                      secondaryTitle={r.landowner_email ?? undefined}
+                    />
                   </AdminTableCell>
                   <AdminTableCell>
-                    <div className="font-medium text-[#0D3B21]">{r.builder_company_name || "—"}</div>
-                    <div className="text-xs text-[#1A2E1A]/50 truncate" title={r.builder_email ?? undefined}>
-                      {r.builder_email || "—"}
-                    </div>
+                    <AdminCellStack
+                      primary={r.builder_company_name || "—"}
+                      secondary={r.builder_email || "—"}
+                      secondaryTitle={r.builder_email ?? undefined}
+                    />
                   </AdminTableCell>
                   <AdminTableCell>
-                    <div className="font-medium">{r.project_type || "—"}</div>
-                    <div className="text-xs text-[#1A2E1A]/50">{r.project_city || "—"}</div>
+                    <AdminCellStack primary={r.project_type || "—"} secondary={r.project_city || "—"} />
                   </AdminTableCell>
                   <AdminTableCell>
                     <div>
@@ -93,9 +96,12 @@ const AdminConnections = () => {
                         variant={r.payment_status === "SUCCESS" ? "success" : "neutral"}
                       />
                     </div>
-                    <div className="text-xs text-[#1A2E1A]/50 font-mono truncate mt-1" title={r.payment_id ?? r.payment_order_id ?? undefined}>
+                    <AdminCellSecondary
+                      className="font-mono mt-1"
+                      title={r.payment_id ?? r.payment_order_id ?? undefined}
+                    >
                       {r.payment_id || r.payment_order_id || "—"}
-                    </div>
+                    </AdminCellSecondary>
                   </AdminTableCell>
                   <AdminTableCell muted>
                     <AdminDateTimeCell value={r.updated_at} />

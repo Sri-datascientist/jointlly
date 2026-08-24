@@ -49,9 +49,9 @@ const AdminSettings = () => {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#C9952A] to-[#8a6420]">
             <Lock className="h-5 w-5 text-white" />
           </div>
-          <p className="text-sm text-[#1A2E1A]/65 leading-relaxed">
+          <p className="text-sm theme-body leading-relaxed">
             Set a new password for{" "}
-            <span className="font-semibold text-[#0D3B21]">{user?.email ?? "your admin account"}</span>.
+            <span className="font-semibold theme-heading">{user?.email ?? "your admin account"}</span>.
             No current password or email OTP is required while logged in as admin.
           </p>
         </div>
@@ -69,7 +69,7 @@ const AdminSettings = () => {
           ) : null}
 
           <div>
-            <Label htmlFor="newPassword" className="text-[#0D3B21]">
+            <Label htmlFor="newPassword" className="theme-heading">
               New password
             </Label>
             <Input
@@ -84,7 +84,7 @@ const AdminSettings = () => {
           </div>
 
           <div>
-            <Label htmlFor="confirmPassword" className="text-[#0D3B21]">
+            <Label htmlFor="confirmPassword" className="theme-heading">
               Confirm new password
             </Label>
             <Input

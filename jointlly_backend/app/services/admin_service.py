@@ -26,7 +26,7 @@ from app.models.support import SupportTicket
 from app.models.admin_audit_log import AdminAuditLog
 from app.models.login_event import LoginEvent
 from app.utils.constants import Role, ProjectStatus, TransactionType
-from app.utils.constants import BuilderApprovalStatus
+from app.utils.constants import BuilderApprovalStatus, ProjectIntent
 from app.exceptions import NotFoundError, ValidationError
 from app.utils.password import get_password_hash
 from app.schemas.forms import BuilderPortfolioLatestResponse, FormSubmissionDetailResponse
@@ -417,6 +417,9 @@ class AdminService:
         form_count = await db.execute(select(func.count(FormSubmission.id)))
         total_form_submissions = form_count.scalar() or 0
 
+        match_count = await db.execute(select(func.count(Match.id)))
+        total_connections = match_count.scalar() or 0
+
         return {
             "total_users": total_users,
             "users_landowner": users_landowner,
@@ -427,6 +430,7 @@ class AdminService:
             "projects_draft": projects_draft,
             "projects_published": projects_published,
             "total_form_submissions": total_form_submissions,
+            "total_connections": total_connections,
         }
 
     @staticmethod
@@ -1025,3 +1029,223 @@ class AdminService:
         await db.commit()
         await db.refresh(profile)
         return profile
+
+    @staticmethod
+    async def _get_landowner_profile(db: AsyncSession, landowner_id: UUID) -> LandownerProfile:
+        result = await db.execute(
+            select(LandownerProfile).where(LandownerProfile.id == landowner_id)
+        )
+        profile = result.scalar_one_or_none()
+        if profile is None:
+            raise NotFoundError("LandownerProfile", str(landowner_id))
+        return profile
+
+    @staticmethod
+    async def update_user_admin(
+        db: AsyncSession,
+        *,
+        admin_user_id: UUID,
+        user_id: UUID,
+        patch: Dict[str, Any],
+    ) -> User:
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        if user is None:
+            raise NotFoundError("User", str(user_id))
+        if user.role == Role.ADMIN:
+            raise ValidationError("Cannot modify admin accounts from this endpoint.")
+
+        before = AdminService._json_safe_snapshot({
+            "name": user.name,
+            "is_active": user.is_active,
+        })
+        if "name" in patch and patch["name"] is not None:
+            user.name = str(patch["name"]).strip()
+        if "is_active" in patch and patch["is_active"] is not None:
+            user.is_active = "true" if patch["is_active"] else "false"
+
+        after = AdminService._json_safe_snapshot({
+            "name": user.name,
+            "is_active": user.is_active,
+        })
+        db.add(
+            AdminAuditLog(
+                admin_user_id=admin_user_id.hex,
+                action="user.update",
+                entity_type="user",
+                entity_id=str(user.id),
+                before_json=before,
+                after_json=after,
+            )
+        )
+        await db.commit()
+        await db.refresh(user)
+        return user
+
+    @staticmethod
+    async def update_landowner_profile_admin(
+        db: AsyncSession,
+        *,
+        admin_user_id: UUID,
+        landowner_id: UUID,
+        patch: Dict[str, Any],
+    ) -> LandownerProfile:
+        profile = await AdminService._get_landowner_profile(db, landowner_id)
+        before = AdminService._json_safe_snapshot({
+            "name": profile.name,
+            "phone": profile.phone,
+            "city": profile.city,
+        })
+        if "name" in patch and patch["name"] is not None:
+            profile.name = str(patch["name"]).strip()
+        if "phone" in patch:
+            profile.phone = patch["phone"]
+        if "city" in patch:
+            profile.city = patch["city"]
+
+        after = AdminService._json_safe_snapshot({
+            "name": profile.name,
+            "phone": profile.phone,
+            "city": profile.city,
+        })
+        db.add(
+            AdminAuditLog(
+                admin_user_id=admin_user_id.hex,
+                action="landowner.profile.update",
+                entity_type="landowner_profile",
+                entity_id=str(profile.id),
+                before_json=before,
+                after_json=after,
+            )
+        )
+        await db.commit()
+        await db.refresh(profile)
+        return profile
+
+    @staticmethod
+    async def update_property_admin(
+        db: AsyncSession,
+        *,
+        admin_user_id: UUID,
+        landowner_id: UUID,
+        property_id: UUID,
+        patch: Dict[str, Any],
+    ) -> Property:
+        profile = await AdminService._get_landowner_profile(db, landowner_id)
+        result = await db.execute(
+            select(Property).where(
+                Property.id == property_id,
+                Property.landowner_id == profile.id,
+            )
+        )
+        prop = result.scalar_one_or_none()
+        if prop is None:
+            raise NotFoundError("Property", str(property_id))
+
+        before = AdminService._json_safe_snapshot({
+            "name": prop.name,
+            "city": prop.city,
+            "ward": prop.ward,
+            "landmark": prop.landmark,
+            "pid_number": prop.pid_number,
+        })
+        scalar_fields = [
+            "name", "city", "ward", "landmark", "google_maps_pin", "pid_number",
+            "khatha_type", "e_khatha_status", "facing", "road_width_ft", "width_ft", "length_ft",
+        ]
+        for key in scalar_fields:
+            if key in patch:
+                setattr(prop, key, patch[key])
+        if "tax_paid" in patch and patch["tax_paid"] is not None:
+            prop.tax_paid = bool(patch["tax_paid"])
+        if "is_corner_plot" in patch and patch["is_corner_plot"] is not None:
+            prop.is_corner_plot = bool(patch["is_corner_plot"])
+
+        after = AdminService._json_safe_snapshot({
+            "name": prop.name,
+            "city": prop.city,
+            "ward": prop.ward,
+            "landmark": prop.landmark,
+            "pid_number": prop.pid_number,
+        })
+        db.add(
+            AdminAuditLog(
+                admin_user_id=admin_user_id.hex,
+                action="landowner.property.update",
+                entity_type="property",
+                entity_id=str(prop.id),
+                before_json=before,
+                after_json=after,
+            )
+        )
+        await db.commit()
+        await db.refresh(prop)
+        return prop
+
+    @staticmethod
+    async def update_project_admin(
+        db: AsyncSession,
+        *,
+        admin_user_id: UUID,
+        landowner_id: UUID,
+        project_id: UUID,
+        patch: Dict[str, Any],
+    ) -> Project:
+        profile = await AdminService._get_landowner_profile(db, landowner_id)
+        result = await db.execute(
+            select(Project)
+            .join(Property, Project.property_id == Property.id)
+            .where(
+                Project.id == project_id,
+                Property.landowner_id == profile.id,
+            )
+        )
+        project = result.scalar_one_or_none()
+        if project is None:
+            raise NotFoundError("Project", str(project_id))
+
+        before = AdminService._json_safe_snapshot({
+            "status": project.status,
+            "intent": project.intent,
+            "timeline": project.timeline,
+            "scope": project.scope,
+        })
+        if "status" in patch and patch["status"] is not None:
+            raw = patch["status"]
+            project.status = ProjectStatus(raw) if not isinstance(raw, ProjectStatus) else raw
+        if "intent" in patch:
+            raw = patch["intent"]
+            if raw is None:
+                project.intent = None
+            elif isinstance(raw, ProjectIntent):
+                project.intent = raw
+            else:
+                project.intent = ProjectIntent(raw)
+        if "timeline" in patch:
+            project.timeline = patch["timeline"]
+        if "scope" in patch:
+            project.scope = patch["scope"]
+        if "asset_class" in patch:
+            project.asset_class = patch["asset_class"]
+        if "budget_tier" in patch:
+            project.budget_tier = patch["budget_tier"]
+
+        after = AdminService._json_safe_snapshot({
+            "status": project.status,
+            "intent": project.intent,
+            "timeline": project.timeline,
+            "scope": project.scope,
+        })
+        db.add(
+            AdminAuditLog(
+                admin_user_id=admin_user_id.hex,
+                action="landowner.project.update",
+                entity_type="project",
+                entity_id=str(project.id),
+                before_json=before,
+                after_json=after,
+            )
+        )
+        await db.commit()
+        await db.refresh(project)
+        return project

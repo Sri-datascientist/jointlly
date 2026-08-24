@@ -40,7 +40,7 @@ const AdminLandownerDetail = () => {
     );
   }
 
-  return <AdminLandownerDetailView detail={detail} />;
+  return <AdminLandownerDetailView detail={detail} onUpdated={setDetail} />;
 };
 
 export default AdminLandownerDetail;

@@ -4,22 +4,21 @@ import { motion } from "framer-motion";
 import { ArrowRight, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const dashboardCardShell =
-  "relative overflow-hidden rounded-2xl border border-[#1A5C35]/15 bg-white shadow-[0_4px_24px_rgba(26,92,53,0.08)]";
+export const dashboardCardShell = "theme-panel relative overflow-hidden";
 
 export function DashboardCardBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#eef6f1]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.08),transparent_55%)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#eef6f1] dark:from-card dark:via-card dark:to-muted/40" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.08),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.14),transparent_55%)]" />
     </>
   );
 }
 
 export function DashboardLoadingState({ label = "Loading dashboard…" }: { label?: string }) {
   return (
-    <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3 text-[#1A2E1A]/60">
-      <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#1A5C35]/20 border-t-[#1A5C35]" />
+    <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3 theme-muted">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#1A5C35]/20 border-t-[#1A5C35] dark:border-primary/30 dark:border-t-primary" />
       <p className="text-sm font-medium">{label}</p>
     </div>
   );
@@ -37,12 +36,12 @@ export function DashboardPageHeader({ title, subtitle, badge, action }: Dashboar
     <div className="mb-8 sm:mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {badge ? (
-          <span className="inline-flex mb-3 rounded-full bg-[#1A5C35]/10 border border-[#1A5C35]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1A5C35]">
+          <span className="inline-flex mb-3 rounded-full bg-[#1A5C35]/10 border border-[#1A5C35]/20 dark:bg-primary/15 dark:border-primary/25 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] theme-brand">
             {badge}
           </span>
         ) : null}
-        <h1 className="font-times text-3xl sm:text-4xl text-[#0D3B21] tracking-tight">{title}</h1>
-        <p className="mt-2 max-w-2xl text-sm sm:text-base text-[#1A2E1A]/65 leading-relaxed">
+        <h1 className="font-times text-3xl sm:text-4xl theme-heading tracking-tight">{title}</h1>
+        <p className="mt-2 max-w-2xl text-sm sm:text-base theme-body leading-relaxed">
           {subtitle}
         </p>
       </div>
@@ -81,26 +80,26 @@ export function DashboardStatCard({
       transition={{ duration: 0.4, delay: index * 0.08 }}
       className={cn(
         dashboardCardShell,
-        "p-5 sm:p-6 transition-all duration-300",
-        href && "hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(26,92,53,0.12)] hover:border-[#1A5C35]/25",
+        "rounded-xl p-3.5 sm:p-4 transition-all duration-300",
+        href && "hover:-translate-y-0.5 hover:shadow-[0_6px_24px_rgba(26,92,53,0.1)] dark:hover:shadow-[0_6px_24px_rgba(0,0,0,0.35)] hover:border-[#1A5C35]/25 dark:hover:border-primary/30",
       )}
     >
       <DashboardCardBackground />
-      <div className="relative flex items-start justify-between gap-3">
+      <div className="relative flex items-start justify-between gap-2">
         <div
           className={cn(
-            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br shadow-md",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br shadow-sm",
             statAccents[accent],
           )}
         >
-          <Icon className="h-5 w-5 text-white" />
+          <Icon className="h-4 w-4 text-white" />
         </div>
-        <p className="text-3xl font-bold tabular-nums text-[#0D3B21]">{value}</p>
+        <p className="text-2xl font-bold tabular-nums theme-heading">{value}</p>
       </div>
-      <p className="relative mt-3 text-sm font-medium text-[#1A2E1A]/70">{label}</p>
+      <p className="relative mt-2 text-xs font-medium theme-body">{label}</p>
       {href ? (
-        <span className="relative mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#1A5C35]">
-          View details <ArrowRight className="h-3.5 w-3.5" />
+        <span className="relative mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold theme-brand">
+          View details <ArrowRight className="h-3 w-3" />
         </span>
       ) : null}
     </motion.div>
@@ -174,12 +173,12 @@ export function DashboardPromoBanner({
       <DashboardCardBackground />
       <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="flex items-start gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1A5C35]/10 border border-[#1A5C35]/15">
-            <Icon className="h-5 w-5 text-[#1A5C35]" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1A5C35]/10 border border-[#1A5C35]/15 dark:bg-primary/15 dark:border-primary/25">
+            <Icon className="h-5 w-5 theme-brand" />
           </div>
           <div>
-            <h2 className="font-semibold text-lg text-[#0D3B21]">{title}</h2>
-            <p className="mt-1 text-sm text-[#1A2E1A]/65">{description}</p>
+            <h2 className="font-semibold text-lg theme-heading">{title}</h2>
+            <p className="mt-1 text-sm theme-body">{description}</p>
           </div>
         </div>
         <Link
@@ -210,13 +209,13 @@ export function DashboardSectionHeader({
   return (
     <div className="mb-5 sm:mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 className="font-times text-xl sm:text-2xl text-[#0D3B21]">{title}</h2>
-        {subtitle ? <p className="mt-1 text-sm text-[#1A2E1A]/60">{subtitle}</p> : null}
+        <h2 className="font-times text-xl sm:text-2xl theme-heading">{title}</h2>
+        {subtitle ? <p className="mt-1 text-sm theme-muted">{subtitle}</p> : null}
       </div>
       {viewAllTo ? (
         <Link
           to={viewAllTo}
-          className="inline-flex items-center gap-1 text-sm font-semibold text-[#1A5C35] hover:underline"
+          className="inline-flex items-center gap-1 text-sm font-semibold theme-brand hover:underline"
         >
           {viewAllLabel}
           <ArrowRight className="h-4 w-4" />
@@ -252,8 +251,8 @@ export function DashboardQuickActionCard({
         className={cn(
           dashboardCardShell,
           "flex h-full min-h-[220px] flex-col p-5 sm:p-6 transition-all duration-300",
-          "hover:-translate-y-1 hover:shadow-[0_12px_36px_rgba(26,92,53,0.12)]",
-          completed ? "border-[#52b788]/50 ring-1 ring-[#52b788]/20" : "hover:border-[#1A5C35]/30",
+          "hover:-translate-y-1 hover:shadow-[0_12px_36px_rgba(26,92,53,0.12)] dark:hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)]",
+          completed ? "border-[#52b788]/50 ring-1 ring-[#52b788]/20" : "hover:border-[#1A5C35]/30 dark:hover:border-primary/35",
         )}
       >
         <DashboardCardBackground />
@@ -264,15 +263,15 @@ export function DashboardQuickActionCard({
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#1A5C35] to-[#0D3B21] shadow-md transition group-hover:scale-105">
             <Icon className="h-6 w-6 text-white" />
           </div>
-          <h3 className="font-semibold text-[#0D3B21] mb-2 line-clamp-2">{label}</h3>
-          <p className="text-sm text-[#1A2E1A]/60 line-clamp-3 flex-1">{description}</p>
+          <h3 className="font-semibold theme-heading mb-2 line-clamp-2">{label}</h3>
+          <p className="text-sm theme-muted line-clamp-3 flex-1">{description}</p>
           {completed ? (
-            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#1A5C35]">
+            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide theme-brand">
               <span className="h-1.5 w-1.5 rounded-full bg-[#52b788]" />
               Profile complete
             </p>
           ) : (
-            <p className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#1A5C35]/70 group-hover:text-[#1A5C35]">
+            <p className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#1A5C35]/70 dark:text-primary/70 group-hover:text-[#1A5C35] dark:group-hover:text-primary">
               Get started <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
             </p>
           )}

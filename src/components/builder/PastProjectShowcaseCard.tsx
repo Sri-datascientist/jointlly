@@ -12,9 +12,15 @@ type PastProjectShowcaseCardProps = {
   project: ComparisonRecentProject;
   index?: number;
   className?: string;
+  onClick?: () => void;
 };
 
-export function PastProjectShowcaseCard({ project, index = 0, className }: PastProjectShowcaseCardProps) {
+export function PastProjectShowcaseCard({
+  project,
+  index = 0,
+  className,
+  onClick,
+}: PastProjectShowcaseCardProps) {
   const imageUrl = project.image_urls?.find(Boolean);
   const title = projectTitle(project, index);
   const caption = projectHeaderCaption(project);
@@ -23,9 +29,22 @@ export function PastProjectShowcaseCard({ project, index = 0, className }: PastP
 
   return (
     <article
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
       className={cn(
         "overflow-hidden rounded-lg border border-[#e5e7eb] bg-white shadow-[0_1px_4px_rgba(15,23,42,0.06)]",
-        className
+        className,
       )}
     >
       <div

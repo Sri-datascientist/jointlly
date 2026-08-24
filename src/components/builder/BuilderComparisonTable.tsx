@@ -9,9 +9,35 @@ import {
 type BuilderComparisonTableProps = {
   columns: BuilderComparisonColumnData[];
   className?: string;
-  /** Row label column width */
   labelWidthClassName?: string;
+  onViewDetails?: (column: BuilderComparisonColumnData) => void;
 };
+
+function TextMetricRow({
+  label,
+  columns,
+  pick,
+}: {
+  label: string;
+  columns: BuilderComparisonColumnData[];
+  pick: (col: BuilderComparisonColumnData) => string | null;
+}) {
+  return (
+    <tr className="border-b border-[#eef0f3] last:border-b-0">
+      <th
+        scope="row"
+        className="bg-[#fafafa] px-4 py-4 text-left text-sm font-medium text-[#6b7280] align-top"
+      >
+        {label}
+      </th>
+      {columns.map((col) => (
+        <td key={col.id} className="px-4 py-4 align-top text-center text-sm text-[#111827]">
+          {pick(col) ?? "—"}
+        </td>
+      ))}
+    </tr>
+  );
+}
 
 function MetricInsight({
   label,
@@ -118,6 +144,7 @@ export function BuilderComparisonTable({
   columns,
   className,
   labelWidthClassName = "w-[140px] sm:w-[160px]",
+  onViewDetails,
 }: BuilderComparisonTableProps) {
   if (!columns.length) return null;
 
@@ -141,15 +168,25 @@ export function BuilderComparisonTable({
             </tr>
           </thead>
           <tbody>
+            {columns.some((c) => c.jdProjects != null) ? (
+              <MetricInsight label="JD projects" columns={columns} pick={(col) => col.jdProjects} />
+            ) : null}
             <MetricInsight
               label="Total delivered"
               columns={columns}
               pick={(col) => col.totalDelivered}
             />
             <MetricInsight
-              label="Avg delivery (months)"
+              label="Avg delivery"
               columns={columns}
               pick={(col) => col.avgDeliveryMonths}
+            />
+            <TextMetricRow label="Max floors" columns={columns} pick={(col) => col.maxFloors} />
+            <TextMetricRow label="Areas served" columns={columns} pick={(col) => col.areasServed} />
+            <TextMetricRow
+              label="Revenue share model"
+              columns={columns}
+              pick={(col) => col.revenueShareModel}
             />
             <tr>
               <th
@@ -167,6 +204,8 @@ export function BuilderComparisonTable({
                           key={`${col.id}-${projectIdx}`}
                           project={project}
                           index={projectIdx + colIdx}
+                          className={onViewDetails ? "cursor-pointer hover:border-[#1A5C35]/35" : undefined}
+                          onClick={onViewDetails ? () => onViewDetails(col) : undefined}
                         />
                       ))
                     ) : (
@@ -176,6 +215,24 @@ export function BuilderComparisonTable({
                 </td>
               ))}
             </tr>
+            {onViewDetails ? (
+              <tr className="border-t border-[#eef0f3] bg-[#fafafa]">
+                <th scope="row" className="px-4 py-3 text-left text-sm font-medium text-[#6b7280]">
+                  Full details
+                </th>
+                {columns.map((col) => (
+                  <td key={col.id} className="px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      onClick={() => onViewDetails(col)}
+                      className="text-sm font-semibold text-[#1A5C35] underline-offset-2 hover:underline"
+                    >
+                      View all fields
+                    </button>
+                  </td>
+                ))}
+              </tr>
+            ) : null}
           </tbody>
         </table>
       </div>

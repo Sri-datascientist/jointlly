@@ -25,6 +25,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { getLandownerPageMeta } from "@/lib/dashboardLayoutMeta";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   dashboardLayoutShell,
   DashboardLayoutGreenHeader,
@@ -183,10 +184,14 @@ const LandownerLayout = () => {
           })}
         </nav>
 
-        <div className="p-4 border-t border-[#1A5C35]/10 space-y-1 shrink-0 bg-[#f8fcf9]">
+        <div className="p-4 border-t border-[#1A5C35]/10 dark:border-border space-y-1 shrink-0 bg-[#f8fcf9] dark:bg-muted/30">
+          <div className="flex items-center justify-between px-3 py-2 mb-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#1A2E1A]/45 dark:text-muted-foreground">Theme</span>
+            <ThemeToggle variant="default" />
+          </div>
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-[#1A5C35]/6 hover:text-[#0D3B21] transition-all group"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 dark:text-muted-foreground hover:bg-[#1A5C35]/6 dark:hover:bg-primary/10 hover:text-[#0D3B21] dark:hover:text-foreground transition-all group"
           >
             <Home className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-[#1A5C35]" />
             <span>Back to home</span>
@@ -197,7 +202,7 @@ const LandownerLayout = () => {
               logout();
               navigate("/");
             }}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 hover:bg-red-50 hover:text-red-600 transition-all group"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#1A2E1A]/75 dark:text-muted-foreground hover:bg-red-50 dark:hover:bg-destructive/10 hover:text-red-600 dark:hover:text-red-400 transition-all group"
           >
             <LogOut className="w-5 h-5 text-[#1A2E1A]/45 group-hover:text-red-600" />
             <span>Logout</span>
@@ -307,9 +312,12 @@ const LandownerLayout = () => {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <span className="font-semibold text-white truncate">{pageMeta.title}</span>
+              <span className="font-times text-lg font-semibold text-white truncate">{pageMeta.title}</span>
             </div>
-            <UserProfileDropdown variant="landowner" triggerClassName="text-white shrink-0 [&_*]:text-white/90" />
+            <div className="flex items-center gap-1 shrink-0">
+              <ThemeToggle variant="dashboard" />
+              <UserProfileDropdown variant="landowner" triggerClassName="text-white shrink-0 [&_*]:text-white/90" />
+            </div>
           </div>
         </header>
 

@@ -6,7 +6,7 @@ from typing import Optional, List, Any, Dict, Literal
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.utils.constants import Role, BuilderApprovalStatus
-from app.utils.constants import MatchStatus
+from app.utils.constants import MatchStatus, ProjectStatus, ProjectIntent
 from app.schemas.landowner import (
     LandownerProfileResponse,
     PropertyResponse,
@@ -153,6 +153,44 @@ class AdminStatsResponse(BaseModel):
     projects_draft: int
     projects_published: int
     total_form_submissions: int
+    total_connections: int = 0
+
+    model_config = ConfigDict(strict=True)
+
+
+class AdminUserUpdateRequest(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    is_active: Optional[bool] = None
+
+    model_config = ConfigDict(strict=True)
+
+
+class AdminPropertyUpdate(BaseModel):
+    name: Optional[str] = Field(None, max_length=255)
+    city: Optional[str] = Field(None, max_length=100)
+    ward: Optional[str] = Field(None, max_length=100)
+    landmark: Optional[str] = Field(None, max_length=255)
+    google_maps_pin: Optional[str] = Field(None, max_length=500)
+    pid_number: Optional[str] = Field(None, max_length=100)
+    khatha_type: Optional[str] = Field(None, max_length=100)
+    e_khatha_status: Optional[str] = Field(None, max_length=100)
+    tax_paid: Optional[bool] = None
+    facing: Optional[str] = Field(None, max_length=50)
+    road_width_ft: Optional[float] = Field(None, gt=0)
+    width_ft: Optional[float] = Field(None, gt=0)
+    length_ft: Optional[float] = Field(None, gt=0)
+    is_corner_plot: Optional[bool] = None
+
+    model_config = ConfigDict(strict=True)
+
+
+class AdminProjectUpdate(BaseModel):
+    status: Optional[ProjectStatus] = None
+    intent: Optional[ProjectIntent] = None
+    timeline: Optional[str] = Field(None, max_length=100)
+    scope: Optional[str] = None
+    asset_class: Optional[str] = Field(None, max_length=50)
+    budget_tier: Optional[str] = Field(None, max_length=20)
 
     model_config = ConfigDict(strict=True)
 

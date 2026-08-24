@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { dashboardPathForUserType } from "@/lib/api";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 type NavbarProps = {
@@ -203,8 +204,9 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* Auth Buttons */}
-            <div className="flex items-center gap-3 ml-4">
+            {/* Theme + Auth */}
+            <div className="flex items-center gap-2 ml-4">
+              <ThemeToggle variant="navbar" />
               {isAuthenticated ? (
                 <div className="flex items-center gap-3">
                   <DropdownMenu>
@@ -386,8 +388,12 @@ const MobileMenu = () => {
               FAQ
             </Link>
 
-            {/* Mobile Auth Buttons */}
+            {/* Theme + Mobile Auth */}
             <div className="pt-4 border-t border-border space-y-3">
+              <div className="flex items-center justify-between px-2 py-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Theme</span>
+                <ThemeToggle variant="default" />
+              </div>
               {isAuthenticated ? (
                 <>
                   <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary/10 mb-2">

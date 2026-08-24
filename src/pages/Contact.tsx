@@ -127,9 +127,14 @@ const ContactMethodCard = ({
   );
 };
 
-const OfficeMap = () => (
-  <div className="relative overflow-hidden rounded-2xl border border-[#1A5C35]/20 shadow-[0_8px_32px_rgba(26,92,53,0.12)]">
-    <div className="relative h-[220px] sm:h-[280px] lg:h-[320px] w-full bg-[#e8f5ec]">
+const OfficeMap = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      "relative flex flex-col overflow-hidden rounded-2xl border border-[#1A5C35]/20 shadow-[0_8px_32px_rgba(26,92,53,0.12)]",
+      className,
+    )}
+  >
+    <div className="relative min-h-[220px] flex-1 w-full bg-[#e8f5ec]">
       <iframe
         title="Jointlly office — Banashankari, Bengaluru"
         src={MAP_EMBED_SRC}
@@ -188,7 +193,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#FAF9F6]">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <Navbar />
 
       {/* Hero — green gradient band */}
@@ -277,16 +282,16 @@ const Contact = () => {
       <section className="relative py-4 sm:pb-16">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1A5C35]/[0.04] to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
             {/* Form */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="overflow-hidden rounded-2xl border border-[#1A5C35]/20 bg-white shadow-[0_12px_40px_rgba(26,92,53,0.1)]"
+              className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#1A5C35]/20 bg-white shadow-[0_12px_40px_rgba(26,92,53,0.1)]"
             >
-              <div className="relative overflow-hidden px-6 sm:px-8 py-6 sm:py-7 border-b border-[#1A5C35]/15">
+              <div className="relative shrink-0 overflow-hidden px-6 sm:px-8 py-6 sm:py-7 border-b border-[#1A5C35]/15">
                 <div className="absolute inset-0 bg-gradient-to-r from-[#0D3B21] via-[#1A5C35] to-[#2d6e48]" />
                 <div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(255,255,255,0.12)_0%,transparent_45%)]" />
                 <div className="relative flex items-center gap-4">
@@ -302,7 +307,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5 bg-white">
+              <form onSubmit={handleSubmit} className="flex flex-1 flex-col p-6 sm:p-8 space-y-5 bg-white">
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
                   <div className="space-y-2">
                     <Label htmlFor="contact-name" className="text-[#0D3B21] font-medium">
@@ -350,7 +355,7 @@ const Contact = () => {
                   </select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="flex flex-1 flex-col space-y-2 min-h-[140px]">
                   <Label htmlFor="contact-message" className="text-[#0D3B21] font-medium">
                     Message
                   </Label>
@@ -359,15 +364,14 @@ const Contact = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell us about your project or question…"
-                    rows={5}
                     required
-                    className="border-[#1A5C35]/25 bg-[#f8fcf9] focus-visible:ring-[#1A5C35]/40 resize-none"
+                    className="min-h-[140px] flex-1 border-[#1A5C35]/25 bg-[#f8fcf9] focus-visible:ring-[#1A5C35]/40 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] px-6 py-3.5 text-sm font-bold text-white shadow-[0_6px_24px_rgba(26,92,53,0.35)] transition-all hover:shadow-[0_8px_28px_rgba(26,92,53,0.45)] hover:-translate-y-0.5 min-h-[48px]"
+                  className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] px-6 py-3.5 text-sm font-bold text-white shadow-[0_6px_24px_rgba(26,92,53,0.35)] transition-all hover:shadow-[0_8px_28px_rgba(26,92,53,0.45)] hover:-translate-y-0.5 min-h-[48px]"
                 >
                   <Send className="h-4 w-4" />
                   Send message
@@ -376,14 +380,15 @@ const Contact = () => {
             </motion.div>
 
             {/* Map + hours */}
-            <div className="space-y-5 sm:space-y-6">
+            <div className="flex h-full flex-col gap-5 sm:gap-6">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.08 }}
                 viewport={{ once: true }}
+                className="flex flex-1 flex-col min-h-0"
               >
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-4 flex shrink-0 items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#1A5C35] to-[#0D3B21]">
                     <Building2 className="h-5 w-5 text-white" />
                   </div>
@@ -392,7 +397,7 @@ const Contact = () => {
                     <p className="text-sm text-[#1A2E1A]/60">Banashankari, Bengaluru</p>
                   </div>
                 </div>
-                <OfficeMap />
+                <OfficeMap className="flex-1 min-h-[220px] sm:min-h-[280px]" />
               </motion.div>
 
               <motion.div
@@ -400,7 +405,7 @@ const Contact = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.12 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-[#1A5C35]/15 bg-white p-5 sm:p-6 shadow-[0_8px_30px_rgba(26,92,53,0.08)]"
+                className="shrink-0 rounded-2xl border border-[#1A5C35]/15 bg-white p-5 sm:p-6 shadow-[0_8px_30px_rgba(26,92,53,0.08)]"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#C9952A]/15 border border-[#C9952A]/30">

@@ -1,42 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { HeroGlobeLoader } from "@/components/HeroGlobeLoader";
+import { loadModelViewer } from "@/lib/loadModelViewer";
 
 type ThreeDModelViewerProps = {
-  /** Public URL or relative path to your .glb / .gltf file */
   src: string;
-  /** Optional: alt text / short description of the model */
   alt?: string;
-  /** Optional: custom className for sizing and layout */
   className?: string;
-  /** Optional: remove default background for transparent display */
   transparent?: boolean;
-  /** Optional: id for the model-viewer element (e.g. for orbit polling) */
   id?: string;
-  /** When true: orbit (rotate) only — no pan or zoom; camera distance/angle locked */
   rotateOnly?: boolean;
-  /**
-   * Starting camera orbit: "theta phi radius" (e.g. "38deg 72deg 105%").
-   * Auto-rotate and drag begin from this view when rotateOnly is set.
-   */
   initialCameraOrbit?: string;
-  /**
-   * Turntable yaw in degrees when the model loads. Auto-rotate continues from
-   * this angle (model spins on Y; separate from camera-orbit).
-   */
   initialTurntableRotationDeg?: number;
+  /** When false, defer fetching the GLB until true (saves bandwidth on first paint). */
+  loadWhen?: boolean;
 };
 
-/**
- * Simple wrapper around the `<model-viewer>` web component so you can
- * drop a `.glb` 3D model into the site without extra React libraries.
- *
- * Usage:
- *
- *  <ThreeDModelViewer
- *    src="/models/your-model.glb"
- *    alt="My 3D building"
- *    className="w-full h-[400px]"
- *  />
- */
 type ModelViewerElement = HTMLElement & {
   cameraOrbit?: string;
   minCameraOrbit?: string;
@@ -45,7 +24,6 @@ type ModelViewerElement = HTMLElement & {
   resetTurntableRotation?: (theta?: number) => void;
 };
 
-/** Parse "theta phi radius" → locked min/max (horizontal spin only). */
 function rotateOnlyOrbitBounds(initialOrbit: string): { min: string; max: string } {
   const parts = initialOrbit.trim().split(/\s+/);
   const phi = parts[1] ?? "72deg";
@@ -63,31 +41,35 @@ const ThreeDModelViewer = ({
   rotateOnly = false,
   initialCameraOrbit,
   initialTurntableRotationDeg,
+  loadWhen = true,
 }: ThreeDModelViewerProps) => {
   const orbitBounds =
     rotateOnly && initialCameraOrbit ? rotateOnlyOrbitBounds(initialCameraOrbit) : null;
 
-  // Dynamically load the model-viewer script once on the client
+  const [viewerReady, setViewerReady] = useState(false);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src*="model-viewer.min.js"]',
-    );
-    if (existing) return;
-
-    const script = document.createElement("script");
-    script.type = "module";
-    script.src =
-      "https://unpkg.com/@google/model-viewer@latest/dist/model-viewer.min.js";
-    document.head.appendChild(script);
-
-    return () => {
-      // We leave the script in place so subsequent mounts are instant.
-    };
+    setReduceMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
   }, []);
 
-  // Apply starting view after the GLB loads so auto-rotate begins from that angle.
   useEffect(() => {
-    if (!id || (!initialCameraOrbit && initialTurntableRotationDeg == null)) return;
+    if (!loadWhen) return;
+    let cancelled = false;
+    loadModelViewer().then(() => {
+      if (!cancelled) setViewerReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadWhen]);
+
+  useEffect(() => {
+    if (!id || !viewerReady || !loadWhen) return;
+    if (!initialCameraOrbit && initialTurntableRotationDeg == null) return;
 
     const bounds =
       rotateOnly && initialCameraOrbit ? rotateOnlyOrbitBounds(initialCameraOrbit) : null;
@@ -111,45 +93,85 @@ const ThreeDModelViewer = ({
     const el = document.getElementById(id) as ModelViewerElement | null;
     if (!el) return;
 
-    el.addEventListener("load", applyInitialView);
+    const onLoad = () => {
+      setModelLoaded(true);
+      applyInitialView();
+    };
+
+    el.addEventListener("load", onLoad);
+    el.addEventListener("error", () => setModelLoaded(true));
     applyInitialView();
 
-    return () => el.removeEventListener("load", applyInitialView);
-  }, [id, initialCameraOrbit, initialTurntableRotationDeg, rotateOnly]);
+    return () => {
+      el.removeEventListener("load", onLoad);
+    };
+  }, [id, initialCameraOrbit, initialTurntableRotationDeg, rotateOnly, viewerReady, loadWhen]);
+
+  const [loaderVisible, setLoaderVisible] = useState(true);
+
+  useEffect(() => {
+    if (!modelLoaded) {
+      setLoaderVisible(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setLoaderVisible(false), 450);
+    return () => window.clearTimeout(timer);
+  }, [modelLoaded]);
+
+  const isLoading = !loadWhen || !viewerReady || !modelLoaded;
+  const showLoader = isLoading || loaderVisible;
 
   return (
-    <model-viewer
-      id={id}
-      src={src}
-      alt={alt}
-      class={className}
-      camera-controls
-      auto-rotate
-      {...(initialCameraOrbit && { "camera-orbit": initialCameraOrbit })}
-      {...(rotateOnly && {
-        "disable-pan": true,
-        "disable-zoom": true,
-        "min-camera-orbit": orbitBounds?.min ?? "auto 72deg 105%",
-        "max-camera-orbit": orbitBounds?.max ?? "auto 72deg 105%",
-        "interaction-prompt": "none",
-      })}
-      exposure="1"
-      shadow-intensity="0.5"
-      shadow-softness="1"
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "block",
-        touchAction: rotateOnly ? "none" : undefined,
-        ...(transparent && { backgroundColor: "transparent" }),
-      }}
-    />
+    <div className={cn("relative h-full w-full", className)}>
+      {showLoader ? (
+        <div
+          className={cn(
+            "absolute inset-0 z-10 flex items-center justify-center rounded-full transition-opacity duration-500 ease-out",
+            modelLoaded ? "pointer-events-none opacity-0" : "opacity-100",
+          )}
+          aria-hidden={modelLoaded}
+        >
+          <HeroGlobeLoader className="h-[92%] w-[92%]" />
+        </div>
+      ) : null}
+
+      {viewerReady && loadWhen ? (
+        <model-viewer
+          id={id}
+          src={src}
+          alt={alt}
+          class={cn("h-full w-full", modelLoaded ? "opacity-100" : "opacity-0")}
+          loading="lazy"
+          reveal="auto"
+          camera-controls
+          auto-rotate={!reduceMotion}
+          {...(initialCameraOrbit && { "camera-orbit": initialCameraOrbit })}
+          {...(rotateOnly && {
+            "disable-pan": true,
+            "disable-zoom": true,
+            "min-camera-orbit": orbitBounds?.min ?? "auto 72deg 105%",
+            "max-camera-orbit": orbitBounds?.max ?? "auto 72deg 105%",
+            "interaction-prompt": "none",
+          })}
+          exposure="1"
+          shadow-intensity={isMobile ? "0" : "0.35"}
+          shadow-softness="0.8"
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "block",
+            transition: "opacity 0.4s ease",
+            touchAction: rotateOnly ? "none" : undefined,
+            ...(transparent && { backgroundColor: "transparent" }),
+          }}
+        />
+      ) : null}
+    </div>
   );
 };
 
 export default ThreeDModelViewer;
 
-// Tell TypeScript about the <model-viewer> element so JSX doesn't error
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -159,6 +181,8 @@ declare global {
       > & {
         src?: string;
         alt?: string;
+        loading?: "auto" | "lazy" | "eager";
+        reveal?: "auto" | "interaction" | "manual";
         "camera-controls"?: boolean;
         "auto-rotate"?: boolean;
         "camera-orbit"?: string;
@@ -175,4 +199,3 @@ declare global {
     }
   }
 }
-

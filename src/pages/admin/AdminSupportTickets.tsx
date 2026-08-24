@@ -59,6 +59,7 @@ export default function AdminSupportTickets() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<AdminSupportTicketDetail | null>(null);
   const [notes, setNotes] = useState<string>("");
+  const [assignee, setAssignee] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -93,6 +94,7 @@ export default function AdminSupportTickets() {
         if (cancelled) return;
         setSelected(detail);
         setNotes(detail.admin_notes ?? "");
+        setAssignee(detail.assigned_to ?? "");
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load ticket");
       }
@@ -110,7 +112,7 @@ export default function AdminSupportTickets() {
     return map;
   }, [rows]);
 
-  const save = async (patch: { status?: string; admin_notes?: string | null }) => {
+  const save = async (patch: { status?: string; assigned_to?: string | null; admin_notes?: string | null }) => {
     if (!selected) return;
     const updated = await updateAdminSupportTicket(selected.id, patch);
     setSelected(updated);
@@ -124,8 +126,8 @@ export default function AdminSupportTickets() {
     <div className="space-y-4">
       <div className={cn(adminPanelShell, "p-4 sm:p-5")}>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm font-semibold text-[#0D3B21]">Filters</span>
-          <div className="text-xs text-[#1A2E1A]/55">
+          <span className="text-sm font-semibold theme-heading">Filters</span>
+          <div className="text-xs theme-muted">
             {Object.entries(statusCounts)
               .sort((a, b) => a[0].localeCompare(b[0]))
               .map(([k, v]) => `${k}: ${v}`)
@@ -214,6 +216,7 @@ export default function AdminSupportTickets() {
             setSelectedId(null);
             setSelected(null);
             setNotes("");
+            setAssignee("");
           }
         }}
       >
@@ -234,6 +237,11 @@ export default function AdminSupportTickets() {
 
               <div className="text-sm whitespace-pre-wrap">{selected.description}</div>
 
+              <Input
+                value={assignee}
+                onChange={(e) => setAssignee(e.target.value)}
+                placeholder="Assigned to (admin name or ID)"
+              />
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Admin notes" />
 
               <div className="flex gap-2 flex-wrap">
@@ -253,8 +261,15 @@ export default function AdminSupportTickets() {
                 </button>
                 <button
                   type="button"
+                  className="inline-flex h-8 items-center rounded-md border border-[#1A5C35]/20 px-3 text-xs font-medium text-[#1A5C35] hover:bg-[#1A5C35]/8"
+                  onClick={() => void save({ status: "closed" })}
+                >
+                  Mark closed
+                </button>
+                <button
+                  type="button"
                   className="inline-flex h-8 items-center rounded-md bg-[#1A5C35] px-3 text-xs font-medium text-white hover:opacity-95"
-                  onClick={() => void save({ admin_notes: notes })}
+                  onClick={() => void save({ admin_notes: notes, assigned_to: assignee || null })}
                 >
                   Save notes
                 </button>

@@ -12,6 +12,8 @@ import {
   type AdminUser360Response,
   type AdminSupportTicketDetail,
   type AdminFormSubmissionListItem,
+  type AdminLandownerDetail,
+  type AdminUserListItem,
 } from "@/lib/api";
 import { AdminErrorState, AdminLoadingState } from "@/components/admin/AdminTableUI";
 
@@ -22,6 +24,7 @@ export default function AdminUser360() {
   const [error, setError] = useState<string | null>(null);
 
   const [ticketNotes, setTicketNotes] = useState<Record<string, string>>({});
+  const [ticketAssignee, setTicketAssignee] = useState<Record<string, string>>({});
   const [txNotes, setTxNotes] = useState<Record<string, string>>({});
   const [inspectOpen, setInspectOpen] = useState(false);
   const [inspectTitle, setInspectTitle] = useState("Details");
@@ -50,7 +53,7 @@ export default function AdminUser360() {
     };
   }, [id]);
 
-  const updateTicket = async (ticketId: string, patch: { status?: string; admin_notes?: string | null }) => {
+  const updateTicket = async (ticketId: string, patch: { status?: string; assigned_to?: string | null; admin_notes?: string | null }) => {
     const updated = await updateAdminSupportTicket(ticketId, patch);
     setData((prev) => {
       if (!prev) return prev;
@@ -59,6 +62,23 @@ export default function AdminUser360() {
       );
       return { ...prev, support_tickets: nextTickets };
     });
+  };
+
+  const onUserUpdated = (user: AdminUserListItem) => {
+    setData((prev) => (prev ? { ...prev, user } : prev));
+  };
+
+  const onLandownerUpdated = (detail: AdminLandownerDetail) => {
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            landowner_profile: detail.profile,
+            landowner_properties: detail.properties,
+            landowner_projects: detail.projects,
+          }
+        : prev,
+    );
   };
 
   const updateTx = async (
@@ -92,8 +112,12 @@ export default function AdminUser360() {
         onEditSubmission={openSubmissionEditor}
         onUpdateTicket={updateTicket}
         onUpdateTx={updateTx}
+        onUserUpdated={onUserUpdated}
+        onLandownerUpdated={onLandownerUpdated}
         ticketNotes={ticketNotes}
         setTicketNotes={setTicketNotes}
+        ticketAssignee={ticketAssignee}
+        setTicketAssignee={setTicketAssignee}
         txNotes={txNotes}
         setTxNotes={setTxNotes}
       />

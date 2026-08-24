@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AdminInlineEmpty,
@@ -28,19 +29,26 @@ import {
   SpecialisationsList,
   capabilityLabel,
 } from "@/components/admin/AdminProfileDetailUI";
+import { AdminUserAccountEditor } from "@/components/admin/AdminUserAccountEditor";
+import { AdminLandownerEditor } from "@/components/admin/AdminLandownerEditor";
+import type { AdminLandownerDetail } from "@/lib/api";
 
 type AdminUser360ViewProps = {
   data: AdminUser360Response;
   onEditSubmission: (submission: AdminFormSubmissionListItem) => void;
-  onUpdateTicket: (ticketId: string, patch: { status?: string; admin_notes?: string | null }) => void;
+  onUpdateTicket: (ticketId: string, patch: { status?: string; assigned_to?: string | null; admin_notes?: string | null }) => void;
   onUpdateTx: (
     txId: string,
     patch: { admin_resolution_status?: "OPEN" | "INVESTIGATING" | "RESOLVED"; admin_notes?: string | null },
   ) => void;
+  onUserUpdated?: (user: AdminUser360Response["user"]) => void;
+  onLandownerUpdated?: (detail: AdminLandownerDetail) => void;
   ticketNotes: Record<string, string>;
   setTicketNotes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   txNotes: Record<string, string>;
   setTxNotes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  ticketAssignee: Record<string, string>;
+  setTicketAssignee: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 };
 
 export function AdminUser360View({
@@ -48,10 +56,14 @@ export function AdminUser360View({
   onEditSubmission,
   onUpdateTicket,
   onUpdateTx,
+  onUserUpdated,
+  onLandownerUpdated,
   ticketNotes,
   setTicketNotes,
   txNotes,
   setTxNotes,
+  ticketAssignee,
+  setTicketAssignee,
 }: AdminUser360ViewProps) {
   const { user } = data;
   const prof = data.professional_profile as Record<string, unknown> | null | undefined;
@@ -120,6 +132,17 @@ export function AdminUser360View({
   ).length;
 
   const [adminOpen, setAdminOpen] = useState(openTickets > 0 || data.transactions.length > 0);
+
+  const landownerDetailForEdit: AdminLandownerDetail | null =
+    land && onLandownerUpdated && data.landowner_profile
+      ? {
+          profile: data.landowner_profile as AdminLandownerDetail["profile"],
+          user_email: user.email,
+          user_name: user.name,
+          properties: data.landowner_properties as AdminLandownerDetail["properties"],
+          projects: data.landowner_projects as AdminLandownerDetail["projects"],
+        }
+      : null;
 
   return (
     <div className="pb-6">
@@ -257,6 +280,18 @@ export function AdminUser360View({
         open={adminOpen}
         onOpenChange={setAdminOpen}
       >
+        {onUserUpdated ? (
+          <AdminUserAccountEditor user={user} onUpdated={onUserUpdated} />
+        ) : null}
+
+        {landownerDetailForEdit && onLandownerUpdated ? (
+          <AdminLandownerEditor
+            landownerId={landownerDetailForEdit.profile.id}
+            detail={landownerDetailForEdit}
+            onUpdated={onLandownerUpdated}
+          />
+        ) : null}
+
         {data.login_events?.length ? (
           <ProfileSection>
             <SectionLabel>Login history</SectionLabel>
@@ -309,6 +344,12 @@ export function AdminUser360View({
                     <AdminStatusBadge status={t.status} variant="neutral" />
                   </div>
                   <p className="whitespace-pre-wrap text-sm text-[#1A2E1A]/70">{t.description}</p>
+                  <Input
+                    value={ticketAssignee[t.id] ?? (t.assigned_to ?? "")}
+                    onChange={(e) => setTicketAssignee((p) => ({ ...p, [t.id]: e.target.value }))}
+                    placeholder="Assigned to (admin name or ID)"
+                    className="border-[#1A5C35]/20 text-sm"
+                  />
                   <Textarea
                     value={ticketNotes[t.id] ?? (t.admin_notes ?? "")}
                     onChange={(e) => setTicketNotes((p) => ({ ...p, [t.id]: e.target.value }))}
@@ -322,11 +363,17 @@ export function AdminUser360View({
                     <Button size="sm" variant="outline" onClick={() => void onUpdateTicket(t.id, { status: "resolved" })}>
                       Resolved
                     </Button>
+                    <Button size="sm" variant="outline" onClick={() => void onUpdateTicket(t.id, { status: "closed" })}>
+                      Closed
+                    </Button>
                     <Button
                       size="sm"
                       className="bg-[#1A5C35]"
                       onClick={() =>
-                        void onUpdateTicket(t.id, { admin_notes: ticketNotes[t.id] ?? (t.admin_notes ?? "") })
+                        void onUpdateTicket(t.id, {
+                          admin_notes: ticketNotes[t.id] ?? (t.admin_notes ?? ""),
+                          assigned_to: ticketAssignee[t.id] ?? (t.assigned_to ?? null),
+                        })
                       }
                     >
                       Save notes
