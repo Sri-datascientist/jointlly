@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogIn, UserPlus, LogOut, User, LayoutDashboard, ChevronDown } from "lucide-react";
-import logoNavbarDark from "@/assets/logo-navbar-dark.svg";
+import { LogIn, UserPlus, LogOut, User, LayoutDashboard, ChevronDown, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,6 +23,40 @@ import { dashboardPathForUserType } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
+const Logo = ({ isDark }: { isDark: boolean }) => {
+  const leftColor = isDark ? "white" : "#1A5C35";
+  const rightColor = "#C9952A";
+  const overlapColor = isDark ? "#0D2B18" : "#FAF9F6";
+  const textColor = isDark ? "white" : "#0D3B21";
+
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" className="h-8 sm:h-9 md:h-10 w-auto max-w-[140px] sm:max-w-none object-contain object-left">
+      {/* J-LEFT */}
+      <rect x="8" y="10" width="18" height="36" rx="3" fill={leftColor}/>
+      <rect x="8" y="6"  width="7"  height="8"  rx="2" fill={leftColor} opacity="0.85"/>
+      <rect x="18" y="7" width="5"  height="7"  rx="1" fill={leftColor} opacity="0.45"/>
+      <path d="M17 46 Q17 58 11 60 Q5 62 2 54 Q0 48 2 44"
+            fill="none" stroke={leftColor} strokeWidth="16" strokeLinecap="round" strokeLinejoin="round"/>
+
+      {/* J-RIGHT */}
+      <rect x="26" y="7"  width="18" height="39" rx="3" fill={rightColor}/>
+      <rect x="26" y="3"  width="7"  height="8"  rx="2" fill={rightColor}/>
+      <rect x="36" y="4"  width="5"  height="7"  rx="1" fill={rightColor} opacity="0.5"/>
+      <path d="M35 46 Q35 59 29 61 Q23 63 20 55 Q18 49 20 45"
+            fill="none" stroke={rightColor} strokeWidth="16" strokeLinecap="round" strokeLinejoin="round"/>
+
+      {/* Overlap */}
+      <rect x="26" y="10" width="9" height="36" rx="0" fill={overlapColor}/>
+
+      {/* Wordmark */}
+      <text x="52" y="42"
+        fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        fontSize="30" fontWeight="300" letterSpacing="1.5"
+        fill={textColor}>jointlly</text>
+    </svg>
+  );
+};
+
 type NavbarProps = {
   variant?: "default" | "hero";
 };
@@ -32,41 +66,53 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHero = variant === "hero";
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
-  const navLinkBaseClass =
-    "text-sm px-3 py-2 rounded-md transition-colors duration-200 text-primary-foreground/80 font-normal hover:text-accent hover:bg-primary-foreground/10";
-  const navLinkActiveClass = "text-accent font-medium";
+  /* ── Shared nav-link classes ── */
+  const navLinkBaseClass = cn(
+    "navbar-link text-[13px] px-3 py-2 rounded-md transition-colors duration-200 font-normal tracking-[0.08em] uppercase",
+    isHero
+      ? "text-white/90 hover:text-white"
+      : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#1A5C35] dark:hover:text-white"
+  );
+  const navLinkActiveClass = isHero
+    ? "text-white font-semibold"
+    : "text-[#1A5C35] dark:text-[#52b788] font-semibold";
 
   return (
     <motion.nav
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 backdrop-blur-md",
-        "bg-primary/95 text-primary-foreground border-b border-primary-foreground/20"
+        "fixed top-0 left-0 right-0 z-50",
+        /* Fully transparent navbar — no backdrop-blur so hero video shows through */
+        "bg-transparent"
       )}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-[env(safe-area-inset-top,0px)]">
-        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
-          {/* Logo — compact on small phones */}
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[env(safe-area-inset-top,0px)]">
+        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20">
+          {/* ── Logo ── */}
           <Link to="/" className="flex items-center shrink-0 min-h-[44px] min-w-[44px]">
-            <img
-              src={logoNavbarDark}
-              alt="Jointlly"
-              className="h-9 sm:h-10 md:h-12 w-auto max-w-[140px] sm:max-w-none object-contain object-left"
-            />
+            <Logo isDark={isHero || isDark} />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
+          {/* ── Desktop Navigation (centered) ── */}
+          <div className="hidden md:flex items-center gap-1 lg:gap-2">
             <NavigationMenu>
-              <NavigationMenuList className="gap-2">
+              <NavigationMenuList className="gap-0">
                 <NavigationMenuItem>
                   <Link
                     to="/"
@@ -82,8 +128,11 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                     className={cn(
-                      "text-sm px-3 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent text-primary-foreground/80 hover:text-accent",
-                      location.pathname.startsWith("/products") && "text-accent font-medium"
+                      "navbar-link text-[13px] px-3 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent tracking-[0.08em] uppercase font-normal",
+                      isHero
+                        ? "text-white/90 hover:text-white"
+                        : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#1A5C35] dark:hover:text-white",
+                      location.pathname.startsWith("/products") && (isHero ? "text-white font-semibold" : "text-[#1A5C35] dark:text-[#52b788] font-semibold")
                     )}
                   >
                     Products
@@ -203,71 +252,81 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-
-            {/* Theme + Auth */}
-            <div className="flex items-center gap-2 ml-4">
-              <ThemeToggle variant="navbar" />
-              {isAuthenticated ? (
-                <div className="flex items-center gap-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                        )}
-                      >
-                        <User className="w-4 h-4 text-primary-foreground" />
-                        <span className="text-sm font-medium text-primary-foreground">{user?.name || "User"}</span>
-                        <ChevronDown className="w-4 h-4 text-primary-foreground opacity-70" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          to={user ? dashboardPathForUserType(user.userType) : "/auth"}
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <LayoutDashboard className="w-4 h-4" />
-                          Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => navigate("/auth", { state: { userType: "builder" } })}
-                    variant="ghost"
-                    size="sm"
-                    className="gap-2 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    Login
-                  </Button>
-                  <Button
-                    onClick={() => navigate("/auth", { state: { userType: "builder" } })}
-                    size="sm"
-                    className="gap-2 btn-navbar"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    Sign Up
-                  </Button>
-                </>
-              )}
-            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* ── Right side: Theme toggle + Auth ── */}
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle variant="navbar" className={isHero ? "text-white/90 hover:bg-white/10" : "text-[#0D3B21]/80 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10"} />
+
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 px-5 py-2 rounded-full border border-border/80 dark:border-white/30 text-[#0D3B21]/90 dark:text-white hover:border-[#1A5C35]/60 dark:hover:border-white/60 hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-200 outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  >
+                    <User className="w-4 h-4 animate-pulse-subtle" />
+                    <span className="text-[13px] font-medium tracking-[0.06em] uppercase">
+                      {user?.name || "Admin"}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={user ? dashboardPathForUserType(user.userType) : "/auth"}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button
+                  onClick={() => navigate("/auth", { state: { userType: "builder" } })}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "gap-2 text-[13px] tracking-[0.06em] uppercase",
+                    isHero
+                      ? "text-white/90 hover:text-white hover:bg-white/10"
+                      : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#0D3B21] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                  )}
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </Button>
+                <Button
+                  onClick={() => navigate("/auth", { state: { userType: "builder" } })}
+                  size="sm"
+                  className={cn(
+                    "gap-2 text-[13px] tracking-[0.06em] uppercase rounded-full border bg-transparent px-5 py-2 transition-all duration-200",
+                    isHero
+                      ? "border-white/40 text-white hover:border-white/70 hover:bg-white/10"
+                      : "border-border/80 dark:border-white/30 text-[#0D3B21] dark:text-white hover:border-[#0D3B21]/60 dark:hover:border-white/60 hover:bg-black/5 dark:hover:bg-white/10"
+                  )}
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Sign Up
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* ── Mobile Menu Button ── */}
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle variant="navbar" className="navbar-theme-toggle" />
             <MobileMenu />
           </div>
         </div>
@@ -292,7 +351,7 @@ const MobileMenu = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 -mr-1 rounded-md text-primary-foreground hover:bg-primary-foreground/15 transition-colors touch-target flex items-center justify-center"
+        className="p-2.5 -mr-1 rounded-md navbar-link hover:bg-white/10 transition-colors touch-target flex items-center justify-center"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
       >
@@ -324,7 +383,7 @@ const MobileMenu = () => {
             <Link
               to="/"
               onClick={() => setIsOpen(false)}
-              className="block py-3 px-2 text-sm font-medium text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              className="block py-3 px-2 text-[13px] font-medium tracking-[0.06em] uppercase text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
             >
               Home
             </Link>
@@ -333,28 +392,28 @@ const MobileMenu = () => {
               <Link
                 to="/products/residential"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-sm text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Residential
               </Link>
               <Link
                 to="/products/commercial"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-sm text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Commercial
               </Link>
               <Link
                 to="/products/industrial"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-sm text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Industrial
               </Link>
               <Link
                 to="/products/interior"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-sm text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Interior
               </Link>
@@ -362,38 +421,34 @@ const MobileMenu = () => {
             <Link
               to="/about"
               onClick={() => setIsOpen(false)}
-              className="block py-3 px-2 text-sm font-medium text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              className="block py-3 px-2 text-[13px] font-medium tracking-[0.06em] uppercase text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
             >
               About Us
             </Link>
             <Link
               to="/pricing"
               onClick={() => setIsOpen(false)}
-              className="block py-3 px-2 text-sm font-medium text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              className="block py-3 px-2 text-[13px] font-medium tracking-[0.06em] uppercase text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
             >
               Pricing
             </Link>
             <Link
               to="/contact"
               onClick={() => setIsOpen(false)}
-              className="block py-3 px-2 text-sm font-medium text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              className="block py-3 px-2 text-[13px] font-medium tracking-[0.06em] uppercase text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
             >
               Contact Us
             </Link>
             <Link
               to="/faq"
               onClick={() => setIsOpen(false)}
-              className="block py-3 px-2 text-sm font-medium text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              className="block py-3 px-2 text-[13px] font-medium tracking-[0.06em] uppercase text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
             >
               FAQ
             </Link>
 
-            {/* Theme + Mobile Auth */}
+            {/* Mobile Auth */}
             <div className="pt-4 border-t border-border space-y-3">
-              <div className="flex items-center justify-between px-2 py-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Theme</span>
-                <ThemeToggle variant="default" />
-              </div>
               {isAuthenticated ? (
                 <>
                   <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary/10 mb-2">

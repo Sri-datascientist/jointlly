@@ -1,10 +1,10 @@
 import { lazy, Suspense } from "react";
-import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 
 // Lazy load below-the-fold components for better initial load performance
-const UseCasesSection = lazy(() => import("@/components/UseCasesSection"));
 const StorytellingSection = lazy(() => import("@/components/StorytellingSection"));
+const FeaturesSection = lazy(() => import("@/components/FeaturesSection"));
+const WorkflowSection = lazy(() => import("@/components/WorkflowSection"));
 const CTASection = lazy(() => import("@/components/CTASection"));
 const Footer = lazy(() => import("@/components/Footer"));
 
@@ -18,13 +18,15 @@ const SectionLoader = () => (
 const Index = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <Navbar variant="hero" />
       <HeroSection />
       <Suspense fallback={<SectionLoader />}>
-        <UseCasesSection />
+        <StorytellingSection />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
-        <StorytellingSection />
+        <FeaturesSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <WorkflowSection />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <CTASection />

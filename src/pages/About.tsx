@@ -1,10 +1,15 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Shield, TrendingUp, Award, Heart, ArrowRight } from "lucide-react";
+import { Shield, TrendingUp, Award, Heart, ArrowRight, Sparkles, ChevronDown, CheckCircle, Home, Building, Warehouse } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 const About = () => {
+  const [activeTab, setActiveTab] = useState<"residential" | "commercial" | "industrial">("residential");
+  const [expandedStep, setExpandedStep] = useState<number | null>(0);
+
   const values = [
     {
       icon: Shield,
@@ -26,399 +31,424 @@ const About = () => {
       title: "Community Focus",
       description: "Building stronger communities by connecting landowners and builders, creating value for everyone involved.",
     },
-  ];
+  ] as const;
+
+  const steps = [
+    {
+      title: "Step 1: Define your development intent",
+      description: "Select your project category—residential, commercial, or industrial. By specifying your intent (self-build, joint venture, or renovation), the platform tailors the data environment to your specific regulatory and engineering needs.",
+    },
+    {
+      title: "Step 2: Access indicative context",
+      description: "Before you speak to a builder, understand your land’s potential. Jointlly surfaces high-level indicators relevant to your category, focusing on functional constraints and regulatory nuances that determine long-term viability and legal safety—the silent deal breakers experienced builders know, but owners often overlook.",
+    },
+    {
+      title: "Step 3: Discover scale-matched partners",
+      description: "Browse a curated ecosystem of builders and developers whose profiles are structured around self-disclosed data and market-visible signals. Filter by project type experience, review scale alignment, and explore portfolios that emphasize technical delivery over marketing fluff.",
+    },
+    {
+      title: "Step 4: Comparative shortlisting",
+      description: "Use non-promotional comparison views to evaluate professionals side-by-side—looking past brand names to compare execution patterns, specialized MEP capabilities, and historical project scales.",
+    },
+    {
+      title: "Step 5: Engage with professional clarity",
+      description: "Armed with Jointlly’s contextual prompts and structured data, you can engage independently. Use our technical inquiry guides to ask sharper questions during site visits and meetings, supporting rigorous, independent legal, technical, and commercial due diligence.",
+    },
+  ] as const;
+
+  const categories = {
+    residential: {
+      label: "Residential",
+      icon: Home,
+      methodology: "Bridging the expertise gap. For private owners, residential construction is deeply personal but technically daunting. Jointlly simplifies the search for “hidden gem” builders and small-scale professionals who deliver high-quality work by providing a structured filtering layer that prioritizes objective track records over marketing budgets.",
+      realitiesTitle: "Beyond cost and height",
+      realitiesDesc: "The difference between a legal home and a permanent liability lies in adherence to granular norms—from OC exemptions for smaller plots, to open-to-sky percolation setbacks, to safe staircase geometry. Jointlly highlights these checks so owners do not discover them only at the approval or handover stage.",
+    },
+    commercial: {
+      label: "Commercial",
+      icon: Building,
+      methodology: "High-performance infrastructure. Commercial builds are high-stakes business assets. Jointlly helps owners navigate the complexities of Grade A office spaces, retail hubs, and managed living by connecting them with professionals capable of handling heavy-duty MEP systems and stringent statutory safety codes.",
+      realitiesTitle: "Beyond FAR and zoning",
+      realitiesDesc: "Commercial assets are valued on efficiency ratios, not just built-up area. We surface insights around premium FAR and TDR loading, fire tender access geometry, and ventilated basement rules so that design and compliance decisions preserve long-term leasability.",
+    },
+    industrial: {
+      label: "Industrial",
+      icon: Warehouse,
+      methodology: "Precision-engineered performance. In the industrial sector, the structure is a high-performance shell. A minor miscalculation in floor leveling or structural load can render a facility unusable. Jointlly facilitates the discovery of specialized PEB experts and industrial civil contractors who understand the rigorous demands of modern logistics and manufacturing.",
+      realitiesTitle: "Beyond clear heights and floor loads",
+      realitiesDesc: "Industrial shells are tools for machinery. Jointlly emphasizes soil bearing capacity, point loading, high-precision flooring standards, and HT power and buffer zone requirements so that the building’s performance envelope truly matches the process it must support.",
+    },
+  } as const;
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
 
-      {/* About Jointlly */}
-      <section className="relative py-10 sm:py-12 md:py-16 lg:py-20">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 jointlly-grid opacity-40" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-12 sm:pb-16 bg-[#FAF9F6] dark:bg-[#07150e] overflow-hidden border-b border-border/20">
+        <div className="absolute inset-0 bg-[#FAF9F6]/20 dark:bg-transparent pointer-events-none" />
+        <div
+          className="absolute right-[-10%] top-[-10%] w-[45vw] h-[45vw] opacity-10 dark:opacity-[0.03] pointer-events-none rounded-full"
+          style={{
+            background: "radial-gradient(circle, #1A5C35, transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-6 sm:space-y-8"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+            className="space-y-6 text-center max-w-3xl mx-auto"
           >
-            <div className="space-y-3">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-                <span className="text-gradient-primary">
-                  About <span className="font-times">Jointlly</span>
-                </span>
-              </h2>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Jointlly is the decision-enablement ecosystem for real estate development. We are a neutral information and
-                discovery platform designed to dismantle the opacity of the construction industry.
-              </p>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                We provide landowners and property seekers with the data-driven clarity needed to move from{" "}
-                <span className="font-semibold">owning land</span> to <span className="font-semibold">building assets</span>{" "}
-                with confidence. In an industry often clouded by biased referrals and complex regulatory hurdles, Jointlly
-                serves as a trust layer by structuring fragmented market data into comparable, high-level insights across
-                residential, commercial, and industrial sectors.
-              </p>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/15 dark:border-[#52b788]/20 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
+              <Sparkles className="h-3 w-3" />
+              <span>About Us</span>
             </div>
-
-            {/* Structural Pillars */}
-            <div className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
-                Our Structural Pillars
-              </h3>
-              <div className="overflow-x-auto rounded-xl border border-border bg-background shadow-sm">
-                <table className="min-w-full text-left text-sm sm:text-base">
-                  <thead className="bg-primary text-primary-foreground">
-                    <tr>
-                      <th className="px-4 sm:px-6 py-3 font-semibold">Pillar</th>
-                      <th className="px-4 sm:px-6 py-3 font-semibold">What it means</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-t border-border/60 bg-background">
-                      <td className="align-top px-4 sm:px-6 py-4 font-medium text-foreground">
-                        Neutral Discovery
-                      </td>
-                      <td className="align-top px-4 sm:px-6 py-4 text-muted-foreground">
-                        We provide structured profiles of builders and developers based on self disclosed data and
-                        market-visible signals, not paid promotions.
-                      </td>
-                    </tr>
-                    <tr className="border-t border-border/60 bg-background">
-                      <td className="align-top px-4 sm:px-6 py-4 font-medium text-foreground">
-                        Decision Enablement
-                      </td>
-                      <td className="align-top px-4 sm:px-6 py-4 text-muted-foreground">
-                        We empower owners to ask better technical and commercial questions through non promotional
-                        comparisons of project scales and execution patterns.
-                      </td>
-                    </tr>
-                    <tr className="border-t border-border/60 bg-background">
-                      <td className="align-top px-4 sm:px-6 py-4 font-medium text-foreground">
-                        Regulatory Context
-                      </td>
-                      <td className="align-top px-4 sm:px-6 py-4 text-muted-foreground">
-                        We bridge the knowledge gap by providing indicative public regulatory frameworks, from FAR ranges
-                        to zoning references, so owners understand the context they are building in.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Methodology */}
-            <div className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
-                The Jointlly Methodology: Solving Ground Realities
-              </h3>
-              <div className="space-y-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                <p>
-                  <span className="font-semibold">1. Residential   Bridging the expertise gap.</span> For private owners,
-                  residential construction is deeply personal but technically daunting. Jointlly simplifies the search for
-                  “hidden gem” builders and small scale professionals who deliver high quality work by providing a structured
-                  filtering layer that prioritizes objective track records over marketing budgets.
-                </p>
-                <p>
-                  <span className="font-semibold">2. Commercial   High performance infrastructure.</span> Commercial builds are
-                  high stakes business assets. Jointlly helps owners navigate the complexities of Grade A office spaces,
-                  retail hubs, and managed living by connecting them with professionals capable of handling heavy duty MEP
-                  systems and stringent statutory safety codes.
-                </p>
-                <p>
-                  <span className="font-semibold">3. Industrial   Precision engineered performance.</span> In the industrial
-                  sector, the structure is a high performance shell. A minor miscalculation in floor leveling or structural
-                  load can render a facility unusable. Jointlly facilitates the discovery of specialized PEB experts and
-                  industrial civil contractors who understand the rigorous demands of modern logistics and manufacturing.
-                </p>
-              </div>
-            </div>
-
-            {/* Operating Principle */}
-            <div className="space-y-3">
-              <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
-                Our Operating Principle
-              </h3>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Jointlly is an information bridge, not a supervisor. We do not recommend, certify, or appoint builders. We
-                do not validate execution quality or guarantee outcomes.
-              </p>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Our mission is to reduce search opacity and improve decision clarity, while ensuring the owner retains full
-                responsibility for independent technical, legal, and contractual due diligence.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Mission */}
-      <section className="relative py-10 sm:py-12 md:py-16 lg:py-20">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 jointlly-grid opacity-40" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-5 sm:space-y-6"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
-              <span className="text-gradient-primary">Our Mission</span>
-            </h2>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.1] tracking-tight">
+              Neutral Ecosystem for Real Estate Development
+            </h1>
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              To deconstruct the opacity of the construction industry by providing a neutral, data driven trust layer for
-              property development.
+              Jointlly is a neutral information and discovery platform designed to dismantle the opacity of the construction industry, serving as a trust layer by structuring fragmented market data.
             </p>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              At Jointlly, we believe that the journey from owning land to building a high performing asset should not be a
-              gamble. Our mission is to empower landowners and investors with decision enablement tools that replace blind
-              referrals and intermediary bias with structured discovery and objective information.
-            </p>
-
-            <div className="space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                The Three Pillars of the Jointlly Mission
-              </h3>
-              <ul className="space-y-3 text-base sm:text-lg text-muted-foreground leading-relaxed list-disc list-inside">
-                <li>
-                  <span className="font-semibold">Dismantling information asymmetry:</span> We provide indicative regulatory
-                  context from FAR ranges to zoning references ensuring that landowners understand the true potential of their
-                  property before entering negotiations.
-                </li>
-                <li>
-                  <span className="font-semibold">Highlighting “hidden gems”:</span> Our platform provides a stage for
-                  high quality, small to mid scale builders who deliver honest work and technical excellence but are often
-                  overshadowed by large corporate marketing budgets.
-                </li>
-                <li>
-                  <span className="font-semibold">Enabling professional independence:</span> We do not replace the owner’s
-                  responsibility; we sharpen it. By providing comparative project scale data and technical prompts, we help
-                  owners ask the right questions and conduct better independent due diligence.
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                Our Why
-              </h3>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Whether it is a private villa, a Grade A corporate hub, or a high precision industrial shell, the structural
-                integrity of an asset is a multi generational commitment. Jointlly exists to ensure that every stakeholder,
-                regardless of their construction expertise, has access to a transparent ecosystem where skill meets scale and
-                data meets development.
-              </p>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                The outcome: reduced search opacity, improved decision clarity, and a marketplace built on verified
-                professional signals rather than empty promises.
-              </p>
-            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* How Jointlly Works */}
-      <section className="relative py-10 sm:py-12 md:py-16 lg:py-20">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 jointlly-grid opacity-40" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-6 sm:space-y-8"
-          >
-            <div className="space-y-3">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-                <span className="text-gradient-primary">How Jointlly Works</span>
+      {/* Corporate Summary & Pillars */}
+      <section className="relative py-16 sm:py-20 bg-background border-b border-border/20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+            
+            {/* Info Summary */}
+            <div className="md:col-span-5 space-y-6">
+              <h2 className="text-2xl sm:text-3xl font-bold font-times text-[#0D3B21] dark:text-white leading-tight">
+                Our Strategic Purpose
               </h2>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                From land to asset, Jointlly acts as your strategic discovery filter. We do not just list names; we give you
-                the context to choose the right partner with confidence.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                We provide landowners and property seekers with the data-driven clarity needed to move from <strong className="text-foreground font-semibold">owning land</strong> to <strong className="text-foreground font-semibold">building assets</strong> with confidence.
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                In an industry often clouded by biased referrals and complex regulatory hurdles, Jointlly serves as a trust layer by structuring fragmented market data into comparable, high-level insights.
               </p>
             </div>
 
-            {/* Steps 1 5 overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Step 1: Define your development intent
+            {/* Pillars Bezel Card */}
+            <div className="md:col-span-7 p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10">
+              <div className="rounded-[calc(2.5rem-0.5rem)] bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 p-6 sm:p-8 space-y-6 shadow-soft">
+                <h3 className="text-lg font-bold font-times text-[#0D3B21] dark:text-white border-b border-border/40 pb-3">
+                  Our Structural Pillars
                 </h3>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Select your project category residential, commercial, or industrial. By specifying your intent (self build,
-                  joint venture, or renovation), the platform tailors the data environment to your specific regulatory and
-                  engineering needs.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Step 2: Access indicative context
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Before you speak to a builder, understand your land’s potential. Jointlly surfaces high level indicators
-                  relevant to your category, focusing on functional constraints and regulatory nuances that determine
-                  long term viability and legal safety the silent deal breakers experienced builders know, but owners often
-                  overlook.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Step 3: Discover scale matched partners
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Browse a curated ecosystem of builders and developers whose profiles are structured around self disclosed
-                  data and market visible signals. Filter by project type experience, review scale alignment, and explore
-                  portfolios that emphasize technical delivery over marketing fluff.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Step 4: Comparative shortlisting
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Use non promotional comparison views to evaluate by professionals side by side looking past brand names to
-                  compare execution patterns, specialized MEP capabilities, and historical project scales.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Step 5: Engage with professional clarity
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Armed with Jointlly’s contextual prompts and structured data, you can engage independently. Use our
-                  technical inquiry guides to ask sharper questions during site visits and meetings, supporting rigorous,
-                  independent legal, technical, and commercial due diligence.
-                </p>
-              </div>
-            </div>
-
-            {/* Deep-dive: Residential / Commercial / Industrial */}
-            <div className="space-y-6">
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                Going deeper: category specific ground realities
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">1. Residential   Beyond cost and height</h4>
-                  <p>
-                    The difference between a legal home and a permanent liability lies in adherence to granular norms from OC
-                    exemptions for smaller plots, to open to sky percolation setbacks, to safe staircase geometry. Jointlly
-                    highlights these checks so owners do not discover them only at the approval or handover stage.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">2. Commercial   Beyond FAR and zoning</h4>
-                  <p>
-                    Commercial assets are valued on efficiency ratios, not just built up area. We surface insights around
-                    premium FAR and TDR loading, fire tender access geometry, and ventilated basement rules so that design and
-                    compliance decisions preserve long term leasability.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">3. Industrial   Beyond clear heights and floor loads</h4>
-                  <p>
-                    Industrial shells are tools for machinery. Jointlly emphasizes soil bearing capacity, point loading,
-                    high precision flooring standards, and HT power and buffer zone requirements so that the building’s
-                    performance envelope truly matches the process it must support.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">
-                  The final outcome
-                </h3>
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  You exit Jointlly not just with a contact number, but with a development strategy reduced search opacity,
-                  improved decision clarity, and full control over your legal and financial commitments.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="relative py-10 sm:py-12 md:py-16 lg:py-20">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 jointlly-grid opacity-40" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-6 sm:mb-8 md:mb-10"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
-              <span className="text-gradient-primary">Our Values</span>
-            </h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
-              The principles that guide everything we do
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-            {values.map((value, index) => {
-              const Icon = value.icon;
-              return (
-                <motion.div
-                  key={value.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="relative pl-5 sm:pl-6 md:pl-8 border-l-2 border-primary/40"
-                >
-                  <div className="absolute left-0 top-0 w-6 h-6 sm:w-8 sm:h-8 -translate-x-1/2 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Neutral Discovery</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We provide structured profiles of builders and developers based on self-disclosed data and market-visible signals, not paid promotions.
+                    </p>
                   </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 sm:mb-3 mt-0.5 sm:mt-1">
-                    {value.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    {value.description}
-                  </p>
-                </motion.div>
-              );
-            })}
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Decision Enablement</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We empower owners to ask better technical and commercial questions through non-promotional comparisons of project scales and execution patterns.
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Regulatory Context</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We bridge the knowledge gap by providing indicative public regulatory frameworks, from FAR ranges to zoning references.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative py-10 sm:py-12 md:py-16 lg:py-20">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 jointlly-grid opacity-40" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-3 sm:space-y-4"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-              Ready to build with transparency?
+      {/* Category Tabs (Clicking Types) */}
+      <section className="relative py-16 sm:py-20 bg-[#FAF9F6] dark:bg-[#07150e] border-b border-border/20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold font-times text-[#0D3B21] dark:text-white leading-tight">
+              Solving Ground Realities
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground px-2">
-              Join thousands of landowners and builders who trust Jointlly.
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground">
+              Explore how we translate high-stakes construction complexities into objective data across sectors.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
-              <Link to="/contact" className="btn-premium inline-flex items-center justify-center gap-2 min-h-[44px]">
-                Contact Us
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/" className="btn-premium-outline inline-flex items-center justify-center gap-2 min-h-[44px]">
-                Explore Platform
-              </Link>
+          </div>
+
+          {/* Interactive tab selector pills */}
+          <div className="flex items-center justify-center gap-3 mb-10 max-w-lg mx-auto p-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10">
+            {(Object.keys(categories) as Array<keyof typeof categories>).map((key) => {
+              const cat = categories[key];
+              const CatIcon = cat.icon;
+              const isActive = activeTab === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-full text-xs font-bold transition-all duration-500 ease-spring",
+                    isActive
+                      ? "bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] text-white shadow-md scale-105"
+                      : "text-muted-foreground hover:text-[#1A5C35] dark:hover:text-[#52b788]"
+                  )}
+                >
+                  <CatIcon className="h-4 w-4" strokeWidth={isActive ? 2 : 1.5} />
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab content panel */}
+          <div className="p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10">
+            <div className="rounded-[calc(2.5rem-0.5rem)] bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 p-8 sm:p-10 shadow-soft relative overflow-hidden min-h-[300px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start"
+                >
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold font-times text-[#0D3B21] dark:text-white border-b border-border/40 pb-3">
+                      The Methodology
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {categories[activeTab].methodology}
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold font-times text-[#C9952A] border-b border-border/40 pb-3">
+                      {categories[activeTab].realitiesTitle}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {categories[activeTab].realitiesDesc}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
-          </motion.div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* How Jointlly Works (Expandable Accordion) */}
+      <section className="relative py-16 sm:py-20 bg-background border-b border-border/20">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold font-times text-[#0D3B21] dark:text-white leading-tight">
+              How Jointlly Works
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground">
+              From land to asset, explore our strategic workflow designed to safeguard your transaction.
+            </p>
+          </div>
+
+          {/* Vertical Accordion */}
+          <div className="space-y-4">
+            {steps.map((step, idx) => {
+              const isOpen = expandedStep === idx;
+              return (
+                <div
+                  key={step.title}
+                  className="p-1 rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 overflow-hidden"
+                >
+                  <div className="rounded-[calc(1.5rem-0.25rem)] bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 overflow-hidden">
+                    <button
+                      onClick={() => setExpandedStep(isOpen ? null : idx)}
+                      className="w-full flex items-center justify-between p-5 text-left font-times text-base sm:text-lg font-bold text-[#0D3B21] dark:text-white focus:outline-none"
+                    >
+                      <span>{step.title}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-5 w-5 text-muted-foreground transition-transform duration-500 ease-spring",
+                          isOpen && "rotate-180 text-[#1A5C35] dark:text-[#52b788]"
+                        )}
+                      />
+                    </button>
+                    
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+                        >
+                          <div className="p-5 pt-0 border-t border-border/20 dark:border-border/10 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                            {step.description}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="relative py-16 sm:py-20 bg-[#FAF9F6] dark:bg-[#07150e] border-b border-border/20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            
+            {/* Mission core */}
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/10 dark:border-[#52b788]/10 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
+                <span>Our Philosophy</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.2]">
+                Our Mission
+              </h2>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                To deconstruct the opacity of the construction industry by providing a neutral, data-driven trust layer for property development.
+              </p>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                At Jointlly, we believe that the journey from owning land to building a high-performing asset should not be a gamble. Our mission is to empower landowners and investors with decision enablement tools that replace blind referrals and intermediary bias with structured discovery.
+              </p>
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 shadow-soft">
+                <h4 className="font-bold text-sm text-[#0D3B21] dark:text-white mb-2">Our Why</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Whether it is a private villa, a Grade-A corporate hub, or a high-precision industrial shell, structural integrity is a multi-generational commitment. Jointlly exists to ensure that every stakeholder has access to a transparent marketplace built on verified professional signals.
+                </p>
+              </div>
+            </div>
+
+            {/* Three pillars of the mission list */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-bold font-times text-[#0D3B21] dark:text-white border-b border-border/40 pb-3">
+                Mission Foundations
+              </h3>
+              <div className="space-y-5">
+                <div className="flex gap-4">
+                  <div className="h-6 w-6 rounded-full bg-[#1A5C35]/10 flex items-center justify-center text-[#1A5C35] dark:text-[#52b788] shrink-0 mt-1">
+                    <CheckCircle className="h-4.5 w-4.5" strokeWidth={2} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Dismantling information asymmetry</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We provide indicative regulatory context from FAR ranges to zoning references, ensuring landowners understand the true potential of their property before entering negotiations.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="h-6 w-6 rounded-full bg-[#1A5C35]/10 flex items-center justify-center text-[#1A5C35] dark:text-[#52b788] shrink-0 mt-1">
+                    <CheckCircle className="h-4.5 w-4.5" strokeWidth={2} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Highlighting “hidden gems”</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Our platform provides a stage for high-quality, small-to-mid-scale builders who deliver honest work and technical excellence but are often overshadowed by large marketing budgets.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="h-6 w-6 rounded-full bg-[#1A5C35]/10 flex items-center justify-center text-[#1A5C35] dark:text-[#52b788] shrink-0 mt-1">
+                    <CheckCircle className="h-4.5 w-4.5" strokeWidth={2} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-foreground">Enabling professional independence</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We do not replace the owner’s responsibility; we sharpen it. By providing comparative project scale data and technical prompts, we help owners ask the right questions and conduct better independent due diligence.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="relative py-16 sm:py-20 bg-background border-b border-border/20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold font-times text-[#0D3B21] dark:text-white leading-tight">
+              Our Operational Values
+            </h2>
+            <p className="mt-4 text-sm text-muted-foreground">
+              The fundamental principles that guide every discovery matching and regulatory context we compile.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {values.map((v, idx) => {
+              const Icon = v.icon;
+              return (
+                <div
+                  key={v.title}
+                  className="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group transition-all duration-700 ease-spring hover:scale-[1.01]"
+                >
+                  <div className="h-full rounded-[calc(2rem-0.5rem)] bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 p-6 sm:p-8 flex items-start gap-4 shadow-soft">
+                    <div className="h-10 w-10 rounded-xl bg-[#1A5C35]/10 flex items-center justify-center text-[#1A5C35] dark:text-[#52b788] shrink-0">
+                      <Icon className="h-5 w-5" strokeWidth={1.25} />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-base font-bold font-times text-[#0D3B21] dark:text-white">
+                        {v.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                        {v.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative py-16 sm:py-20 bg-[#FAF9F6] dark:bg-[#07150e] overflow-hidden">
+        <div className="absolute inset-0 bg-[#FAF9F6]/20 dark:bg-transparent pointer-events-none" />
+        <div
+          className="absolute left-1/2 bottom-[-10%] w-[35vw] h-[35vw] opacity-10 dark:opacity-[0.03] pointer-events-none rounded-full -translate-x-1/2"
+          style={{
+            background: "radial-gradient(circle, #F3B24A, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center space-y-8">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-times text-[#0D3B21] dark:text-white leading-tight">
+            Ready to build with absolute transparency?
+          </h2>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            Join thousands of property owners and verified builders who rely on Jointlly to secure real estate construction pipelines.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* Button-in-button */}
+            <Link
+              to="/contact"
+              className="w-full sm:w-auto inline-flex items-center justify-between rounded-full bg-gradient-to-r from-[#1A5C35] to-[#0D3B21] hover:from-[#217041] hover:to-[#0f4728] pl-6 pr-2 py-2 text-sm font-bold text-white shadow-lg transition-colors"
+            >
+              <span className="font-sans tracking-wide pr-6">Contact Us</span>
+              <div className="h-8 h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+                <ArrowRight className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
+            </Link>
+            <Link
+              to="/"
+              className="w-full sm:w-auto text-xs font-bold text-[#0D3B21] dark:text-white hover:underline uppercase tracking-wider"
+            >
+              Explore Platform
+            </Link>
+          </div>
         </div>
       </section>
 

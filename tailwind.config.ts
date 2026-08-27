@@ -18,12 +18,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        westack: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        times: ['Times New Roman', 'Times', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Playfair Display"', 'Georgia', 'Cambria', 'serif'],
+        heading: ['"Playfair Display"', 'Georgia', 'Cambria', 'serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'Cambria', 'serif'],
+        westack: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+        times: ['"Playfair Display"', 'Georgia', 'Cambria', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",

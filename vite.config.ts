@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import viteCompression from "vite-plugin-compression2";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -20,21 +19,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    // Add compression for production builds
-    mode === "production" &&
-      viteCompression({
-        algorithm: "gzip",
-        exclude: [/\.(br)$/, /\.(gz)$/],
-        threshold: 1024, // Only compress files larger than 1KB
-      }),
-    mode === "production" &&
-      viteCompression({
-        algorithm: "brotliCompress",
-        exclude: [/\.(br)$/, /\.(gz)$/],
-        threshold: 1024,
-        filename: "[path][base].br",
-      }),
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

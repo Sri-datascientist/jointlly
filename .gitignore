@@ -39,3 +39,17 @@ jointlly_backend/generated_exports/
 *.sln
 *.sw?
 Thumbs.db
+
+.vercel
+
+# Agent / Tooling temporary files
+.agents/
+temp_skills/
+skills-lock.json
+
+# Root level media scratch files
+/*.jpeg
+/*.jpg
+/*.png
+/*.mp4
+/*.webp

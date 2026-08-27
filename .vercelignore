@@ -1,0 +1,29 @@
+node_modules
+.git
+dist
+coverage
+.vscode
+.idea
+*.log
+.env
+.env.local
+.env.*.local
+
+# Backend & Android native folders
+jointlly_backend
+android
+
+# Large root media & video files ONLY in the root directory (leading slash prevents ignoring src/assets)
+/*.mp4
+/*.jpeg
+/*.png
+/*.jpg
+/*.webm
+
+# Temporary & AI agent directories
+.agents
+.cursor
+temp_skills
+scratch
+
+
