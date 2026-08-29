@@ -28,10 +28,10 @@ const pillars = [
   },
   {
     icon: Lock,
-    title: "Escrow Financial Security",
-    tag: "Capital Safety",
+    title: "Structured Contract Governance",
+    tag: "Legal Security",
     description:
-      "Securing project capital via milestone-linked escrow accounts. Funds are released strictly upon verified completion of execution checkpoints.",
+      "Standardized joint-venture and construction contract frameworks that protect both landowners and builders with transparent, enforceable terms.",
     image: undevelopedUrbanLandImg,
     imageAlt: "Undeveloped urban land aerial view",
   },

@@ -24,8 +24,8 @@ const steps = [
   {
     icon: FileCheck,
     step: "04",
-    title: "Milestone Escrow Sign-off",
-    description: "Deploy secure contracting templates and link capital release directly to third-party verified construction checkpoints.",
+    title: "Transparent Contract Sign-off",
+    description: "Deploy standardized legal contract templates and structure clear, verified milestone checkpoints for seamless project execution.",
   },
 ] as const;
 
