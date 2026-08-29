@@ -32,35 +32,35 @@ const PricingSectionHeader = ({
   description: string;
 }) => (
   <div className="flex items-start gap-3 mb-6 sm:mb-8">
-    <div className="w-10 h-10 shrink-0 rounded-xl border border-[#1A5C35]/20 bg-gradient-to-br from-[#1A5C35]/15 to-[#52b788]/10 flex items-center justify-center shadow-sm">
-      <CheckCircle2 className="w-5 h-5 text-[#1A5C35]" />
+    <div className="w-10 h-10 shrink-0 rounded-xl border border-[#1A5C35]/20 dark:border-[#52b788]/30 bg-gradient-to-br from-[#1A5C35]/15 to-[#52b788]/10 flex items-center justify-center shadow-sm">
+      <CheckCircle2 className="w-5 h-5 text-[#1A5C35] dark:text-[#52b788]" />
     </div>
     <div>
-      <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B21]">{title}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B21] dark:text-white">{title}</h2>
       <p className="text-sm sm:text-base text-muted-foreground mt-1">{description}</p>
     </div>
   </div>
 );
 
 const PayerBadge = ({ payer }: { payer: string }) => (
-  <div className="shrink-0 rounded-xl border border-[#1A5C35]/15 bg-white/70 px-3 py-2 text-right backdrop-blur-sm">
-    <span className="block text-[10px] uppercase tracking-wider text-[#1A5C35]/70 font-semibold">
+  <div className="shrink-0 rounded-xl border border-[#1A5C35]/15 dark:border-white/15 bg-white/70 dark:bg-white/10 px-3 py-2 text-right backdrop-blur-sm">
+    <span className="block text-[10px] uppercase tracking-wider text-[#1A5C35]/70 dark:text-[#F3B24A] font-semibold">
       Payer
     </span>
-    <span className="text-sm font-semibold text-[#0D3B21]">{payer}</span>
+    <span className="text-sm font-semibold text-[#0D3B21] dark:text-white">{payer}</span>
   </div>
 );
 
 const GatekeeperFeeDisplay = ({ fee }: { fee: GatekeeperFee }) => {
   if (fee.type === "range") {
     return (
-      <div className="w-full rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1.5">
+      <div className="w-full rounded-xl border border-[#1A5C35]/12 dark:border-white/10 bg-white/80 dark:bg-[#061020]/90 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 dark:text-[#F3B24A] mb-1.5">
           Fee range
         </p>
-        <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21] leading-snug">
+        <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21] dark:text-white leading-snug">
           {formatRupee(fee.min)}
-          <span className="mx-2 text-sm font-semibold text-[#1A5C35]/55">to</span>
+          <span className="mx-2 text-sm font-semibold text-[#1A5C35]/55 dark:text-white/60">to</span>
           {formatRupee(fee.max)}
         </p>
       </div>
@@ -68,15 +68,15 @@ const GatekeeperFeeDisplay = ({ fee }: { fee: GatekeeperFee }) => {
   }
 
   return (
-    <div className="w-full rounded-xl border border-[#1A5C35]/12 bg-white/80 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
-      <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 mb-1.5">
+    <div className="w-full rounded-xl border border-[#1A5C35]/12 dark:border-white/10 bg-white/80 dark:bg-[#061020]/90 px-4 py-4 text-center shadow-[0_2px_8px_rgba(26,92,53,0.06)]">
+      <p className="text-[10px] uppercase tracking-wider font-semibold text-[#1A5C35]/70 dark:text-[#F3B24A] mb-1.5">
         Entry fee
       </p>
-      <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21]">
+      <p className="text-base sm:text-lg font-bold tabular-nums text-[#0D3B21] dark:text-white">
         {formatRupee(fee.amount)}
       </p>
       {fee.label ? (
-        <p className="mt-1 text-xs font-medium text-[#1A2E1A]/55 capitalize">{fee.label}</p>
+        <p className="mt-1 text-xs font-medium text-[#1A2E1A]/55 dark:text-white/60 capitalize">{fee.label}</p>
       ) : null}
     </div>
   );
@@ -135,7 +135,7 @@ const successFeePricing: SuccessFeeRow[] = [
 ];
 
 const pricingCardShell =
-  "group relative overflow-hidden rounded-2xl border border-[#1A5C35]/20 shadow-[0_4px_24px_rgba(26,92,53,0.1),inset_0_1px_0_rgba(255,255,255,0.8)]";
+  "group relative overflow-hidden rounded-2xl border border-[#1A5C35]/20 dark:border-white/10 shadow-[0_4px_24px_rgba(26,92,53,0.1)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.5)]";
 
 const GatekeeperCard = ({ row, index }: { row: GatekeeperRow; index: number }) => (
   <motion.div
@@ -145,12 +145,12 @@ const GatekeeperCard = ({ row, index }: { row: GatekeeperRow; index: number }) =
     viewport={{ once: true, amount: 0.25 }}
     className={pricingCardShell}
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#e8f5ec]" />
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.1),transparent_55%)]" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#e8f5ec] dark:from-[#081628] dark:via-[#061020] dark:to-[#040a14]" />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.1),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.06),transparent_55%)]" />
 
-    <div className="relative border-b border-[#1A5C35]/12 bg-gradient-to-r from-[#1A5C35]/10 via-[#52b788]/8 to-transparent px-5 sm:px-6 py-4 sm:py-5">
+    <div className="relative border-b border-[#1A5C35]/12 dark:border-white/10 bg-gradient-to-r from-[#1A5C35]/10 via-[#52b788]/8 to-transparent dark:from-[#1A5C35]/25 dark:via-[#52b788]/15 dark:to-transparent px-5 sm:px-6 py-4 sm:py-5">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-times text-xl sm:text-2xl text-[#0D3B21] tracking-tight leading-tight">
+        <h3 className="font-times text-xl sm:text-2xl text-[#0D3B21] dark:text-white tracking-tight leading-tight">
           {row.category}
         </h3>
         <PayerBadge payer={row.payer} />
@@ -160,7 +160,7 @@ const GatekeeperCard = ({ row, index }: { row: GatekeeperRow; index: number }) =
     <div className="relative p-5 sm:p-6 space-y-4 text-center">
       <GatekeeperFeeDisplay fee={row.fee} />
       {row.notes ? (
-        <p className="text-sm text-[#1A2E1A]/65 leading-relaxed border-t border-[#1A5C35]/10 pt-4">
+        <p className="text-sm text-[#1A2E1A]/65 dark:text-white/70 leading-relaxed border-t border-[#1A5C35]/10 dark:border-white/10 pt-4">
           {row.notes}
         </p>
       ) : null}
@@ -176,14 +176,14 @@ const SuccessFeeCard = ({ row, index }: { row: SuccessFeeRow; index: number }) =
     viewport={{ once: true, amount: 0.25 }}
     className={pricingCardShell}
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#e8f5ec]" />
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.12),transparent_55%)]" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#f8fcf9] via-white to-[#e8f5ec] dark:from-[#081628] dark:via-[#061020] dark:to-[#040a14]" />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.12),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_top_right,rgba(82,183,136,0.06),transparent_55%)]" />
 
-    <div className="relative border-b border-[#1A5C35]/12 bg-gradient-to-r from-[#1A5C35]/12 via-[#52b788]/10 to-transparent px-5 sm:px-6 py-4 sm:py-5">
+    <div className="relative border-b border-[#1A5C35]/12 dark:border-white/10 bg-gradient-to-r from-[#1A5C35]/12 via-[#52b788]/10 to-transparent dark:from-[#1A5C35]/25 dark:via-[#52b788]/15 dark:to-transparent px-5 sm:px-6 py-4 sm:py-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="font-times text-xl sm:text-2xl text-[#0D3B21] tracking-tight">{row.category}</h3>
-          <p className="mt-2 inline-flex items-center rounded-full border border-[#1A5C35]/25 bg-white/70 px-3 py-1 text-xs sm:text-sm font-medium text-[#1A5C35] backdrop-blur-sm">
+          <h3 className="font-times text-xl sm:text-2xl text-[#0D3B21] dark:text-white tracking-tight">{row.category}</h3>
+          <p className="mt-2 inline-flex items-center rounded-full border border-[#1A5C35]/25 dark:border-white/20 bg-white/70 dark:bg-white/10 px-3 py-1 text-xs sm:text-sm font-medium text-[#1A5C35] dark:text-[#52b788] backdrop-blur-sm">
             Fee range: {row.percentRange}
           </p>
         </div>
@@ -195,10 +195,10 @@ const SuccessFeeCard = ({ row, index }: { row: SuccessFeeRow; index: number }) =
       {row.tiers.map((tier) => (
         <div
           key={tier.label}
-          className="flex items-center justify-between gap-4 rounded-xl border border-[#1A5C35]/12 bg-white/85 px-4 py-3 shadow-[0_2px_8px_rgba(26,92,53,0.06)] transition-colors group-hover:border-[#1A5C35]/18"
+          className="flex items-center justify-between gap-4 rounded-xl border border-[#1A5C35]/12 dark:border-white/10 bg-white/85 dark:bg-[#061020]/90 px-4 py-3 shadow-[0_2px_8px_rgba(26,92,53,0.06)] transition-colors group-hover:border-[#1A5C35]/18 dark:group-hover:border-white/20"
         >
-          <span className="text-sm text-[#1A2E1A]/75 font-medium">{tier.label}</span>
-          <span className="shrink-0 text-sm font-semibold tabular-nums text-[#0D3B21]">
+          <span className="text-sm text-[#1A2E1A]/75 dark:text-white/80 font-medium">{tier.label}</span>
+          <span className="shrink-0 text-sm font-semibold tabular-nums text-[#0D3B21] dark:text-white">
             {tier.percent}
           </span>
         </div>
@@ -208,8 +208,8 @@ const SuccessFeeCard = ({ row, index }: { row: SuccessFeeRow; index: number }) =
 );
 
 const InfoNote = ({ children }: { children: ReactNode }) => (
-  <div className="mt-6 sm:mt-8 rounded-2xl border border-[#1A5C35]/15 bg-gradient-to-br from-[#f4faf6] to-white px-4 sm:px-5 py-4 shadow-[0_2px_12px_rgba(26,92,53,0.06)]">
-    <p className="text-sm text-[#1A2E1A]/70 leading-relaxed">{children}</p>
+  <div className="mt-6 sm:mt-8 rounded-2xl border border-[#1A5C35]/15 dark:border-white/10 bg-gradient-to-br from-[#f4faf6] to-white dark:from-[#081628] dark:to-[#040a14] px-4 sm:px-5 py-4 shadow-[0_2px_12px_rgba(26,92,53,0.06)]">
+    <p className="text-sm text-[#1A2E1A]/70 dark:text-white/70 leading-relaxed">{children}</p>
   </div>
 );
 
