@@ -68,12 +68,28 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
   const isHero = variant === "hero";
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const isDark = mounted && resolvedTheme === "dark";
+  const isTransparentHero = isHero && !scrolled;
+  const isDarkForLogo = isTransparentHero ? true : isDark;
 
   const handleLogout = () => {
     logout();
@@ -83,11 +99,11 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
   /* ── Shared nav-link classes ── */
   const navLinkBaseClass = cn(
     "navbar-link text-[13px] px-3 py-2 rounded-md transition-colors duration-200 font-normal tracking-[0.08em] uppercase",
-    isHero
+    isTransparentHero
       ? "text-white/90 hover:text-white"
-      : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#1A5C35] dark:hover:text-white"
+      : "text-[#0D3B21]/85 dark:text-white/85 hover:text-[#1A5C35] dark:hover:text-[#52b788]"
   );
-  const navLinkActiveClass = isHero
+  const navLinkActiveClass = isTransparentHero
     ? "text-white font-semibold"
     : "text-[#1A5C35] dark:text-[#52b788] font-semibold";
 
@@ -97,16 +113,19 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50",
-        /* Fully transparent navbar — no backdrop-blur so hero video shows through */
-        "bg-transparent"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isTransparentHero
+          ? "bg-transparent py-1 sm:py-2"
+          : isDark
+            ? "bg-[#050b14]/92 border-b border-white/10 shadow-lg backdrop-blur-md py-0 sm:py-1"
+            : "bg-[#FAF9F6]/92 border-b border-[#1A5C35]/15 shadow-md backdrop-blur-md py-0 sm:py-1 text-[#0D3B21]"
       )}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[env(safe-area-inset-top,0px)]">
         <div className="flex items-center justify-between h-16 sm:h-18 md:h-20">
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center shrink-0 min-h-[44px] min-w-[44px]">
-            <Logo isDark={isHero || isDark} />
+            <Logo isDark={isDarkForLogo} />
           </Link>
 
           {/* ── Desktop Navigation (centered) ── */}
@@ -129,10 +148,10 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                   <NavigationMenuTrigger
                     className={cn(
                       "navbar-link text-[13px] px-3 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent tracking-[0.08em] uppercase font-normal",
-                      isHero
+                      isTransparentHero
                         ? "text-white/90 hover:text-white"
-                        : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#1A5C35] dark:hover:text-white",
-                      location.pathname.startsWith("/products") && (isHero ? "text-white font-semibold" : "text-[#1A5C35] dark:text-[#52b788] font-semibold")
+                        : "text-[#0D3B21]/85 dark:text-white/85 hover:text-[#1A5C35] dark:hover:text-[#52b788]",
+                      location.pathname.startsWith("/products") && (isTransparentHero ? "text-white font-semibold" : "text-[#1A5C35] dark:text-[#52b788] font-semibold")
                     )}
                   >
                     Products
@@ -256,14 +275,26 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
 
           {/* ── Right side: Theme toggle + Auth ── */}
           <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle variant="navbar" className={isHero ? "text-white/90 hover:bg-white/10" : "text-[#0D3B21]/80 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10"} />
+            <ThemeToggle
+              variant="navbar"
+              className={
+                isTransparentHero
+                  ? "text-white/90 hover:bg-white/10 hover:text-white"
+                  : "text-[#0D3B21] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 hover:text-[#0D3B21] dark:hover:text-white"
+              }
+            />
 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-5 py-2 rounded-full border border-border/80 dark:border-white/30 text-[#0D3B21]/90 dark:text-white hover:border-[#1A5C35]/60 dark:hover:border-white/60 hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-200 outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                    className={cn(
+                      "flex items-center gap-2 px-5 py-2 rounded-full border transition-all duration-200 outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
+                      isTransparentHero
+                        ? "border-white/30 text-white hover:bg-white/10"
+                        : "border-[#1A5C35]/25 dark:border-white/30 text-[#0D3B21] dark:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                    )}
                   >
                     <User className="w-4 h-4 animate-pulse-subtle" />
                     <span className="text-[13px] font-medium tracking-[0.06em] uppercase">
@@ -299,7 +330,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                   size="sm"
                   className={cn(
                     "gap-2 text-[13px] tracking-[0.06em] uppercase",
-                    isHero
+                    isTransparentHero
                       ? "text-white/90 hover:text-white hover:bg-white/10"
                       : "text-[#0D3B21]/80 dark:text-white/80 hover:text-[#0D3B21] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
                   )}
@@ -312,9 +343,9 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                   size="sm"
                   className={cn(
                     "gap-2 text-[13px] tracking-[0.06em] uppercase rounded-full border bg-transparent px-5 py-2 transition-all duration-200",
-                    isHero
+                    isTransparentHero
                       ? "border-white/40 text-white hover:border-white/70 hover:bg-white/10"
-                      : "border-border/80 dark:border-white/30 text-[#0D3B21] dark:text-white hover:border-[#0D3B21]/60 dark:hover:border-white/60 hover:bg-black/5 dark:hover:bg-white/10"
+                      : "border-[#1A5C35]/30 dark:border-white/30 text-[#0D3B21] dark:text-white hover:border-[#1A5C35] dark:hover:border-white/60 hover:bg-[#1A5C35]/10 dark:hover:bg-white/10"
                   )}
                 >
                   <UserPlus className="w-4 h-4" />
@@ -326,8 +357,15 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
 
           {/* ── Mobile Menu Button ── */}
           <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle variant="navbar" className="navbar-theme-toggle" />
-            <MobileMenu />
+            <ThemeToggle
+              variant="navbar"
+              className={
+                isTransparentHero
+                  ? "text-white/90 hover:bg-white/10 hover:text-white"
+                  : "text-[#0D3B21] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 hover:text-[#0D3B21] dark:hover:text-white"
+              }
+            />
+            <MobileMenu isTransparentHero={isTransparentHero} />
           </div>
         </div>
       </div>
@@ -335,7 +373,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
   );
 };
 
-const MobileMenu = () => {
+const MobileMenu = ({ isTransparentHero }: { isTransparentHero?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
@@ -351,7 +389,12 @@ const MobileMenu = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 -mr-1 rounded-md navbar-link hover:bg-white/10 transition-colors touch-target flex items-center justify-center"
+        className={cn(
+          "p-2.5 -mr-1 rounded-md transition-colors touch-target flex items-center justify-center",
+          isTransparentHero
+            ? "text-white hover:bg-white/10"
+            : "text-[#0D3B21] dark:text-white hover:bg-black/5 dark:hover:bg-white/10"
+        )}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
       >
