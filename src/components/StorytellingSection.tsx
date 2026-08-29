@@ -263,23 +263,19 @@ const StorytellingSection = () => {
         {/* SECTION 1: The Core Value Proposition Reveal */}
         <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
           <RevealText>
-            Developing real estate is complex. Mistrust,{" "}
-            <span className="text-[#C9952A] dark:text-[#D4AF37] underline decoration-[#C9952A]/30 dark:decoration-[#D4AF37]/30 decoration-wavy decoration-2 underline-offset-4">
-              delays
+            Real estate development shouldn't be stalled by mistrust or{" "}
+            <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
+              project delays
             </span>
-            , and lack of transparency derail projects.{" "}
+            .{" "}
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-extrabold">
               Jointlly
             </span>{" "}
-            acts as a neutral{" "}
-            <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
-              trust layer
-            </span>
-            —pre-screening builders, verifying{" "}
+            protects both landowners and builders by verifying{" "}
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
               legal land records
             </span>
-            , and securing{" "}
+            , vetting qualified partners, and securing transparent{" "}
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
               contract terms
             </span>
@@ -396,36 +392,34 @@ const StorytellingSection = () => {
             </div>
 
             {/* Role selection buttons - Interactive Bento Tiles (Horizontal reference design with theme colors) */}
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto mb-8 sm:mb-12">
               <button
                 type="button"
                 onClick={() => handleRoleSelection("landowner")}
                 className={cn(
-                  "relative flex items-center gap-6 p-6 sm:p-7 rounded-[2rem] border text-left transition-all duration-700 ease-spring hover:scale-[1.02] active:scale-[0.99] group/card overflow-hidden w-full",
+                  "relative flex items-center gap-3.5 sm:gap-6 p-4 sm:p-7 rounded-[1.5rem] sm:rounded-[2rem] border text-left transition-all duration-700 ease-spring hover:scale-[1.02] active:scale-[0.99] group/card overflow-hidden w-full",
                   userRole === "landowner"
                     ? "border-[#52b788] bg-gradient-to-br from-[#1A5C35] via-[#227041] to-[#52b788] text-white shadow-[0_20px_50px_rgba(26,92,53,0.45)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] ring-2 ring-[#52b788]/30"
                     : "border-[#1A5C35]/50 dark:border-[#52b788]/25 bg-gradient-to-br from-[#0D3B21] to-[#1A5C35] text-white/90 hover:border-[#1A5C35] hover:shadow-lg backdrop-blur-sm"
                 )}
               >
-
-
                 {/* Circular Icon Wrapper */}
                 <div className={cn(
-                  "h-14 w-14 min-w-14 rounded-full flex items-center justify-center border shadow-sm transition-all duration-500",
+                  "h-11 w-11 min-w-11 sm:h-14 sm:w-14 sm:min-w-14 rounded-full flex items-center justify-center border shadow-sm transition-all duration-500 shrink-0",
                   userRole === "landowner"
                     ? "bg-white/20 border-white/30 text-white"
                     : "bg-white/5 border-white/10 text-white/60"
                 )}>
-                  <User className="h-6 w-6" strokeWidth={2} />
+                  <User className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
                 </div>
 
                 {/* Text Content */}
-                <div className="flex-1 flex flex-col items-start text-left pr-2">
-                  <span className="font-extrabold text-lg text-white transition-colors duration-500">
+                <div className="flex-1 min-w-0 flex flex-col items-start text-left pr-1">
+                  <span className="font-extrabold text-base sm:text-lg text-white transition-colors duration-500 leading-snug">
                     I Have Land
                   </span>
                   <span className={cn(
-                    "text-xs mt-1.5 font-bold leading-relaxed transition-colors duration-500",
+                    "text-[11px] sm:text-xs mt-1 font-bold leading-normal sm:leading-relaxed transition-colors duration-500",
                     userRole === "landowner" ? "text-white/90" : "text-white/60"
                   )}>
                     Verify details, discover and match with validated builders.
@@ -434,7 +428,7 @@ const StorytellingSection = () => {
 
                 {/* Right Arrow Indicator */}
                 <div className={cn(
-                  "h-9 w-9 min-w-9 rounded-full flex items-center justify-center transition-all duration-500",
+                  "h-8 w-8 min-w-8 sm:h-9 sm:w-9 sm:min-w-9 rounded-full flex items-center justify-center transition-all duration-500 shrink-0",
                   userRole === "landowner"
                     ? "bg-white text-[#1A5C35] shadow-md rotate-90"
                     : "bg-white/10 text-white/70 group-hover/card:bg-[#1A5C35] group-hover/card:text-white group-hover/card:translate-x-1"
@@ -447,31 +441,29 @@ const StorytellingSection = () => {
                 type="button"
                 onClick={() => handleRoleSelection("builder")}
                 className={cn(
-                  "relative flex items-center gap-6 p-6 sm:p-7 rounded-[2rem] border text-left transition-all duration-700 ease-spring hover:scale-[1.02] active:scale-[0.99] group/card overflow-hidden w-full",
+                  "relative flex items-center gap-3.5 sm:gap-6 p-4 sm:p-7 rounded-[1.5rem] sm:rounded-[2rem] border text-left transition-all duration-700 ease-spring hover:scale-[1.02] active:scale-[0.99] group/card overflow-hidden w-full",
                   userRole === "builder"
                     ? "border-[#F3B24A] bg-gradient-to-br from-[#9a7228] via-[#C9952A] to-[#F3B24A] text-white shadow-[0_20px_50px_rgba(201,149,42,0.45)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] ring-2 ring-[#F3B24A]/30"
                     : "border-[#C9952A]/50 dark:border-[#F3B24A]/25 bg-gradient-to-br from-[#805e1a] to-[#a87c22] text-white/90 hover:border-[#C9952A] hover:shadow-lg backdrop-blur-sm"
                 )}
               >
-
-
                 {/* Circular Icon Wrapper */}
                 <div className={cn(
-                  "h-14 w-14 min-w-14 rounded-full flex items-center justify-center border shadow-sm transition-all duration-500",
+                  "h-11 w-11 min-w-11 sm:h-14 sm:w-14 sm:min-w-14 rounded-full flex items-center justify-center border shadow-sm transition-all duration-500 shrink-0",
                   userRole === "builder"
                     ? "bg-white/20 border-white/30 text-white"
                     : "bg-white/5 border-white/10 text-white/60"
                 )}>
-                  <Building2 className="h-6 w-6" strokeWidth={2} />
+                  <Building2 className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
                 </div>
 
                 {/* Text Content */}
-                <div className="flex-1 flex flex-col items-start text-left pr-2">
-                  <span className="font-extrabold text-lg text-white transition-colors duration-500">
+                <div className="flex-1 min-w-0 flex flex-col items-start text-left pr-1">
+                  <span className="font-extrabold text-base sm:text-lg text-white transition-colors duration-500 leading-snug">
                     I Build &amp; Design
                   </span>
                   <span className={cn(
-                    "text-xs mt-1.5 font-bold leading-relaxed transition-colors duration-500",
+                    "text-[11px] sm:text-xs mt-1 font-bold leading-normal sm:leading-relaxed transition-colors duration-500",
                     userRole === "builder" ? "text-white/90" : "text-white/60"
                   )}>
                     Showcase builder profile, bid on construction or JVs.
@@ -480,7 +472,7 @@ const StorytellingSection = () => {
 
                 {/* Right Arrow Indicator */}
                 <div className={cn(
-                  "h-9 w-9 min-w-9 rounded-full flex items-center justify-center transition-all duration-500",
+                  "h-8 w-8 min-w-8 sm:h-9 sm:w-9 sm:min-w-9 rounded-full flex items-center justify-center transition-all duration-500 shrink-0",
                   userRole === "builder"
                     ? "bg-white text-[#C9952A] shadow-md rotate-90"
                     : "bg-white/10 text-white/70 group-hover/card:bg-[#C9952A] group-hover/card:text-white group-hover/card:translate-x-1"
