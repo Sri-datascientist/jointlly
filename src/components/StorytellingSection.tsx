@@ -314,31 +314,31 @@ const StorytellingSection = () => {
                 className="p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group transition-all duration-700 ease-spring hover:scale-[1.01]"
               >
                 {/* Inner Core container (Double-Bezel architecture) */}
-                <div className="h-full rounded-[calc(2.5rem-0.5rem)] relative overflow-hidden aspect-[16/10] bg-muted/10 dark:bg-muted/5 border border-border/40 dark:border-border/10 cursor-default">
+                <div className="h-full rounded-[calc(2.5rem-0.5rem)] relative overflow-hidden aspect-[16/10] bg-black border border-border/40 dark:border-border/10 cursor-default">
                   {/* Visual Asset (Video loops with image fallback) */}
                   <div className="absolute inset-0 w-full h-full overflow-hidden">
                     <video
                       src={v.video}
                       poster={v.image}
-                      className="w-full h-full object-cover scale-100 group-hover:scale-[1.04] transition-transform duration-1000 ease-out grayscale group-hover:grayscale-0 opacity-40 dark:opacity-30 group-hover:opacity-75 dark:group-hover:opacity-55"
+                      className="w-full h-full object-cover scale-100 group-hover:scale-[1.04] transition-transform duration-1000 ease-out grayscale group-hover:grayscale-0 opacity-55 dark:opacity-45 group-hover:opacity-85 dark:group-hover:opacity-65"
                       autoPlay
                       loop
                       muted
                       playsInline
                     />
-                    {/* Premium overlay gradients */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+                    {/* Premium overlay gradients for high text contrast */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 pointer-events-none" />
                   </div>
 
                   {/* Editorial content */}
                   <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col justify-end text-white z-10">
-                    <p className="text-[#F3B24A] font-bold text-xs uppercase tracking-widest mb-1.5">
+                    <p className="text-[#F3B24A] font-extrabold text-xs uppercase tracking-widest mb-1.5 shadow-sm">
                       {v.tag}
                     </p>
-                    <h4 className="font-times text-xl sm:text-2xl font-semibold mb-2">
+                    <h4 className="font-times text-xl sm:text-2xl font-bold mb-2 text-white drop-shadow-md">
                       {v.title}
                     </h4>
-                    <p className="text-white/85 text-xs sm:text-sm leading-relaxed max-w-md opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed max-w-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 translate-y-0 sm:translate-y-2 sm:group-hover:translate-y-0 transition-all duration-500 ease-out drop-shadow-sm">
                       {v.description}
                     </p>
                   </div>
