@@ -50,8 +50,8 @@ const Logo = ({ isDark }: { isDark: boolean }) => {
 
       {/* Wordmark */}
       <text x="52" y="42"
-        fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif"
-        fontSize="30" fontWeight="300" letterSpacing="1.5"
+        fontFamily="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        fontSize="32" fontWeight="700" letterSpacing="1.2"
         fill={textColor}>jointlly</text>
     </svg>
   );
@@ -98,14 +98,14 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
 
   /* ── Shared nav-link classes ── */
   const navLinkBaseClass = cn(
-    "navbar-link text-[13px] px-3 py-2 rounded-md transition-colors duration-200 font-normal tracking-[0.08em] uppercase",
+    "navbar-link text-[13px] sm:text-[14px] px-3.5 py-2 rounded-md transition-colors duration-200 font-bold tracking-[0.05em] uppercase",
     isTransparentHero
       ? "text-white/90 hover:text-white"
-      : "text-[#0D3B21]/85 dark:text-white/85 hover:text-[#1A5C35] dark:hover:text-[#52b788]"
+      : "text-[#0D3B21] dark:text-white/90 hover:text-[#1A5C35] dark:hover:text-[#52b788]"
   );
   const navLinkActiveClass = isTransparentHero
-    ? "text-white font-semibold"
-    : "text-[#1A5C35] dark:text-[#52b788] font-semibold";
+    ? "text-white font-extrabold"
+    : "text-[#1A5C35] dark:text-[#52b788] font-extrabold";
 
   return (
     <motion.nav
@@ -147,11 +147,11 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                     className={cn(
-                      "navbar-link text-[13px] px-3 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent tracking-[0.08em] uppercase font-normal",
+                      "navbar-link text-[13px] sm:text-[14px] px-3.5 py-2 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent tracking-[0.05em] uppercase font-bold",
                       isTransparentHero
                         ? "text-white/90 hover:text-white"
-                        : "text-[#0D3B21]/85 dark:text-white/85 hover:text-[#1A5C35] dark:hover:text-[#52b788]",
-                      location.pathname.startsWith("/products") && (isTransparentHero ? "text-white font-semibold" : "text-[#1A5C35] dark:text-[#52b788] font-semibold")
+                        : "text-[#0D3B21] dark:text-white/90 hover:text-[#1A5C35] dark:hover:text-[#52b788]",
+                      location.pathname.startsWith("/products") && (isTransparentHero ? "text-white font-extrabold" : "text-[#1A5C35] dark:text-[#52b788] font-extrabold")
                     )}
                   >
                     Products
