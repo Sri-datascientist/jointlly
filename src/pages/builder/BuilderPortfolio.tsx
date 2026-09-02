@@ -301,7 +301,7 @@ function BuilderComparisonPreview({
       <div>
         <h3 className="text-base font-semibold text-[#1a2e22]">Marketplace comparison preview</h3>
         <p className="mt-1 text-xs text-[#5c6b5f]">
-          How landowners see your profile when comparing builders — including delivery stats and past projects.
+          How landowners see your profile when comparing builders, including delivery stats and past projects.
         </p>
       </div>
       <BuilderComparisonTable columns={[column]} />
@@ -1382,7 +1382,7 @@ function InteriorPanel({
                 onChange={(e) => setDraft((d) => (d ? { ...d, approximatePricing: e.target.value } : d))}
               />
               <p className="text-xs text-[#5c6b5f]">
-                Reference examples: 1200 sft flat end-to-end; 1500 sft duplex; 1800 sft commercial fit-out; other scopes — combined in this one field.
+                Reference examples: 1200 sft flat end-to-end; 1500 sft duplex; 1800 sft commercial fit-out; other scopes, combined in this one field.
               </p>
             </div>
             <div className="space-y-2 sm:col-span-2">
@@ -1992,7 +1992,7 @@ export default function BuilderPortfolio() {
         {counts.filled > 0 ? (
           <p className="mt-2 text-xs text-[#5c6b5f]">{counts.filled} of 4 profile type(s) have saved data.</p>
         ) : (
-          <p className="mt-2 text-xs text-[#5c6b5f]">No submissions yet — open a tab and follow the link to fill the form.</p>
+          <p className="mt-2 text-xs text-[#5c6b5f]">No submissions yet: open a tab and follow the link to fill the form.</p>
         )}
       </div>
 

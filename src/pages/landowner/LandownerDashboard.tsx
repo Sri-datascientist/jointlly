@@ -236,7 +236,7 @@ const LandownerDashboard = () => {
     <div className="pb-4">
       <DashboardPromoBanner
         title="Create your opportunity listing"
-        description="Publish your request on Opportunities — contract construction, JV/JD, interior, or renovation — so builders can discover and match with you."
+        description="Publish your request on Opportunities (contract construction, JV/JD, interior, or renovation) so builders can discover and match with you."
         icon={Sparkles}
         ctaLabel="Fill the form"
         ctaTo="/landowner/options"

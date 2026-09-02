@@ -36,11 +36,11 @@ const About = () => {
   const steps = [
     {
       title: "Step 1: Define your development intent",
-      description: "Select your project category—residential, commercial, or industrial. By specifying your intent (self-build, joint venture, or renovation), the platform tailors the data environment to your specific regulatory and engineering needs.",
+      description: "Select your project category: residential, commercial, or industrial. By specifying your intent (self-build, joint venture, or renovation), the platform tailors the data environment to your specific regulatory and engineering needs.",
     },
     {
       title: "Step 2: Access indicative context",
-      description: "Before you speak to a builder, understand your land’s potential. Jointlly surfaces high-level indicators relevant to your category, focusing on functional constraints and regulatory nuances that determine long-term viability and legal safety—the silent deal breakers experienced builders know, but owners often overlook.",
+      description: "Before you speak to a builder, understand your land’s potential. Jointlly surfaces high-level indicators relevant to your category, focusing on functional constraints and regulatory nuances that determine long-term viability and legal safety: the silent deal breakers experienced builders know, but owners often overlook.",
     },
     {
       title: "Step 3: Discover scale-matched partners",
@@ -48,7 +48,7 @@ const About = () => {
     },
     {
       title: "Step 4: Comparative shortlisting",
-      description: "Use non-promotional comparison views to evaluate professionals side-by-side—looking past brand names to compare execution patterns, specialized MEP capabilities, and historical project scales.",
+      description: "Use non-promotional comparison views to evaluate professionals side by side, looking past brand names to compare execution patterns, specialized MEP capabilities, and historical project scales.",
     },
     {
       title: "Step 5: Engage with professional clarity",
@@ -62,7 +62,7 @@ const About = () => {
       icon: Home,
       methodology: "Bridging the expertise gap. For private owners, residential construction is deeply personal but technically daunting. Jointlly simplifies the search for “hidden gem” builders and small-scale professionals who deliver high-quality work by providing a structured filtering layer that prioritizes objective track records over marketing budgets.",
       realitiesTitle: "Beyond cost and height",
-      realitiesDesc: "The difference between a legal home and a permanent liability lies in adherence to granular norms—from OC exemptions for smaller plots, to open-to-sky percolation setbacks, to safe staircase geometry. Jointlly highlights these checks so owners do not discover them only at the approval or handover stage.",
+      realitiesDesc: "The difference between a legal home and a permanent liability lies in adherence to granular norms, from OC exemptions for smaller plots, to open-to-sky percolation setbacks, to safe staircase geometry. Jointlly highlights these checks so owners do not discover them only at the approval or handover stage.",
     },
     commercial: {
       label: "Commercial",

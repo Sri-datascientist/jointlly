@@ -471,7 +471,7 @@ export default function LandownerMarketplace() {
       const updated = await landownerClearMatchSelection(matchToClear.id);
       setMatches((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
       setMatchToClear(null);
-      toast.success("Selection cleared — you can tap Select again to test the confirmation email.");
+      toast.success("Selection cleared: you can tap Select again to test the confirmation email.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to clear selection");
     } finally {
@@ -494,7 +494,7 @@ export default function LandownerMarketplace() {
       setSelectedMatch(null);
       if (res.email_dispatched) {
         toast.success(
-          "The builder was emailed with your contact details. You'll get a confirmation email too—if either message doesn't show up, check spam or Promotions and ask the builder to check theirs."
+          "The builder was emailed with your contact details. You'll get a confirmation email too. If either message doesn't show up, check spam or Promotions and ask the builder to check theirs."
         );
       } else {
         toast.warning(
@@ -562,8 +562,8 @@ export default function LandownerMarketplace() {
             placeholder={
               selectedProjectForCards &&
               propertyCityById[selectedProjectForCards.property_id]
-                ? `Optional — e.g. ${propertyCityById[selectedProjectForCards.property_id]}`
-                : "Optional — city or area"
+                ? `Optional: e.g. ${propertyCityById[selectedProjectForCards.property_id]}`
+                : "Optional: city or area"
             }
             className="w-full border border-border rounded-md px-3 py-2 text-sm bg-card"
           />
@@ -629,8 +629,8 @@ export default function LandownerMarketplace() {
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {match.express_interest_landowner
-                      ? "You already confirmed this builder — we emailed them with your contact details for this project."
-                      : "Select to confirm — we will email the builder with your contact details."}
+                      ? "You already confirmed this builder: we emailed them with your contact details for this project."
+                      : "Select to confirm: we will email the builder with your contact details."}
                   </p>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     {match.express_interest_landowner ? (
@@ -688,7 +688,7 @@ export default function LandownerMarketplace() {
                     onClick={openProfile}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Match score not assigned yet — open the profile to compare delivery stats and past projects.
+                    Match score not assigned yet: open the profile to compare delivery stats and past projects.
                   </p>
                   <Button variant="default" className="w-full" onClick={openProfile}>
                     View profile

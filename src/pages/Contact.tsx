@@ -115,7 +115,7 @@ const OfficeMap = ({ className }: { className?: string }) => (
     <div className="h-full rounded-[calc(2rem-0.375rem)] bg-white dark:bg-[#071f12] border border-border/40 dark:border-border/10 overflow-hidden flex flex-col justify-between">
       <div className="relative min-h-[220px] flex-grow w-full bg-[#e8f5ec]">
         <iframe
-          title="Jointlly office — Banashankari, Bengaluru"
+          title="Jointlly office: Banashankari, Bengaluru"
           src={MAP_EMBED_SRC}
           className="absolute inset-0 h-full w-full border-0"
           allowFullScreen
@@ -169,7 +169,7 @@ const Contact = () => {
           : topic === "builder"
             ? "Builder"
             : "General inquiry";
-    const subject = encodeURIComponent(`Jointlly contact — ${topicLabel}`);
+    const subject = encodeURIComponent(`Jointlly contact: ${topicLabel}`);
     const body = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\nTopic: ${topic}\n\n${message}`
     );
@@ -208,7 +208,7 @@ const Contact = () => {
                 Contact <span className="font-times text-[#0D3B21] dark:text-white">Jointlly</span>
               </h1>
               <p className="text-sm sm:text-base text-muted-foreground max-w-lg leading-relaxed">
-                Landowners, builders, or partners—reach out and our Bengaluru team will guide you through the platform with absolute clarity.
+                Landowners, builders, or partners: reach out and our Bengaluru team will guide you through the platform with absolute clarity.
               </p>
             </motion.div>
 

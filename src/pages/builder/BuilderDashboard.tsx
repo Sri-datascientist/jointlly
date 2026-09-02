@@ -92,7 +92,7 @@ const BuilderDashboard = () => {
     <div className="pb-4">
       <DashboardPromoBanner
         title="Create your opportunity listing"
-        description="Complete the form for your service type — contract construction, JV/JD, interior, or renovation — to appear on Opportunities."
+        description="Complete the form for your service type (contract construction, JV/JD, interior, or renovation) to appear on Opportunities."
         icon={Sparkles}
         ctaLabel="Fill the form"
         ctaTo="/builder/options"

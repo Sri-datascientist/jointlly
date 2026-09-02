@@ -132,7 +132,7 @@ const Residential = () => {
                 Residential Construction
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Structured decision enablement for low-rise properties—from single-family private estates (villas) to duplexes and multi-unit investment apartments.
+                Structured decision enablement for low-rise properties, from single-family private estates (villas) to duplexes and multi-unit investment apartments.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link

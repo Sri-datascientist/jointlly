@@ -126,7 +126,7 @@ const Commercial = () => {
                 Commercial Infrastructure
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Dismantling opacity in commercial real estate development—from Grade-A office spaces to retail hubs and adaptive mixed-use environments.
+                Dismantling opacity in commercial real estate development, from Grade-A office spaces to retail hubs and adaptive mixed-use environments.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link

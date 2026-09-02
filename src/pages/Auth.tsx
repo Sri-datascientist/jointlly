@@ -404,7 +404,7 @@ const Auth = () => {
               </div>
               ) : (
                 <p className="text-sm text-muted-foreground rounded-md border border-border bg-muted/30 px-3 py-2">
-                  Admin login — sign in with your administrator credentials.
+                  Admin login: sign in with your administrator credentials.
                 </p>
               )}
 

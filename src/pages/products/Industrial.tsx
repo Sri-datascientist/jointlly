@@ -73,7 +73,7 @@ const Industrial = () => {
     {
       tabLabel: "Capacity Expansion",
       title: "Industrial Retrofitting & Capacity Expansion (Brownfield Projects)",
-      subtitle: "Expanding an active manufacturing plant—adding overhead cranes or heavier machinery—carries severe physical risks:",
+      subtitle: "Expanding an active manufacturing plant (adding overhead cranes or heavier machinery) carries severe physical risks:",
       challenges: [
         "Unvetted contractors welding extra members or modifying structural columns without dynamic load analysis.",
         "Major structural failure or collapse once machinery is commissioned due to incorrect stress estimates.",
@@ -126,7 +126,7 @@ const Industrial = () => {
                 Industrial Engineering
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Structured decision enablement for heavy-duty facilities—from pre-engineered steel envelopes (PEB) to high-tolerance warehouse floors.
+                Structured decision enablement for heavy-duty facilities, from pre-engineered steel envelopes (PEB) to high-tolerance warehouse floors.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link

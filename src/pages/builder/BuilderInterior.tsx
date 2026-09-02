@@ -393,12 +393,12 @@ const BuilderInterior = () => {
                     To help us provide a clear and transparent view for landowners or property owners, could you kindly indicate your tentative starting price for typical projects? (Approximate starting price for reference only)
                   </p>
                   <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
-                    <p className="text-sm font-medium text-foreground">Examples (for your reference — one field below)</p>
+                    <p className="text-sm font-medium text-foreground">Examples (for your reference: one field below)</p>
                     <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-2">
-                      <li>1200 sft flat — end-to-end interior including 2 wooden cupboards, false ceiling, and kitchen countertop (complete set)</li>
-                      <li>1500 sft duplex — living, bedrooms, and kitchen including 2 wooden wardrobes, false ceiling, and wardrobe units (complete set)</li>
-                      <li>1800 sft commercial / office — fit-out including false ceiling, reception desk, and basic partitions (complete set)</li>
-                      <li>Other project types — add any note or range you typically work with</li>
+                      <li>1200 sft flat: end-to-end interior including 2 wooden cupboards, false ceiling, and kitchen countertop (complete set)</li>
+                      <li>1500 sft duplex: living, bedrooms, and kitchen including 2 wooden wardrobes, false ceiling, and wardrobe units (complete set)</li>
+                      <li>1800 sft commercial / office: fit-out including false ceiling, reception desk, and basic partitions (complete set)</li>
+                      <li>Other project types: add any note or range you typically work with</li>
                     </ul>
                   </div>
                   <div>
