@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { optionsPathForUserType } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -188,15 +189,32 @@ const CTASection = () => {
           viewport={{ once: true }}
           className="text-center mb-10 sm:mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
-            <span className="text-foreground">Ready to Build</span>
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#1A5C35]/20 dark:border-[#52b788]/25 bg-[#1A5C35]/8 dark:bg-[#52b788]/10 text-xs uppercase tracking-[0.18em] font-semibold text-[#1A5C35] dark:text-[#52b788] mb-4">
+            <span>Regulatory & Governance Norms</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+            <span className="text-foreground">Building Norms &</span>
             <br />
-            <span className="text-accent">With Confidence</span>
+            <span className="text-accent">Government Guidelines</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-1">
-            Join thousands of landowners and builders who trust Jointlly for transparent, AI-powered
-            real estate decisions.
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-1 leading-relaxed">
+            Stay compliant with active municipal master plans, BBMP & BDA setback rules, RERA project registration requirements, and FAR loading limits before initiating development contracts.
           </p>
+
+          <div className="mt-6 flex flex-wrap justify-center gap-2.5 max-w-2xl mx-auto">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
+              BBMP & BDA Setback Compliance
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
+              RERA Project Registration
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
+              FAR & TDR Calculation Rules
+            </span>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-3xl mx-auto">
