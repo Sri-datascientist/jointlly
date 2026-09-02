@@ -13,7 +13,7 @@ const steps = [
     icon: ShieldCheck,
     step: "02",
     title: "Neutral Validation Check",
-    description: "Jointlly performs regulatory record checks, legal title verification, and compiles builder litigation audits.",
+    description: "Jointlly performs regulatory record checks, initial land ownership verification on demand, and compiles builder litigation audits.",
   },
   {
     icon: GitPullRequest,

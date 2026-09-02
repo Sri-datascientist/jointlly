@@ -40,7 +40,7 @@ const pillars = [
     title: "Regulatory Validation",
     tag: "Risk Mitigation",
     description:
-      "Comprehensive background screening covering landowner title search, regulatory approvals, and builder historical litigation tracking to eliminate real estate transaction risk.",
+      "Comprehensive background screening covering initial land ownership verification on demand, regulatory approvals, and builder historical litigation tracking to eliminate real estate transaction risk.",
     image: aerialUrbanDevelopmentImg,
     imageAlt: "Aerial view of urban development",
   },
