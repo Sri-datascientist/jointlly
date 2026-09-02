@@ -271,11 +271,11 @@ const StorytellingSection = () => {
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-extrabold">
               Jointlly
             </span>{" "}
-            protects both landowners and builders with{" "}
+            protects both landowners and builders by aggregating{" "}
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
-              initial ownership verification on demand
+              primary ownership records
             </span>
-            , vetted partners, and transparent{" "}
+            , vetting qualified partners, and securing transparent{" "}
             <span className="text-[#C9952A] dark:text-[#D4AF37] font-semibold">
               contract terms
             </span>

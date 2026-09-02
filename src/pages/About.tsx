@@ -13,23 +13,23 @@ const About = () => {
   const values = [
     {
       icon: Shield,
-      title: "Trust & Dual Verification",
-      description: "Verified manually through ground audits and algorithmically by AI compiling regulatory records, credentials, and historical delivery metrics.",
+      title: "Dual-Engine Validation",
+      description: "We combine automated algorithmic data indexing with manual expert review. Every initial property profile is mapped by AI and cross-verified by real estate professionals to ensure operational accuracy.",
     },
     {
       icon: TrendingUp,
-      title: "Objective Matchmaking",
-      description: "Eliminating opaque commission agents by scoring builder capabilities, past project scales, and structural specializations against verified land requirements.",
+      title: "Technical Compliance First",
+      description: "Innovation without compliance causes project delays. We leverage machine learning to scan regulatory databases, turning complex building codes into clear, actionable development strategies.",
     },
     {
       icon: Award,
-      title: "Contract Governance",
-      description: "Enforcing clear milestone-based sign-offs, standardized agreements, and transparent fee structures to safeguard capital for both parties.",
+      title: "Risk Mitigation",
+      description: "We establish a baseline of accountability by benchmarking developer delivery timelines, public dispute records, and past structural audits before introductions are made.",
     },
     {
       icon: Heart,
-      title: "Neutral Ecosystem",
-      description: "Providing unbiased discovery for landowners and high-intent opportunities for verified builders without promotional bias or hidden marketing fees.",
+      title: "Ecosystem Alignment",
+      description: "Building transparent real estate partnerships by matching underutilized land with the precise execution capability required to complete the development cycle.",
     },
   ] as const;
 
@@ -62,7 +62,7 @@ const About = () => {
       icon: Home,
       methodology: "Bridging the expertise gap. For private owners, residential construction is deeply personal but technically daunting. Jointlly simplifies the search for “hidden gem” builders and small-scale professionals who deliver high-quality work by providing a structured filtering layer that prioritizes objective track records over marketing budgets.",
       realitiesTitle: "Beyond cost and height",
-      realitiesDesc: "The difference between a legal home and a permanent liability lies in adherence to granular norms, from OC exemptions for smaller plots, to open-to-sky percolation setbacks, to safe staircase geometry. Jointlly highlights these checks so owners do not discover them only at the approval or handover stage.",
+      realitiesDesc: "The viability of a development layout depends heavily on strict local compliance. Jointlly highlights critical technical baselines including Occupancy Certificate eligibility thresholds, open-to-sky percolation requirements, and mandatory staircase accessibility dimensions. By bringing these granular constraints forward early, we ensure owners identify hidden structural bottlenecks long before the final approval or physical handover stage.",
     },
     commercial: {
       label: "Commercial",

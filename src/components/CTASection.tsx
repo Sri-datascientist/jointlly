@@ -190,44 +190,44 @@ const CTASection = () => {
           className="text-center mb-10 sm:mb-14"
         >
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#1A5C35]/20 dark:border-[#52b788]/25 bg-[#1A5C35]/8 dark:bg-[#52b788]/10 text-xs uppercase tracking-[0.18em] font-semibold text-[#1A5C35] dark:text-[#52b788] mb-4">
-            <span>Regulatory & Governance Norms</span>
+            <span>Regulatory & Governance Framework</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
-            <span className="text-foreground">Building Norms &</span>
+            <span className="text-foreground">Navigate Changing</span>
             <br />
-            <span className="text-accent">Government Guidelines</span>
+            <span className="text-accent">Regulatory Landscapes</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-1 leading-relaxed">
-            Stay compliant with active municipal master plans, BBMP & BDA setback rules, RERA project registration requirements, and FAR loading limits before initiating development contracts.
+            Jointlly maps evolving development guidelines directly to your property profile. Stay aligned with updated local zoning laws, setback revisions, and regional infrastructure mandates automatically before your project breaks ground.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2.5 max-w-2xl mx-auto">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
-              BBMP & BDA Setback Compliance
+              Zoning & Master Plan Alignment
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
-              RERA Project Registration
+              Setback & Infrastructure Mandates
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-foreground/80">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1A5C35] dark:text-[#52b788]" />
-              FAR & TDR Calculation Rules
+              Automated Pre-Ground Alignment
             </span>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-3xl mx-auto">
           <PremiumCtaCard
-            title="Landowner"
-            subtitle="Property Owner"
+            title="View Zoning Frameworks"
+            subtitle="Landowner Portal"
             onClick={handleLandownerClick}
             accent="primary"
             delay={0.1}
           />
           <PremiumCtaCard
-            title="Construction Company"
-            subtitle="Builder"
+            title="Assess Builder Track Records"
+            subtitle="Construction Directory"
             onClick={handleBuilderClick}
             accent="gold"
             delay={0.2}
