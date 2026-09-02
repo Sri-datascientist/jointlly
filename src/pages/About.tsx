@@ -13,23 +13,23 @@ const About = () => {
   const values = [
     {
       icon: Shield,
-      title: "Trust & Transparency",
-      description: "We believe in complete transparency. Every project, every transaction, every decision is built on trust and verified by AI.",
+      title: "Trust & Dual Verification",
+      description: "Verified manually through ground audits and algorithmically by AI compiling regulatory records, credentials, and historical delivery metrics.",
     },
     {
       icon: TrendingUp,
-      title: "Innovation First",
-      description: "Leveraging cutting-edge AI technology to revolutionize how real estate projects are planned, executed, and managed.",
+      title: "Objective Matchmaking",
+      description: "Eliminating opaque commission agents by scoring builder capabilities, past project scales, and structural specializations against verified land requirements.",
     },
     {
       icon: Award,
-      title: "Excellence",
-      description: "We set the highest standards for quality, ensuring every project meets our rigorous criteria for success.",
+      title: "Contract Governance",
+      description: "Enforcing clear milestone-based sign-offs, standardized agreements, and transparent fee structures to safeguard capital for both parties.",
     },
     {
       icon: Heart,
-      title: "Community Focus",
-      description: "Building stronger communities by connecting landowners and builders, creating value for everyone involved.",
+      title: "Neutral Ecosystem",
+      description: "Providing unbiased discovery for landowners and high-intent opportunities for verified builders without promotional bias or hidden marketing fees.",
     },
   ] as const;
 
