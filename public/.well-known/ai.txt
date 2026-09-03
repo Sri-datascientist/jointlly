@@ -1,0 +1,6 @@
+# AI Discovery File for Jointlly
+Site: https://jointlly.in
+Organization: Jointlly
+Description: Jointlly is India's verified real estate & construction marketplace connecting landowners with vetted builders for residential, commercial, and industrial projects.
+Contact: contact@jointlly.in
+Sitemap: https://jointlly.in/sitemap.xml

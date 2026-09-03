@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Jointlly | Real Estate &amp; Construction Marketplace Updates</title>
+  <link>https://jointlly.in/</link>
+  <description>Latest verified real estate joint venture listings, market insights, and builder updates across India.</description>
+  <language>en-us</language>
+  <lastBuildDate>Thu, 03 Sep 2026 00:00:00 +0000</lastBuildDate>
+  <atom:link href="https://jointlly.in/rss.xml" rel="self" type="application/rss+xml" />
+  
+  <item>
+    <title>Verified Real Estate Joint Ventures in Bengaluru</title>
+    <link>https://jointlly.in/products/residential</link>
+    <guid>https://jointlly.in/products/residential</guid>
+    <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
+    <description>Discover verified residential joint venture opportunities for landowners and developers in Bengaluru.</description>
+  </item>
+
+  <item>
+    <title>Commercial Real Estate &amp; Turnkey Development Guidelines</title>
+    <link>https://jointlly.in/products/commercial</link>
+    <guid>https://jointlly.in/products/commercial</guid>
+    <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
+    <description>Learn how Jointlly verifies commercial construction developers and streamlines project agreements.</description>
+  </item>
+</channel>
+</rss>

@@ -102,6 +102,8 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/legal/terms" element={<Terms />} />
             <Route path="/legal/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Navigate to="/legal/terms" replace />} />
+            <Route path="/privacy" element={<Navigate to="/legal/privacy" replace />} />
             <Route path="/legal/legal-aid" element={<Legal />} />
             <Route
               path="/help"

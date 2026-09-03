@@ -93,6 +93,7 @@ const HeroSection = () => {
           transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
           className="hero-main-title font-times text-[3.2rem] sm:text-[4.5rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] font-light tracking-[0.18em] sm:tracking-[0.22em] md:tracking-[0.28em] leading-[0.9] mb-6 sm:mb-8 select-none"
         >
+          <span className="sr-only">Jointlly — Verified Real Estate &amp; Construction Marketplace</span>
           <span className="hero-main-title-text">JOINT</span>
           <span className="hero-main-title-accent">L</span>
           <span className="hero-main-title-text">LY</span>

@@ -53,3 +53,4 @@ skills-lock.json
 /*.png
 /*.mp4
 /*.webp
+*.timestamp-*.mjs

@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Jointlly Real Estate Marketplace",
+  "name_for_model": "jointlly_marketplace",
+  "description_for_human": "Verified real estate development & construction marketplace matching landowners and builders.",
+  "description_for_model": "Jointlly provides verified data matching between property owners and construction companies across residential, commercial, industrial, and interior sectors.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://jointlly.in/sitemap.xml"
+  },
+  "logo_url": "https://jointlly.in/image/IMG-20260323-WA0012-removebg-preview.png",
+  "contact_email": "contact@jointlly.in",
+  "legal_info_url": "https://jointlly.in/terms"
+}

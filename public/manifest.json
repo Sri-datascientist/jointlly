@@ -1,0 +1,15 @@
+{
+  "short_name": "Jointlly",
+  "name": "Jointlly | Verified Real Estate & Construction Marketplace",
+  "icons": [
+    {
+      "src": "/image/IMG-20260323-WA0012-removebg-preview.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FAF9F6",
+  "theme_color": "#1A5C35",
+  "display": "standalone"
+}
