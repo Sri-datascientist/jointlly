@@ -328,7 +328,7 @@ const UseCasesSection = () => {
         <div className="mb-5 flex justify-center">
           <Link
             to="/auth"
-            state={{ userType: "landowner", authMode: "login" }}
+            state={{ userType: "landowner", authMode: "signup" }}
             className="font-times inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#52b788] px-10 py-4 text-2xl sm:text-3xl md:text-4xl font-normal tracking-[0.06em] text-white shadow-sm transition hover:bg-[#45a377]"
           >
             Property Owner

@@ -378,10 +378,6 @@ const StorytellingSection = () => {
             
             {/* Centered title section with glassmorphic backdrop panel */}
             <div className="relative z-10 text-center max-w-2xl mx-auto mb-10 sm:mb-14 bg-white/80 dark:bg-[#061020]/75 backdrop-blur-md border border-[#1A5C35]/15 dark:border-white/10 p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-lg">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-border/80 dark:border-border/15 bg-white/80 dark:bg-white/5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#C9952A] dark:text-[#F3B24A] mb-5 sm:mb-6 shadow-sm">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#1A5C35] dark:text-[#52b788]" />
-                <span>Verification Desk</span>
-              </div>
               <h3 className="text-3xl sm:text-5xl font-extrabold font-times text-[#0D3B21] dark:text-white mb-4 sm:mb-5 leading-tight tracking-tight">
                 Get Started with <span className="block text-[#1A5C35] dark:text-[#52b788] mt-1 sm:mt-2 text-4xl sm:text-6xl font-black">Jointlly</span>
               </h3>

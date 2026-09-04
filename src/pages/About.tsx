@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Shield, TrendingUp, Award, Heart, ArrowRight, Sparkles, ChevronDown, CheckCircle, Home, Building, Warehouse } from "lucide-react";
+import { Shield, TrendingUp, Award, Heart, ArrowRight, ChevronDown, CheckCircle, Home, Building, Warehouse } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +85,7 @@ const About = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-12 sm:pb-16 bg-[#FAF9F6] dark:bg-[#07150e] overflow-hidden border-b border-border/20">
+      <section className="relative py-12 sm:py-16 md:py-20 bg-[#FAF9F6] dark:bg-[#07150e] overflow-hidden border-b border-border/20">
         <div className="absolute inset-0 bg-[#FAF9F6]/20 dark:bg-transparent pointer-events-none" />
         <div
           className="absolute right-[-10%] top-[-10%] w-[45vw] h-[45vw] opacity-10 dark:opacity-[0.03] pointer-events-none rounded-full"
@@ -102,10 +102,6 @@ const About = () => {
             transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
             className="space-y-6 text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/15 dark:border-[#52b788]/20 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
-              <Sparkles className="h-3 w-3" />
-              <span>About Us</span>
-            </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.1] tracking-tight">
               Neutral Ecosystem for Real Estate Development
             </h1>
@@ -304,9 +300,6 @@ const About = () => {
             
             {/* Mission core */}
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/10 dark:border-[#52b788]/10 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
-                <span>Our Philosophy</span>
-              </div>
               <h2 className="text-3xl sm:text-4xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.2]">
                 Our Mission
               </h2>

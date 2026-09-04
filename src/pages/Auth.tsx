@@ -150,10 +150,15 @@ const Auth = () => {
           role
         );
         if (registerResponse.requires_verification) {
-          navigate(
-            `/verify-email?email=${encodeURIComponent(formData.email.trim())}&userType=${encodeURIComponent(formData.userType)}`,
-            { replace: true },
-          );
+          try {
+            const response = await apiLogin(formData.email.trim(), formData.password, formData.userType as "builder" | "landowner");
+            login(response);
+            navigate(postLoginRedirectPath(response.user.role, authState?.from), { replace: true });
+          } catch {
+            // If backend requires verification before login, switch to login tab with success note
+            setIsLogin(true);
+            setSuccessMessage("Account created successfully! You can now log in.");
+          }
         } else {
           const response = await apiLogin(formData.email.trim(), formData.password, formData.userType as "builder" | "landowner");
           login(response);
@@ -239,9 +244,24 @@ const Auth = () => {
             </div>
 
             {errors.general && (
-              <p className="text-sm text-destructive mb-4 p-3 rounded-lg bg-destructive/10">
-                {errors.general}
-              </p>
+              <div className="text-sm text-destructive mb-4 p-3 rounded-lg bg-destructive/10 space-y-2">
+                <p>{errors.general}</p>
+                {(errors.general.toLowerCase().includes("already exists") ||
+                  errors.general.toLowerCase().includes("registered") ||
+                  errors.general.toLowerCase().includes("log in") ||
+                  errors.general.toLowerCase().includes("conflict")) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(true);
+                      setErrors({});
+                    }}
+                    className="text-xs font-semibold text-[#1A5C35] dark:text-[#52b788] underline block hover:opacity-80 cursor-pointer"
+                  >
+                    Already registered? Click here to switch to Login →
+                  </button>
+                )}
+              </div>
             )}
 
             {successMessage && (
@@ -374,38 +394,34 @@ const Auth = () => {
               )}
 
               {/* Account type dropdown */}
-              {!isAdminLogin ? (
-              <div>
-                <Label className="mb-2 block">Account type</Label>
-                <Select
-                  value={formData.userType}
-                  onValueChange={(value: "builder" | "landowner") =>
-                    setFormData((prev) => ({ ...prev, userType: value }))
-                  }
-                >
-                  <SelectTrigger className="h-10 bg-primary/5 border-primary/20">
-                    <SelectValue placeholder="Select account type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="builder">
-                      <span className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4" />
-                        Construction Company
-                      </span>
-                    </SelectItem>
-                    <SelectItem value="landowner">
-                      <span className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Landowner
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              ) : (
-                <p className="text-sm text-muted-foreground rounded-md border border-border bg-muted/30 px-3 py-2">
-                  Admin login: sign in with your administrator credentials.
-                </p>
+              {!isAdminLogin && (
+                <div>
+                  <Label className="mb-2 block">Account type</Label>
+                  <Select
+                    value={formData.userType}
+                    onValueChange={(value: "builder" | "landowner") =>
+                      setFormData((prev) => ({ ...prev, userType: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-10 bg-primary/5 border-primary/20">
+                      <SelectValue placeholder="Select account type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="builder">
+                        <span className="flex items-center gap-2">
+                          <Building2 className="w-4 h-4" />
+                          Construction Company
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="landowner">
+                        <span className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          Landowner
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
 
               <div className="space-y-1">

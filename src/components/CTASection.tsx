@@ -149,7 +149,7 @@ const CTASection = () => {
   const handleBuilderClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate("/auth", { state: { userType: "builder" } });
+      navigate("/auth", { state: { userType: "builder", authMode: "signup" } });
     } else if (user) {
       navigate(optionsPathForUserType(user.userType));
     }
@@ -158,7 +158,7 @@ const CTASection = () => {
   const handleLandownerClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate("/auth", { state: { userType: "landowner" } });
+      navigate("/auth", { state: { userType: "landowner", authMode: "signup" } });
     } else if (user) {
       navigate(optionsPathForUserType(user.userType));
     }
@@ -189,9 +189,6 @@ const CTASection = () => {
           viewport={{ once: true }}
           className="text-center mb-10 sm:mb-14"
         >
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#1A5C35]/20 dark:border-[#52b788]/25 bg-[#1A5C35]/8 dark:bg-[#52b788]/10 text-xs uppercase tracking-[0.18em] font-semibold text-[#1A5C35] dark:text-[#52b788] mb-4">
-            <span>Regulatory & Governance Framework</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
             <span className="text-foreground">Navigate Changing</span>
             <br />

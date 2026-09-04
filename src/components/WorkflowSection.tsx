@@ -46,15 +46,6 @@ const WorkflowSection = () => {
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-20 sm:mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#F3B24A]/25 dark:border-[#F3B24A]/20 bg-[#F3B24A]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#9a7228] dark:text-[#F3B24A] mb-4"
-          >
-            <span>The Protocol</span>
-          </motion.div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.1] tracking-tight">
             The Matchmaking Process
           </h2>

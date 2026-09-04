@@ -286,12 +286,35 @@ async function handleResponse<T>(res: Response): Promise<T> {
   }
 
   if (!res.ok) {
-    const message =
-      (data && typeof data === "object" && "detail" in data)
-        ? (Array.isArray((data as { detail: unknown }).detail)
-            ? (data as { detail: unknown[] }).detail.map((d: unknown) => String(d)).join(", ")
-            : String((data as { detail: unknown }).detail))
-        : res.statusText || "Request failed";
+    let message = "";
+    if (data && typeof data === "object") {
+      const obj = data as Record<string, unknown>;
+      if ("detail" in obj && obj.detail) {
+        if (Array.isArray(obj.detail)) {
+          message = obj.detail
+            .map((item: unknown) => {
+              if (item && typeof item === "object" && "msg" in item) {
+                return String((item as { msg: unknown }).msg);
+              }
+              return String(item);
+            })
+            .join(", ");
+        } else {
+          message = String(obj.detail);
+        }
+      } else if ("message" in obj && obj.message) {
+        message = String(obj.message);
+      } else if ("error" in obj && obj.error) {
+        message = String(obj.error);
+      }
+    }
+
+    if (res.status === 409) {
+      message = "User with this email address already exists. Please log in instead.";
+    } else if (!message || message === "[object Object]") {
+      message = res.statusText || `Request failed with status ${res.status}`;
+    }
+
     if (import.meta.env.DEV) console.warn("[API] Error", res.status, res.url, data);
     throw new Error(message);
   }

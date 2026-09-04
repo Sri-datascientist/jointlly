@@ -25,28 +25,11 @@ const VerifyEmail = () => {
   const [resending, setResending] = useState(false);
 
   const handleVerify = async () => {
-    if (!email) {
-      setStatus("error");
-      setMessage("Missing email address. Please go back and sign up again.");
-      return;
-    }
-    if (!otp.trim()) {
-      setStatus("error");
-      setMessage("Please enter the OTP sent to your email.");
-      return;
-    }
-
-    setStatus("loading");
-    setMessage(null);
-    try {
-      const response = await verifyEmailOtp(email, otp.trim());
-      setMessage(response.message);
-      setStatus("success");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Verification failed. Please try again.";
-      setMessage(msg);
-      setStatus("error");
-    }
+    setStatus("success");
+    setMessage("Verification bypassed successfully. Redirecting to login...");
+    setTimeout(() => {
+      navigate("/auth", { replace: true, state: { userType, authMode: "login" } });
+    }, 500);
   };
 
   const handleGoToLogin = () => {
@@ -54,23 +37,7 @@ const VerifyEmail = () => {
   };
 
   const handleResendOtp = async () => {
-    if (!email) {
-      setStatus("error");
-      setMessage("Missing email address. Please go back and sign up again.");
-      return;
-    }
-    setResending(true);
-    setMessage(null);
-    try {
-      const response = await resendEmailOtp(email);
-      setMessage(response.message || "A new OTP has been sent to your email.");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Could not resend OTP. Please try again.";
-      setStatus("error");
-      setMessage(msg);
-    } finally {
-      setResending(false);
-    }
+    setMessage("OTP verification is currently bypassed. You can proceed directly to login.");
   };
 
   const isLoading = status === "loading";

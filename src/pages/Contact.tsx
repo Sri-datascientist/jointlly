@@ -17,7 +17,6 @@ import {
   Building2,
   ArrowUpRight,
   MessageSquare,
-  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -181,7 +180,7 @@ const Contact = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-10 overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0D3B21]/8 via-transparent to-transparent pointer-events-none" />
         <div className="absolute inset-0 jointlly-grid opacity-25 pointer-events-none" />
         <motion.div
@@ -195,15 +194,11 @@ const Contact = () => {
             
             {/* Header Content */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -24 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
               className="lg:col-span-7 space-y-6"
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/15 dark:border-[#52b788]/20 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
-                <Sparkles className="h-3 w-3" />
-                <span>We're here to help</span>
-              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight">
                 Contact <span className="font-times text-[#0D3B21] dark:text-white">Jointlly</span>
               </h1>

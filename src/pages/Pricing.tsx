@@ -114,21 +114,21 @@ const gatekeeperPricing: GatekeeperRow[] = [
 const successFeePricing: SuccessFeeRow[] = [
   {
     category: "Construction",
-    percentRange: "0.75% – 0.5%",
+    percentRange: "0.75%",
     tiers: [
-      { label: "Deal ₹5Cr", percent: "0.75%" },
-      { label: "Deal ₹1Cr – ₹5Cr", percent: "0.6%" },
-      { label: "Deal up to ₹1Cr", percent: "0.5%" },
+      { label: "Deal ≥ ₹5Cr", percent: "0.75%" },
+      { label: "Deal ₹1Cr – ₹5Cr", percent: "0.75%" },
+      { label: "Deal up to ₹1Cr", percent: "0.75%" },
     ],
     payer: "Professional",
   },
   {
     category: "Joint Development",
-    percentRange: "0.75% – 0.5%",
+    percentRange: "0.75%",
     tiers: [
-      { label: "Deal ₹5Cr", percent: "0.75%" },
-      { label: "Deal ₹1Cr – ₹5Cr", percent: "0.6%" },
-      { label: "Deal up to ₹1Cr", percent: "0.5%" },
+      { label: "Deal ≥ ₹5Cr", percent: "0.75%" },
+      { label: "Deal ₹1Cr – ₹5Cr", percent: "0.75%" },
+      { label: "Deal up to ₹1Cr", percent: "0.75%" },
     ],
     payer: "Professional",
   },
@@ -184,7 +184,7 @@ const SuccessFeeCard = ({ row, index }: { row: SuccessFeeRow; index: number }) =
         <div>
           <h3 className="font-times text-xl sm:text-2xl text-[#0D3B21] dark:text-white tracking-tight">{row.category}</h3>
           <p className="mt-2 inline-flex items-center rounded-full border border-[#1A5C35]/25 dark:border-white/20 bg-white/70 dark:bg-white/10 px-3 py-1 text-xs sm:text-sm font-medium text-[#1A5C35] dark:text-[#52b788] backdrop-blur-sm">
-            Fee range: {row.percentRange}
+            Success fee: {row.percentRange}
           </p>
         </div>
         <PayerBadge payer={row.payer} />
@@ -218,7 +218,7 @@ const Pricing = () => {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <Navbar />
 
-      <section className="relative pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-12 md:pb-16 overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 jointlly-grid opacity-30" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div

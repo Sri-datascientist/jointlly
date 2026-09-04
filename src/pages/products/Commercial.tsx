@@ -99,7 +99,7 @@ const Commercial = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center pt-24 pb-10 overflow-hidden bg-gradient-to-b from-[#FAF9F6] to-white dark:from-[#07150e] dark:to-background border-b border-border/20">
+      <section className="relative min-h-[80vh] flex items-center py-12 sm:py-16 md:py-20 overflow-hidden bg-gradient-to-b from-[#FAF9F6] to-white dark:from-[#07150e] dark:to-background border-b border-border/20">
         <div className="absolute inset-0 bg-[#FAF9F6]/20 dark:bg-transparent pointer-events-none" />
         <div
           className="absolute right-[-10%] top-[-10%] w-[45vw] h-[45vw] opacity-10 dark:opacity-[0.03] pointer-events-none rounded-full"
@@ -119,9 +119,6 @@ const Commercial = () => {
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
               className="lg:col-span-7 space-y-6"
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/15 dark:border-[#52b788]/20 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788]">
-                <span>Commercial Assets</span>
-              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.1] tracking-tight">
                 Commercial Infrastructure
               </h1>
@@ -140,7 +137,7 @@ const Commercial = () => {
                 </Link>
                 <Link
                   to="/auth"
-                  state={{ userType: "landowner", authMode: "login" }}
+                  state={{ userType: "landowner", authMode: "signup" }}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-white/40 dark:bg-white/5 px-6 py-2 text-xs font-bold text-foreground hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
                 >
                   Explore Options

@@ -113,7 +113,8 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isHero ? "fixed top-0 left-0 right-0 z-50" : "sticky top-0 z-50",
+        "transition-all duration-300",
         isTransparentHero
           ? "bg-transparent py-1 sm:py-2"
           : isDark
@@ -325,7 +326,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
             ) : (
               <>
                 <Button
-                  onClick={() => navigate("/auth", { state: { userType: "builder" } })}
+                  onClick={() => navigate("/auth", { state: { userType: "builder", authMode: "login" } })}
                   variant="ghost"
                   size="sm"
                   className={cn(
@@ -339,7 +340,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                   Login
                 </Button>
                 <Button
-                  onClick={() => navigate("/auth", { state: { userType: "builder" } })}
+                  onClick={() => navigate("/auth", { state: { userType: "builder", authMode: "signup" } })}
                   size="sm"
                   className={cn(
                     "gap-2 text-[13px] tracking-[0.06em] uppercase rounded-full border bg-transparent px-5 py-2 transition-all duration-200",
@@ -520,7 +521,7 @@ const MobileMenu = ({ isTransparentHero }: { isTransparentHero?: boolean }) => {
                 <>
                   <Button
                     onClick={() => {
-                      navigate("/auth", { state: { userType: "builder" } });
+                      navigate("/auth", { state: { userType: "builder", authMode: "login" } });
                       setIsOpen(false);
                     }}
                     variant="ghost"
@@ -532,7 +533,7 @@ const MobileMenu = ({ isTransparentHero }: { isTransparentHero?: boolean }) => {
                   </Button>
                   <Button
                     onClick={() => {
-                      navigate("/auth", { state: { userType: "builder" } });
+                      navigate("/auth", { state: { userType: "builder", authMode: "signup" } });
                       setIsOpen(false);
                     }}
                     size="sm"

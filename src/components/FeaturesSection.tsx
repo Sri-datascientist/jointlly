@@ -157,15 +157,6 @@ const FeaturesSection = () => {
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col justify-center h-full">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#1A5C35]/15 dark:border-[#52b788]/20 bg-[#1A5C35]/5 dark:bg-[#52b788]/5 text-[10px] uppercase tracking-[0.2em] font-medium text-[#1A5C35] dark:text-[#52b788] mb-3"
-            >
-              <span>Core Pillars</span>
-            </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-times text-[#0D3B21] dark:text-white leading-[1.1] tracking-tight">
               Ecosystem Capabilities
             </h2>

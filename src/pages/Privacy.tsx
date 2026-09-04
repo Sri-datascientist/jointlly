@@ -64,7 +64,7 @@ const Privacy = () => {
         },
         {
           label: "d) Commercial Enforcement & Revenue Protection",
-          content: "For specific categories (Construction and Joint Development), Jointlly processes project status data to enforce the Anti-Circumvention Agreement. Usage: We track project milestones (e.g., \"Agreement Signed\") to calculate and recover the applicable Success Fee (0.5% - 0.75%). Legal Basis: Processing is necessary for the performance of a contract and recovery of legitimate dues.",
+          content: "For specific categories (Construction and Joint Development), Jointlly processes project status data to enforce the Anti-Circumvention Agreement. Usage: We track project milestones (e.g., \"Agreement Signed\") to calculate and recover the applicable Success Fee (0.75%). Legal Basis: Processing is necessary for the performance of a contract and recovery of legitimate dues.",
         },
         {
           label: "e) Legal Disclosure",
@@ -174,7 +174,7 @@ const Privacy = () => {
       <Navbar />
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/70 via-green-50/60 to-teal-50/70" />
       <div className="absolute inset-0 jointlly-grid opacity-40" />
-      <div className="relative z-10 pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-24">
+      <div className="relative z-10 py-12 sm:py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <motion.div

@@ -176,7 +176,7 @@ const FAQ = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
-      <section className="relative pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-24">
+      <section className="relative py-12 sm:py-16 md:py-20">
         <div className="absolute inset-0 bg-background" />
         <div className="absolute inset-0 jointlly-grid opacity-40" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
