@@ -309,10 +309,12 @@ async function handleResponse<T>(res: Response): Promise<T> {
       }
     }
 
-    if (res.status === 409) {
-      message = "User with this email address already exists. Please log in instead.";
-    } else if (!message || message === "[object Object]") {
-      message = res.statusText || `Request failed with status ${res.status}`;
+    if (!message || message === "[object Object]") {
+      if (res.status === 409) {
+        message = "User with this email address already exists. Please log in instead.";
+      } else {
+        message = res.statusText || `Request failed with status ${res.status}`;
+      }
     }
 
     if (import.meta.env.DEV) console.warn("[API] Error", res.status, res.url, data);

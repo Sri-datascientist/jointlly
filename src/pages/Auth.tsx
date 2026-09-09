@@ -45,12 +45,24 @@ const Auth = () => {
     navigate(postLoginRedirectPath(role, from), { replace: true });
   }, [isAuthenticated, user, navigate, authState?.from]);
 
-  // Allow other pages to deep-link into Login/Sign-up.
+  // Support path (/login vs /signup), query params (?mode=signup, ?type=landowner), and location.state
   useEffect(() => {
-    const mode = authState?.authMode;
-    if (!mode) return;
-    setIsLogin(mode === "login");
-  }, [authState?.authMode]);
+    const searchParams = new URLSearchParams(location.search);
+    const queryMode = searchParams.get("mode");
+    const queryType = searchParams.get("type");
+
+    if (location.pathname === "/signup" || queryMode === "signup" || authState?.authMode === "signup") {
+      setIsLogin(false);
+    } else if (location.pathname === "/login" || queryMode === "login" || authState?.authMode === "login") {
+      setIsLogin(true);
+    }
+
+    if (queryType === "landowner" || authState?.userType === "landowner") {
+      setFormData((prev) => ({ ...prev, userType: "landowner" }));
+    } else if (queryType === "builder" || queryType === "professional" || authState?.userType === "builder") {
+      setFormData((prev) => ({ ...prev, userType: "builder" }));
+    }
+  }, [location.pathname, location.search, authState]);
 
   // Keep auth screen on a single solid background across html/body/root.
   useEffect(() => {

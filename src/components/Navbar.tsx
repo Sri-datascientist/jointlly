@@ -167,7 +167,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                               "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             )}
                           >
-                            <div className="text-sm font-medium leading-none">Residential</div>
+                            <div className="text-sm font-bold text-[#0D3B21] dark:text-white leading-none">Residential</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Low-rise structures like villas and duplexes
                             </p>
@@ -182,7 +182,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                               "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             )}
                           >
-                            <div className="text-sm font-medium leading-none">Commercial</div>
+                            <div className="text-sm font-bold text-[#0D3B21] dark:text-white leading-none">Commercial</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Office hubs, hotels, and rental complexes
                             </p>
@@ -197,7 +197,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                               "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             )}
                           >
-                            <div className="text-sm font-medium leading-none">Industrial</div>
+                            <div className="text-sm font-bold text-[#0D3B21] dark:text-white leading-none">Industrial</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               High-performance structures for machinery
                             </p>
@@ -212,7 +212,7 @@ const Navbar = ({ variant = "default" }: NavbarProps) => {
                               "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             )}
                           >
-                            <div className="text-sm font-medium leading-none">Interior</div>
+                            <div className="text-sm font-bold text-[#0D3B21] dark:text-white leading-none">Interior</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Efficient and visually refined spaces
                             </p>
@@ -436,28 +436,28 @@ const MobileMenu = ({ isTransparentHero }: { isTransparentHero?: boolean }) => {
               <Link
                 to="/products/residential"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[14px] font-bold text-[#0D3B21] dark:text-white hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Residential
               </Link>
               <Link
                 to="/products/commercial"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[14px] font-bold text-[#0D3B21] dark:text-white hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Commercial
               </Link>
               <Link
                 to="/products/industrial"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[14px] font-bold text-[#0D3B21] dark:text-white hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Industrial
               </Link>
               <Link
                 to="/products/interior"
                 onClick={() => setIsOpen(false)}
-                className="block py-3 px-2 text-[13px] text-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+                className="block py-3 px-2 text-[14px] font-bold text-[#0D3B21] dark:text-white hover:text-primary transition-colors min-h-[44px] flex items-center"
               >
                 Interior
               </Link>
