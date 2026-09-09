@@ -126,7 +126,7 @@ const Auth = () => {
       }
     }
 
-    if (!acceptedTerms) {
+    if (!isLogin && !acceptedTerms) {
       newErrors.terms =
         "You must accept the Terms & Conditions to use Jointlly. Jointlly is only a facilitator and is not responsible for any disputes between parties.";
     }

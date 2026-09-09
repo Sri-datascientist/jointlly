@@ -19,41 +19,52 @@ def _marketplace_logo_url() -> str:
     raw = (getattr(settings, "email_logo_url", None) or "").strip()
     if raw:
         return raw
-    base = (settings.frontend_base_url or "https://jointlly.com").rstrip("/")
-    return f"{base}/logo-navbar-dark.svg"
+    base = (settings.frontend_base_url or "https://jointlly.in").rstrip("/")
+    return f"{base}/image/IMG-20260323-WA0012-removebg-preview.png"
 
 
 def _marketplace_email_shell(*, preheader: str, heading: str, body_html: str) -> str:
     """Table-based layout for email clients; includes logo in header."""
     logo = escape(_marketplace_logo_url(), quote=True)
-    fe = escape((settings.frontend_base_url or "https://jointlly.com").rstrip("/"))
+    fe = escape((settings.frontend_base_url or "https://jointlly.in").rstrip("/"))
     h_pre = escape(preheader)
     h_head = escape(heading)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#eef2ef;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#eef2ef;">
-    <tr><td align="center" style="padding:28px 14px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #d5e0d9;box-shadow:0 8px 32px rgba(26,46,34,0.07);">
+<body style="margin:0;padding:0;background-color:#f0f5f2;font-family:'Segoe UI',Roboto,-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;">
+  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f0f5f2;padding:32px 12px;">
+    <tr><td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" width="560" style="max-width:560px;width:100%;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #d5e4dc;box-shadow:0 12px 40px rgba(13,59,33,0.08);">
+        <!-- Header with Jointlly Brand Gradient -->
         <tr>
-          <td style="padding:26px 28px;background:linear-gradient(152deg,#1f4a36 0%,#2d6b4f 55%,#163828 100%);text-align:center;">
-            <img src="{logo}" alt="Jointlly" width="168" height="auto" style="display:block;margin:0 auto;max-width:168px;border:0;outline:none;" />
-            <p style="margin:14px 0 0;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.88);">Marketplace</p>
+          <td style="padding:32px 28px 24px;background:linear-gradient(135deg, #0d3b21 0%, #1a5c35 60%, #2e7d4a 100%);text-align:center;">
+            <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
+              <tr>
+                <td style="background:rgba(255,255,255,0.95);padding:10px 18px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+                  <img src="{logo}" alt="Jointlly" height="48" style="display:block;height:48px;width:auto;border:0;outline:none;" />
+                </td>
+              </tr>
+            </table>
+            <p style="margin:14px 0 0;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:#a8e0bd;">Real Estate &amp; Construction Marketplace</p>
           </td>
         </tr>
-        <tr><td style="padding:22px 28px 0;">
-          <p style="margin:0;color:#5c6b5f;font-size:14px;line-height:1.5;">{h_pre}</p>
+        <!-- Content Body -->
+        <tr><td style="padding:28px 32px 8px;">
+          <p style="margin:0;color:#2e6b47;font-size:13px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">{h_pre}</p>
         </td></tr>
-        <tr><td style="padding:12px 28px 6px;">
-          <h1 style="margin:0;font-size:22px;line-height:1.35;color:#1a2e22;font-weight:700;">{h_head}</h1>
+        <tr><td style="padding:6px 32px 12px;">
+          <h1 style="margin:0;font-size:24px;line-height:1.3;color:#0d3b21;font-weight:700;">{h_head}</h1>
         </td></tr>
-        <tr><td style="padding:8px 28px 28px;color:#3d5247;font-size:15px;line-height:1.65;">
+        <tr><td style="padding:8px 32px 32px;color:#334e3e;font-size:15px;line-height:1.65;">
           {body_html}
         </td></tr>
-        <tr><td style="padding:18px 28px;background:#f1f5f3;border-top:1px solid #dde8e2;font-size:12px;color:#5c6b5f;line-height:1.55;">
-          Sent by Jointlly · <a href="{fe}" style="color:#1f4a36;font-weight:600;text-decoration:none;">Open app</a>
-          <br /><span style="color:#8a9a91;">Do not reply to this automated message.</span>
+        <!-- Footer -->
+        <tr><td style="padding:20px 32px;background:#f6faf7;border-top:1px solid #e2ebe5;font-size:12px;color:#5a7364;line-height:1.6;text-align:center;">
+          Jointlly Real Estate Advisory &amp; Marketplace Platform
+          <br />
+          <a href="{fe}" style="color:#1a5c35;font-weight:700;text-decoration:none;">Visit jointlly.in</a>
+          <br /><span style="color:#8a9e91;font-size:11px;">This is an automated notification. Please do not reply directly.</span>
         </td></tr>
       </table>
     </td></tr>
@@ -121,7 +132,7 @@ def _plain_project_field(v: Optional[str]) -> str:
 
 
 def _marketplace_plain_footer() -> str:
-    base = (settings.frontend_base_url or "https://jointlly.com").rstrip("/")
+    base = (settings.frontend_base_url or "https://jointlly.in").rstrip("/")
     return (
         f"\n--\nJointlly · {base}\n"
         "Automated notification about marketplace activity on Jointlly."
@@ -139,10 +150,6 @@ async def send_email(
 ) -> bool:
     """
     Send a single HTML email.
-
-    Returns True if handed off to SMTP successfully, False if skipped (non-production, missing SMTP).
-
-    If SMTP configuration is missing in production, raises RuntimeError.
     """
     if not settings.smtp_host or not settings.smtp_username or not settings.smtp_password:
         missing = []
@@ -215,36 +222,41 @@ async def send_verification_email(
     Send email verification link to new user.
     """
     verify_link = _build_frontend_link("/verify-email", token)
-    display_name = name or to_email
+    display_name = escape(name or to_email)
 
     subject = "Verify your Jointlly account"
-    html_body = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 24px;">
-        <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; padding: 24px;">
-          <h2 style="color: #1f2933; margin-bottom: 12px;">Welcome to Jointlly, {display_name}!</h2>
-          <p style="color: #4b5563; line-height: 1.6;">
-            Please verify your email address to activate your account and start using Jointlly.
-          </p>
-          <p style="text-align: center; margin: 24px 0;">
-            <a href="{verify_link}"
-               style="display: inline-block; padding: 12px 24px; background-color: #16a34a; color: #ffffff;
-                      text-decoration: none; border-radius: 999px; font-weight: 600;">
-              Verify Email
-            </a>
-          </p>
-          <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
-            Or copy and paste this link into your browser:<br />
-            <span style="word-break: break-all;">{verify_link}</span>
-          </p>
-          <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-            If you did not create a Jointlly account, you can safely ignore this email.
-          </p>
-        </div>
-      </body>
-    </html>
+    body_content = f"""
+        <p style="margin:0 0 16px;color:#334e3e;line-height:1.65;">
+          Welcome <strong>{display_name}</strong>! Thank you for joining Jointlly.
+        </p>
+        <p style="margin:0 0 24px;color:#334e3e;line-height:1.65;">
+          Please verify your email address to activate your account and start exploring verified real estate and construction partnerships.
+        </p>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0;">
+          <tr>
+            <td align="center" style="border-radius:50px;background:linear-gradient(135deg, #1a5c35 0%, #2e7d4a 100%);">
+              <a href="{escape(verify_link, quote=True)}" target="_blank"
+                 style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:50px;letter-spacing:0.02em;">
+                Verify Email Address
+              </a>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:24px 0 8px;font-size:13px;color:#607869;">
+          Or copy and paste this link into your browser:
+        </p>
+        <p style="margin:0 0 24px;font-size:13px;word-break:break-all;color:#1a5c35;">
+          <a href="{escape(verify_link, quote=True)}" style="color:#1a5c35;text-decoration:underline;">{escape(verify_link)}</a>
+        </p>
+        <p style="margin:24px 0 0;font-size:12px;color:#8a9e91;">
+          If you did not create an account on Jointlly, you can safely ignore this email.
+        </p>
     """
-
+    html_body = _marketplace_email_shell(
+        preheader="Account Verification",
+        heading="Verify Your Email Address",
+        body_html=body_content,
+    )
     await send_email(to_email=to_email, subject=subject, html_body=html_body)
 
 
@@ -256,30 +268,26 @@ async def send_verification_otp_email(
     """
     Send an email OTP for account verification.
     """
-    display_name = name or to_email
-
+    display_name = escape(name or to_email)
     subject = "Your Jointlly verification code"
-    html_body = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 24px;">
-        <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; padding: 24px;">
-          <h2 style="color: #1f2933; margin-bottom: 12px;">Verify your email</h2>
-          <p style="color: #4b5563; line-height: 1.6;">
-            Hi {display_name}, use the code below to verify your Jointlly account.
-          </p>
-          <div style="text-align: center; margin: 20px 0;">
-            <div style="display: inline-block; padding: 14px 18px; border-radius: 10px; background: #0b1220; color: #ffffff; letter-spacing: 6px; font-size: 24px; font-weight: 700;">
-              {otp}
-            </div>
+    body_content = f"""
+        <p style="margin:0 0 16px;color:#334e3e;line-height:1.65;">
+          Hi <strong>{display_name}</strong>, use the secure 6-digit code below to complete your email verification.
+        </p>
+        <div style="text-align:center;margin:28px 0;">
+          <div style="display:inline-block;padding:16px 28px;border-radius:14px;background:#0d3b21;color:#ffffff;letter-spacing:8px;font-size:28px;font-weight:700;box-shadow:0 4px 16px rgba(13,59,33,0.15);">
+            {escape(otp)}
           </div>
-          <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
-            This code expires soon. If you did not create a Jointlly account, you can safely ignore this email.
-          </p>
         </div>
-      </body>
-    </html>
+        <p style="margin:24px 0 0;font-size:13px;color:#607869;text-align:center;">
+          This code will expire in 10 minutes for security reasons.
+        </p>
     """
-
+    html_body = _marketplace_email_shell(
+        preheader="Security Verification",
+        heading="Verification Code",
+        body_html=body_content,
+    )
     await send_email(to_email=to_email, subject=subject, html_body=html_body)
 
 
@@ -292,39 +300,41 @@ async def send_password_reset_email(
     Send password reset link to existing user.
     """
     reset_link = _build_frontend_link("/reset-password", token)
-    display_name = name or to_email
+    display_name = escape(name or to_email)
 
     subject = "Reset your Jointlly password"
-    html_body = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 24px;">
-        <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; padding: 24px;">
-          <h2 style="color: #1f2933; margin-bottom: 12px;">Password reset requested</h2>
-          <p style="color: #4b5563; line-height: 1.6;">
-            Hi {display_name}, we received a request to reset your Jointlly account password.
-          </p>
-          <p style="color: #4b5563; line-height: 1.6;">
-            Click the button below to create a new password. This link will expire soon for your security.
-          </p>
-          <p style="text-align: center; margin: 24px 0;">
-            <a href="{reset_link}"
-               style="display: inline-block; padding: 12px 24px; background-color: #16a34a; color: #ffffff;
-                      text-decoration: none; border-radius: 999px; font-weight: 600;">
-              Reset Password
-            </a>
-          </p>
-          <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
-            Or copy and paste this link into your browser:<br />
-            <span style="word-break: break-all;">{reset_link}</span>
-          </p>
-          <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-            If you did not request a password reset, you can safely ignore this email.
-          </p>
-        </div>
-      </body>
-    </html>
+    body_content = f"""
+        <p style="margin:0 0 16px;color:#334e3e;line-height:1.65;">
+          Hi <strong>{display_name}</strong>, we received a request to reset the password for your Jointlly account.
+        </p>
+        <p style="margin:0 0 24px;color:#334e3e;line-height:1.65;">
+          Click the button below to secure your account and set up a new password. This link is valid for 1 hour.
+        </p>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0;">
+          <tr>
+            <td align="center" style="border-radius:50px;background:linear-gradient(135deg, #1a5c35 0%, #2e7d4a 100%);">
+              <a href="{escape(reset_link, quote=True)}" target="_blank"
+                 style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:50px;letter-spacing:0.02em;">
+                Reset Password
+              </a>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:24px 0 8px;font-size:13px;color:#607869;">
+          Or copy and paste this link into your browser:
+        </p>
+        <p style="margin:0 0 24px;font-size:13px;word-break:break-all;color:#1a5c35;">
+          <a href="{escape(reset_link, quote=True)}" style="color:#1a5c35;text-decoration:underline;">{escape(reset_link)}</a>
+        </p>
+        <p style="margin:24px 0 0;font-size:12px;color:#8a9e91;">
+          If you did not request a password reset, your password will remain unchanged and you can safely ignore this email.
+        </p>
     """
-
+    html_body = _marketplace_email_shell(
+        preheader="Account Security",
+        heading="Password Reset Request",
+        body_html=body_content,
+    )
     await send_email(to_email=to_email, subject=subject, html_body=html_body)
 
 
