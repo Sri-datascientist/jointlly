@@ -3,13 +3,14 @@
  * Base URL from VITE_API_URL (falls back to local backend if unset).
  */
 
-const DEFAULT_API_URL =
-  "http://127.0.0.1:8001";
-
 const getBaseUrl = (): string => {
   const url = import.meta.env.VITE_API_URL;
-  if (typeof url === "string" && url) return url.replace(/\/$/, "");
-  return DEFAULT_API_URL;
+  if (typeof url === "string" && url.trim()) return url.replace(/\/$/, "");
+  // In browser production, relative routing (/api/v1/...) works through Nginx proxy
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return "";
+  }
+  return "http://127.0.0.1:8001";
 };
 
 const API_STORAGE_SCOPE = getBaseUrl()
