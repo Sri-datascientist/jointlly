@@ -434,45 +434,6 @@ export async function register(
 }
 
 /**
- * Verify OTP sent via email for user account activation.
- */
-export async function verifyOtp(email: string, otp: string): Promise<VerifyOtpResponse> {
-  const base = getBaseUrl();
-  const url = `${base}/api/v1/auth/verify-otp`;
-  const body = JSON.stringify({ email, otp });
-
-  if (isDev) console.log("[API] POST", url, { email });
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-  });
-
-  return handleResponse<VerifyOtpResponse>(res);
-}
-
-/**
- * Resend email verification OTP to user.
- */
-export async function resendOtp(email: string): Promise<MessageResponse> {
-  const base = getBaseUrl();
-  const url = `${base}/api/v1/auth/resend-otp`;
-  const body = JSON.stringify({ email });
-
-  if (isDev) console.log("[API] POST", url, { email });
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-  });
-
-  return handleResponse<MessageResponse>(res);
-}
-
-
-/**
  * Get current user (requires valid access token).
  */
 export async function getMe(): Promise<ApiUser> {
@@ -782,6 +743,10 @@ export async function resendEmailOtp(email: string): Promise<MessageResponse> {
 
   return handleResponse<MessageResponse>(res);
 }
+
+// Aliases for Auth & VerifyEmail compatibility
+export const verifyOtp = verifyEmailOtp;
+export const resendOtp = resendEmailOtp;
 
 // ----- Uploads (S3 presigned URLs) -----
 export interface PresignResponse {
