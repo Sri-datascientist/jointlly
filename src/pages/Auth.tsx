@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Lock, User, Building2, Phone } from "lucide-react";
+import { ArrowLeft, Mail, Lock, User, Building2, Phone, KeyRound, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
-import { login as apiLogin, register as apiRegister, postLoginRedirectPath, type BackendRole } from "@/lib/api";
+import {
+  login as apiLogin,
+  register as apiRegister,
+  verifyOtp as apiVerifyOtp,
+  resendOtp as apiResendOtp,
+  postLoginRedirectPath,
+  type BackendRole
+} from "@/lib/api";
 const appLogo = "/image/IMG-20260323-WA0012-removebg-preview.png";
 
 const Auth = () => {
@@ -23,6 +30,12 @@ const Auth = () => {
   const authState = location.state as { userType?: string; from?: string; authMode?: "login" | "signup" } | null;
   const isAdminLogin = authState?.userType === "admin" || authState?.from?.startsWith("/admin");
   const [isLogin, setIsLogin] = useState(true);
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSubmitting, setOtpSubmitting] = useState(false);
+  const [resendingOtp, setResendingOtp] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -81,7 +94,6 @@ const Auth = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    // Clear error when user starts typing
     if (errors[e.target.name] || errors.general) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -154,28 +166,16 @@ const Auth = () => {
         navigate(postLoginRedirectPath(response.user.role, authState?.from), { replace: true });
       } else {
         const role: BackendRole = formData.userType === "builder" ? "PROFESSIONAL" : "LANDOWNER";
-        const registerResponse = await apiRegister(
+        await apiRegister(
           formData.name.trim(),
           formData.email.trim(),
           formData.phone.trim(),
           formData.password,
           role
         );
-        if (registerResponse.requires_verification) {
-          try {
-            const response = await apiLogin(formData.email.trim(), formData.password, formData.userType as "builder" | "landowner");
-            login(response);
-            navigate(postLoginRedirectPath(response.user.role, authState?.from), { replace: true });
-          } catch {
-            // If backend requires verification before login, switch to login tab with success note
-            setIsLogin(true);
-            setSuccessMessage("Account created successfully! You can now log in.");
-          }
-        } else {
-          const response = await apiLogin(formData.email.trim(), formData.password, formData.userType as "builder" | "landowner");
-          login(response);
-          navigate(postLoginRedirectPath(response.user.role, authState?.from), { replace: true });
-        }
+        // Show OTP screen after sign up
+        setShowOtpScreen(true);
+        setSuccessMessage(`Account created! A 6-digit OTP code has been sent to ${formData.email.trim()}`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -184,6 +184,47 @@ const Auth = () => {
       setSubmitting(false);
     }
   };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors((prev) => ({ ...prev, otp: "", general: "" }));
+    setResendMessage(null);
+
+    if (!otpCode.trim() || otpCode.trim().length !== 6) {
+      setErrors((prev) => ({ ...prev, otp: "Please enter a valid 6-digit OTP code" }));
+      return;
+    }
+
+    setOtpSubmitting(true);
+    try {
+      await apiVerifyOtp(formData.email.trim(), otpCode.trim());
+      // Log user in automatically after successful verification
+      const loginResp = await apiLogin(formData.email.trim(), formData.password, formData.userType);
+      login(loginResp);
+      navigate(postLoginRedirectPath(loginResp.user.role, authState?.from), { replace: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Invalid or expired OTP code.";
+      setErrors((prev) => ({ ...prev, otp: message }));
+    } finally {
+      setOtpSubmitting(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setErrors((prev) => ({ ...prev, otp: "", general: "" }));
+    setResendMessage(null);
+    setResendingOtp(true);
+    try {
+      const res = await apiResendOtp(formData.email.trim());
+      setResendMessage(res.message || "A new OTP code has been sent to your email.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to resend OTP. Please try again.";
+      setErrors((prev) => ({ ...prev, otp: message }));
+    } finally {
+      setResendingOtp(false);
+    }
+  };
+
 
   const userTypeLabel = formData.userType === "builder" ? "Construction Company" : "Landowner";
 
@@ -214,13 +255,88 @@ const Auth = () => {
                 />
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                {isLogin ? "Login" : "Create Account"}
+                {showOtpScreen ? "Verify OTP" : isLogin ? "Login" : "Create Account"}
               </h1>
-              <p className="text-muted-foreground">
-                {isLogin ? `Login to continue as ${userTypeLabel}` : `Sign up to get started as ${userTypeLabel}`}
+              <p className="text-muted-foreground text-sm">
+                {showOtpScreen
+                  ? `Enter the 6-digit code sent to ${formData.email}`
+                  : isLogin
+                  ? `Login to continue as ${userTypeLabel}`
+                  : `Sign up to get started as ${userTypeLabel}`}
               </p>
             </div>
 
+            {showOtpScreen ? (
+              <form onSubmit={handleVerifyOtp} className="space-y-4 sm:space-y-6">
+                {successMessage && (
+                  <div className="text-xs sm:text-sm text-primary mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
+                    {successMessage}
+                  </div>
+                )}
+                {resendMessage && (
+                  <div className="text-xs sm:text-sm text-green-600 mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                    {resendMessage}
+                  </div>
+                )}
+                {errors.otp && (
+                  <div className="text-xs sm:text-sm text-destructive mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                    {errors.otp}
+                  </div>
+                )}
+
+                <div>
+                  <Label htmlFor="otpCode" className="mb-2 block">
+                    6-Digit Verification Code *
+                  </Label>
+                  <div className="relative">
+                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="otpCode"
+                      name="otpCode"
+                      type="text"
+                      maxLength={6}
+                      placeholder="Enter 6-digit OTP"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ""))}
+                      className="pl-10 text-center tracking-widest font-mono text-lg"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full btn-premium min-h-[44px]"
+                  disabled={otpSubmitting}
+                >
+                  {otpSubmitting ? "Verifying..." : "Verify OTP & Continue"}
+                </Button>
+
+                <div className="flex items-center justify-between pt-2 text-xs sm:text-sm">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowOtpScreen(false);
+                      setIsLogin(true);
+                    }}
+                    className="text-muted-foreground hover:text-foreground underline"
+                  >
+                    Back to Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={resendingOtp}
+                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${resendingOtp ? "animate-spin" : ""}`} />
+                    {resendingOtp ? "Sending..." : "Resend OTP"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
             {/* Toggle Login/Signup */}
             <div className="flex items-center gap-2 mb-5 sm:mb-6 p-1 bg-secondary/50 rounded-lg">
               <button
@@ -254,6 +370,7 @@ const Auth = () => {
                 Sign Up
               </button>
             </div>
+
 
             {errors.general && (
               <div className="text-sm text-destructive mb-4 p-3 rounded-lg bg-destructive/10 space-y-2">
@@ -481,10 +598,13 @@ const Auth = () => {
                 </Link>
               </p>
             </div>
+            </>
+            )}
           </motion.div>
       </div>
     </div>
   );
 };
+
 
 export default Auth;
