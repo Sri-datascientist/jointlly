@@ -476,8 +476,8 @@ const Auth = () => {
                 <Label htmlFor="password" className="mb-2 block">
                   Password *
                 </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <div className="relative flex items-center">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
                   <Input
                     id="password"
                     name="password"
@@ -485,15 +485,15 @@ const Auth = () => {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 pr-10 ${errors.password ? "border-destructive" : ""}`}
+                    className={`pl-10 pr-12 ${errors.password ? "border-destructive" : ""}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 z-20 cursor-pointer transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && (
@@ -516,8 +516,8 @@ const Auth = () => {
                   <Label htmlFor="confirmPassword" className="mb-2 block">
                     Confirm Password *
                   </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
@@ -525,15 +525,15 @@ const Auth = () => {
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`pl-10 pr-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                      className={`pl-10 pr-12 ${errors.confirmPassword ? "border-destructive" : ""}`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none p-1"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 z-20 cursor-pointer transition-colors"
                       aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                     >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                   {errors.confirmPassword && (
