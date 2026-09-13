@@ -177,12 +177,9 @@ const Auth = () => {
           formData.password,
           role
         );
-        // Navigate directly to dedicated /verify-email page
-        const query = new URLSearchParams({
-          email: formData.email.trim(),
-          userType: formData.userType,
-        }).toString();
-        navigate(`/verify-email?${query}`);
+        // Switch view directly to OTP Verification screen inline
+        setShowOtpScreen(true);
+        setSuccessMessage(`Account created! A 6-digit OTP code has been sent to ${formData.email.trim()}`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -190,7 +187,6 @@ const Auth = () => {
     } finally {
       setSubmitting(false);
     }
-
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
