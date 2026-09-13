@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Lock, User, Building2, Phone, KeyRound, RefreshCw } from "lucide-react";
+import { ArrowLeft, Mail, Lock, User, Building2, Phone, KeyRound, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,9 @@ const Auth = () => {
   const [resendingOtp, setResendingOtp] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -44,6 +47,7 @@ const Auth = () => {
     confirmPassword: "",
     userType: (authState?.userType === "landowner" ? "landowner" : "builder") as "builder" | "landowner",
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -481,12 +485,20 @@ const Auth = () => {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 ${errors.password ? "border-destructive" : ""}`}
+                    className={`pl-10 pr-10 ${errors.password ? "border-destructive" : ""}`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none p-1"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-xs text-destructive mt-1">{errors.password}</p>
@@ -513,12 +525,20 @@ const Auth = () => {
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`pl-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                      className={`pl-10 pr-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none p-1"
+                      aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                   {errors.confirmPassword && (
                     <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
