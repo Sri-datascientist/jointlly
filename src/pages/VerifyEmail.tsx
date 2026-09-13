@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, RefreshCw, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { resendEmailOtp, verifyEmailOtp } from "@/lib/api";
+import { resendOtp as apiResendOtp, verifyOtp as apiVerifyOtp } from "@/lib/api";
 
 const appLogo = "/image/IMG-20260323-WA0012-removebg-preview.png";
 
@@ -25,11 +25,29 @@ const VerifyEmail = () => {
   const [resending, setResending] = useState(false);
 
   const handleVerify = async () => {
-    setStatus("success");
-    setMessage("Verification bypassed successfully. Redirecting to login...");
-    setTimeout(() => {
-      navigate("/auth", { replace: true, state: { userType, authMode: "login" } });
-    }, 500);
+    if (!otp.trim() || otp.trim().length !== 6) {
+      setMessage("Please enter a valid 6-digit verification code");
+      return;
+    }
+    if (!email) {
+      setMessage("Missing email parameter. Please go back to sign up.");
+      return;
+    }
+
+    setStatus("loading");
+    setMessage(null);
+    try {
+      await apiVerifyOtp(email, otp.trim());
+      setStatus("success");
+      setMessage("Email verified successfully! Redirecting to login...");
+      setTimeout(() => {
+        navigate("/auth", { replace: true, state: { userType, authMode: "login" } });
+      }, 1500);
+    } catch (err) {
+      setStatus("error");
+      const msg = err instanceof Error ? err.message : "Invalid or expired OTP code.";
+      setMessage(msg);
+    }
   };
 
   const handleGoToLogin = () => {
@@ -37,7 +55,21 @@ const VerifyEmail = () => {
   };
 
   const handleResendOtp = async () => {
-    setMessage("OTP verification is currently bypassed. You can proceed directly to login.");
+    if (!email) {
+      setMessage("Missing email address.");
+      return;
+    }
+    setResending(true);
+    setMessage(null);
+    try {
+      const res = await apiResendOtp(email);
+      setMessage(res.message || "A new 6-digit OTP code has been sent to your email.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to send OTP.";
+      setMessage(msg);
+    } finally {
+      setResending(false);
+    }
   };
 
   const isLoading = status === "loading";
@@ -71,11 +103,11 @@ const VerifyEmail = () => {
             {isLoading && (
               <>
                 <div className="flex justify-center mb-4">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F3B24A]" />
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Verifying email...</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Verifying code...</h1>
                 <p className="text-muted-foreground">
-                  Please wait while we confirm your email address.
+                  Please wait while we verify your 6-digit OTP.
                 </p>
               </>
             )}
@@ -97,38 +129,44 @@ const VerifyEmail = () => {
 
             {status === "idle" && (
               <>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Enter OTP</h1>
-                <p className="text-muted-foreground mb-5">
-                  We sent a verification code to {email ? <span className="font-medium text-foreground">{email}</span> : "your email"}.
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Verify OTP</h1>
+                <p className="text-muted-foreground mb-5 text-sm">
+                  We sent a 6-digit verification code to {email ? <span className="font-medium text-foreground">{email}</span> : "your email"}.
                 </p>
 
-                <div className="space-y-2 text-left">
-                  <Label htmlFor="otp">OTP</Label>
-                  <Input
-                    id="otp"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    placeholder="Enter 6-digit code"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="min-h-[44px]"
-                  />
+                <div className="space-y-2 text-left mb-4">
+                  <Label htmlFor="otp">6-Digit Verification Code *</Label>
+                  <div className="relative">
+                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="otp"
+                      inputMode="numeric"
+                      maxLength={6}
+                      autoComplete="one-time-code"
+                      placeholder="Enter 6-digit OTP"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ""))}
+                      className="pl-10 text-center tracking-widest font-mono text-lg min-h-[44px]"
+                      autoFocus
+                    />
+                  </div>
                 </div>
 
                 {message && (
-                  <p className="text-sm text-destructive mt-4 p-3 rounded-lg bg-destructive/10">
+                  <p className="text-xs sm:text-sm text-destructive mb-4 p-3 rounded-lg bg-destructive/10 text-left">
                     {message}
                   </p>
                 )}
 
                 <div className="mt-5 flex flex-col gap-2">
                   <Button onClick={handleVerify} className="btn-premium min-h-[44px]">
-                    Verify
+                    Verify OTP &amp; Continue
                   </Button>
                   <Button onClick={handleResendOtp} variant="outline" className="min-h-[44px]" disabled={resending}>
+                    <RefreshCw className={`w-3.5 h-3.5 mr-2 ${resending ? "animate-spin" : ""}`} />
                     {resending ? "Sending OTP..." : "Resend OTP"}
                   </Button>
-                  <Button onClick={handleGoToLogin} variant="outline" className="min-h-[44px]">
+                  <Button onClick={handleGoToLogin} variant="ghost" className="min-h-[44px]">
                     Back to login
                   </Button>
                 </div>
@@ -141,14 +179,17 @@ const VerifyEmail = () => {
                   <XCircle className="w-10 h-10 text-red-500" />
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold mb-2">Verification failed</h1>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 text-sm">
                   {message || "We could not verify your email. The OTP may have expired."}
                 </p>
                 <div className="flex flex-col gap-2">
                   <Button onClick={() => setStatus("idle")} className="btn-premium min-h-[44px]">
                     Try again
                   </Button>
-                  <Button onClick={handleGoToLogin} variant="outline" className="min-h-[44px]">
+                  <Button onClick={handleResendOtp} variant="outline" className="min-h-[44px]" disabled={resending}>
+                    {resending ? "Sending OTP..." : "Resend OTP"}
+                  </Button>
+                  <Button onClick={handleGoToLogin} variant="ghost" className="min-h-[44px]">
                     Back to login
                   </Button>
                 </div>
@@ -160,6 +201,7 @@ const VerifyEmail = () => {
     </div>
   );
 };
+
 
 export default VerifyEmail;
 
